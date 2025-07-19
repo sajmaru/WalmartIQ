@@ -1,0 +1,25 @@
+* {
+  box-sizing: border-box;
+  font-family: Poppins;
+}
+
+html {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+body {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  margin: 0;
+  padding: 0;
+}
+
+::selection {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+::-moz-selection {
+  background: rgba(0, 0, 0, 0.15);
+}
+

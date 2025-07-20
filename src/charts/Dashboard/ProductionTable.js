@@ -9,6 +9,7 @@ import {
   TableSortLabel,
   Toolbar,
   Typography,
+  TableBody,
 } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
 import useSWR from 'swr';
@@ -59,8 +60,13 @@ const ProductionTable = () => {
     year = LATEST_YEAR,
     cropCode = ALL_CROPS_CODE,
   } = useRouting();
-  const { data: values } = useSWR(
+  
+  const { data: values = [] } = useSWR(
     `${API_HOST_URL}api/dashboard/getCropData?stateCode=${stateCode}&year=${year}&cropCode=${cropCode}`,
+    {
+      fallbackData: [],
+      onError: (err) => console.log('🎭 Using fallback production data due to:', err.message)
+    }
   );
 
   const headCells = useMemo(
@@ -111,56 +117,90 @@ const ProductionTable = () => {
     [handleRequestSort],
   );
 
+  // Helper function to safely get location name
+  const getLocationName = useCallback((thatStateCode, districtCode) => {
+    if (stateCode === INDIA_STATE_CODE) {
+      return STATE_NAMES[thatStateCode] || thatStateCode || 'Unknown';
+    } else {
+      // Handle cases where districtCode might be undefined or not in expected format
+      if (!districtCode) return 'Unknown District';
+      if (typeof districtCode !== 'string') return String(districtCode);
+      
+      const parts = districtCode.split('-');
+      if (parts.length > 1) {
+        return titleCase(parts[1]);
+      }
+      return titleCase(districtCode);
+    }
+  }, [stateCode]);
+
   return (
     <AnimatedEnter>
       <Paper variant="outlined">
         <Toolbar>
           <Typography variant="h6" style={{ flex: 1 }}>
             Agricultural {year === LATEST_YEAR ? 'Prediction' : 'Data'} for{' '}
-            {STATE_NAMES[stateCode]}
+            {STATE_NAMES[stateCode] || stateCode}
           </Typography>
         </Toolbar>
         <TableContainer>
           <Table>
             <TableHead>
-              {headCells.map((headCell) => (
-                <TableCell
-                  key={headCell.id}
-                  align={headCell.numeric ? 'right' : 'left'}
-                  padding={headCell.disablePadding ? 'none' : 'default'}
-                  sortDirection={orderBy === headCell.id ? order : false}>
-                  <TableSortLabel
-                    active={orderBy === headCell.id}
-                    direction={orderBy === headCell.id ? order : 'asc'}
-                    onClick={createSortHandler(headCell.id)}>
-                    {headCell.label}
-                  </TableSortLabel>
-                </TableCell>
-              ))}
+              <TableRow>
+                {headCells.map((headCell) => (
+                  <TableCell
+                    key={headCell.id}
+                    align={headCell.numeric ? 'right' : 'left'}
+                    padding={headCell.disablePadding ? 'none' : 'normal'}
+                    sortDirection={orderBy === headCell.id ? order : false}>
+                    <TableSortLabel
+                      active={orderBy === headCell.id}
+                      direction={orderBy === headCell.id ? order : 'asc'}
+                      onClick={createSortHandler(headCell.id)}>
+                      {headCell.label}
+                    </TableSortLabel>
+                  </TableCell>
+                ))}
+              </TableRow>
             </TableHead>
-            {stableSort(values, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map(
-                ({
-                  stateCode: thatStateCode,
-                  cropCode: thatCropCode,
-                  districtCode,
-                  ...params
-                }) => (
-                  <TableRow>
-                    <TableCell>
-                      {stateCode === INDIA_STATE_CODE
-                        ? STATE_NAMES[thatStateCode]
-                        : titleCase(districtCode.split('-')[1])}
-                    </TableCell>
-                    <TableCell>{year}</TableCell>
-                    <TableCell>{CROP_NAMES[thatCropCode]}</TableCell>
-                    {Object.values(params).map((value) => (
-                      <TableCell>{readableNumber(value)}</TableCell>
-                    ))}
-                  </TableRow>
-                ),
+            <TableBody>
+              {values.length > 0 ? (
+                stableSort(values, getComparator(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map(
+                    (
+                      {
+                        stateCode: thatStateCode,
+                        cropCode: thatCropCode,
+                        districtCode,
+                        ...params
+                      },
+                      index,
+                    ) => (
+                      <TableRow key={`production-${index}`}>
+                        <TableCell>
+                          {getLocationName(thatStateCode, districtCode)}
+                        </TableCell>
+                        <TableCell>{year}</TableCell>
+                        <TableCell>{CROP_NAMES[thatCropCode] || thatCropCode}</TableCell>
+                        {Object.values(params).map((value, paramIndex) => (
+                          <TableCell key={`param-${paramIndex}`}>
+                            {readableNumber(value)}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ),
+                  )
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={headCells.length} align="center">
+                    <Typography variant="body2" color="textSecondary">
+                      No production data available
+                    </Typography>
+                  </TableCell>
+                </TableRow>
               )}
+            </TableBody>
           </Table>
         </TableContainer>
         <TablePagination
@@ -169,8 +209,8 @@ const ProductionTable = () => {
           count={values.length}
           rowsPerPage={rowsPerPage}
           page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
     </AnimatedEnter>
@@ -178,4 +218,3 @@ const ProductionTable = () => {
 };
 
 export default ProductionTable;
-

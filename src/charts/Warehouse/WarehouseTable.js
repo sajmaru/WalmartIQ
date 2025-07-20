@@ -14,8 +14,16 @@ import {
 import { useCallback, useMemo, useState } from 'react';
 import useSWR from 'swr';
 import AnimatedEnter from '../../components/AnimatedEnter';
-import { API_HOST_URL, INDIA_STATE_CODE, STATE_NAMES } from '../../constants';
+import {
+  API_HOST_URL,
+  INDIA_STATE_CODE,
+  MONTH_NAMES,
+  STATE_NAMES,
+  WEATHER_PARAMS,
+  WEATHER_UNITS,
+} from '../../constants';
 import { readableNumber, titleCase } from '../../helpers';
+import useConstants from '../../hooks/useConstants';
 import useRouting from '../../routes/useRouting';
 
 const descendingComparator = (a, b, orderBy) => {
@@ -44,23 +52,34 @@ const stableSort = (array, comparator) => {
   return stabilizedThis.map((el) => el[0]);
 };
 
-const WarehouseTable = () => {
-  const { stateCode = INDIA_STATE_CODE } = useRouting();
-  const { data: values } = useSWR(
-    `${API_HOST_URL}api/storage/getStorageData?stateCode=${stateCode}`,
+const WeatherTable = () => {
+  const { LATEST_YEAR } = useConstants();
+  const { stateCode = INDIA_STATE_CODE, year = LATEST_YEAR } = useRouting();
+  
+  const { data: values = [] } = useSWR(
+    `${API_HOST_URL}api/weather/getWeatherTable?stateCode=${stateCode}&year=${year}`,
+    {
+      fallbackData: [],
+      onError: (err) => console.log('🎭 Using fallback weather data due to:', err.message)
+    }
   );
 
   const headCells = useMemo(
     () => [
-      { id: 'type', label: 'Type' },
-      { id: 'warehouse', label: 'Warehouse' },
-      { id: 'total', label: 'Capacity (Tonnes)' },
       {
         id: stateCode === INDIA_STATE_CODE ? 'stateCode' : 'districtCode',
         label: 'Location',
       },
+      { id: 'year', label: 'Year' },
+      { id: 'month', label: 'Month' },
+      ...Object.entries(WEATHER_PARAMS).map(([paramCode, paramName]) => ({
+        id: paramCode,
+        label: `${year === LATEST_YEAR ? 'Predicted ' : ''}${paramName} (${
+          WEATHER_UNITS[paramCode]
+        })`,
+      })),
     ],
-    [stateCode],
+    [stateCode, year, LATEST_YEAR],
   );
 
   const [order, setOrder] = useState('asc');
@@ -93,12 +112,30 @@ const WarehouseTable = () => {
     [handleRequestSort],
   );
 
+  // Helper function to safely get location name
+  const getLocationName = useCallback((thatStateCode, districtCode) => {
+    if (stateCode === INDIA_STATE_CODE) {
+      return STATE_NAMES[thatStateCode] || thatStateCode || 'Unknown';
+    } else {
+      // Handle cases where districtCode might be undefined or not in expected format
+      if (!districtCode) return 'Unknown District';
+      if (typeof districtCode !== 'string') return String(districtCode);
+      
+      const parts = districtCode.split('-');
+      if (parts.length > 1) {
+        return titleCase(parts[1]);
+      }
+      return titleCase(districtCode);
+    }
+  }, [stateCode]);
+
   return (
     <AnimatedEnter>
       <Paper variant="outlined">
         <Toolbar>
           <Typography variant="h6" style={{ flex: 1 }}>
-            Warehouses in {STATE_NAMES[stateCode]}
+            Weather {year === LATEST_YEAR ? 'Prediction' : 'Data'} for{' '}
+            {STATE_NAMES[stateCode] || stateCode}
           </Typography>
         </Toolbar>
         <TableContainer>
@@ -111,7 +148,10 @@ const WarehouseTable = () => {
                     align={headCell.numeric ? 'right' : 'left'}
                     padding={headCell.disablePadding ? 'none' : 'normal'}
                     sortDirection={orderBy === headCell.id ? order : false}>
-                    <TableSortLabel /* ... existing props ... */>
+                    <TableSortLabel
+                      active={orderBy === headCell.id}
+                      direction={orderBy === headCell.id ? order : 'asc'}
+                      onClick={createSortHandler(headCell.id)}>
                       {headCell.label}
                     </TableSortLabel>
                   </TableCell>
@@ -119,31 +159,43 @@ const WarehouseTable = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {stableSort(values, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map(
-                  (
-                    {
-                      type,
-                      total: capacity,
-                      warehouse,
-                      stateCode: thatStateCode,
-                      districtCode,
-                    },
-                    index,
-                  ) => (
-                    <TableRow key={`warehouse-${index}`}>
-                      <TableCell>{type}</TableCell>
-                      <TableCell>{warehouse}</TableCell>
-                      <TableCell>{readableNumber(capacity)}</TableCell>
-                      <TableCell>
-                        {stateCode === INDIA_STATE_CODE
-                          ? STATE_NAMES[thatStateCode]
-                          : titleCase(districtCode.split('-')[1])}
-                      </TableCell>
-                    </TableRow>
-                  ),
-                )}
+              {values.length > 0 ? (
+                stableSort(values, getComparator(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map(
+                    (
+                      {
+                        year: thatYear,
+                        month,
+                        stateCode: thatStateCode,
+                        districtCode,
+                        ...params
+                      },
+                      index,
+                    ) => (
+                      <TableRow key={`weather-${index}`}>
+                        <TableCell>
+                          {getLocationName(thatStateCode, districtCode)}
+                        </TableCell>
+                        <TableCell>{thatYear}</TableCell>
+                        <TableCell>{MONTH_NAMES[month - 1] || `Month ${month}`}</TableCell>
+                        {Object.values(params).map((value, paramIndex) => (
+                          <TableCell key={`param-${paramIndex}`}>
+                            {readableNumber(value)}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ),
+                  )
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={headCells.length} align="center">
+                    <Typography variant="body2" color="textSecondary">
+                      No weather data available
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -160,5 +212,5 @@ const WarehouseTable = () => {
     </AnimatedEnter>
   );
 };
-export default WarehouseTable;
 
+export default WeatherTable;

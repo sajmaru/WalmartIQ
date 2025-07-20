@@ -19,9 +19,8 @@ const NavbarContainer = styled(motion.create(Box))(({ theme }) => ({
   zIndex: theme.zIndex.appBar,
 }));
 
-const NavbarItem = styled(ListItem, {
-  shouldForwardProp: (prop) => !['button', 'dense', 'disableGutters'].includes(prop),
-})(({ theme }) => ({
+// Fix: Remove invalid props from shouldForwardProp
+const NavbarItem = styled(ListItem)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   textDecoration: 'none',
@@ -52,7 +51,6 @@ const LargeItemText = styled(ItemText)({
   fontSize: '2.5em',
 });
 
-const MotionBox = motion.create(Box);
 const MotionNavbarItem = motion.create(NavbarItem);
 
 const Navbar = memo(() => {
@@ -133,7 +131,7 @@ const Navbar = memo(() => {
             animate={location.pathname === page.pageLink ? 'focused' : 'normal'}
             component={Link}
             to={page.pageLink}
-            sx={{ cursor: 'pointer' }} // Add cursor pointer instead of button prop
+            style={{ cursor: 'pointer' }} // Fix: Use style instead of sx
           >
             <ItemIcon
               custom={i + 1}

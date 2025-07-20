@@ -3,9 +3,7 @@ import { Select } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-const StyledSelect = styled(Select, {
-  shouldForwardProp: (prop) => prop !== 'dense',
-})(({ theme, dense = false }) => ({
+const StyledSelect = styled(Select)(({ theme, dense = false }) => ({
   background: theme.palette.background.paper,
   borderStyle: 'none',
   borderWidth: 0,
@@ -28,7 +26,7 @@ const StyledSelect = styled(Select, {
   },
 }));
 
-const MinimalSelect = ({ dense, children, ...props }) => {
+const MinimalSelect = ({ dense = false, children, ...props }) => {
   const IconComponent = useCallback(
     (iconProps) => (
       <ExpandMoreIcon
@@ -47,7 +45,6 @@ const MinimalSelect = ({ dense, children, ...props }) => {
   return (
     <StyledSelect
       variant="outlined"
-      dense={dense}
       IconComponent={IconComponent}
       {...props}
     >

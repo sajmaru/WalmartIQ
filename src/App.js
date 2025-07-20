@@ -5,6 +5,7 @@ import { AnimatePresence } from 'framer-motion';
 import useSWR from 'swr';
 import Navbar, { NAVBAR_WIDTH } from './components/Navbar';
 import Router from './routes/Router';
+import ErrorBoundary from './components/ErrorBoundary';
 import { API_HOST_URL } from './constants';
 import useConstants from './hooks/useConstants';
 
@@ -22,28 +23,38 @@ const useAppStyles = makeStyles((theme) => ({
 
 const App = () => {
   const styles = useAppStyles();
-  const {
-    data: {
-      year: { year },
-    },
-  } = useSWR(`${API_HOST_URL}api/dashboard/getYear`);
+  
+  // Add error handling for the SWR call
+  const { 
+    data, 
+    error 
+  } = useSWR(`${API_HOST_URL}api/dashboard/getYear`, {
+    fallbackData: { year: 2023 }, // Provide fallback
+    onError: (err) => console.log('🎭 Using fallback year due to:', err.message)
+  });
+  
   const { LATEST_YEAR, setConstant } = useConstants();
 
   useEffect(() => {
-    if (LATEST_YEAR !== year) setConstant('LATEST_YEAR', year);
-  }, [LATEST_YEAR, year, setConstant]);
+    const year = data?.year || 2023;
+    if (LATEST_YEAR !== year) {
+      setConstant('LATEST_YEAR', year);
+    }
+  }, [data, LATEST_YEAR, setConstant]);
 
   return (
-    <Box classes={{ root: styles.Container }}>
-      <Navbar />
-      <Suspense fallback={<div />}>
-        <Box classes={{ root: styles.Content }}>
-          <AnimatePresence>
-            <Router />
-          </AnimatePresence>
-        </Box>
-      </Suspense>
-    </Box>
+    <ErrorBoundary>
+      <Box classes={{ root: styles.Container }}>
+        <Navbar />
+        <Suspense fallback={<div />}>
+          <Box classes={{ root: styles.Content }}>
+            <AnimatePresence>
+              <Router />
+            </AnimatePresence>
+          </Box>
+        </Suspense>
+      </Box>
+    </ErrorBoundary>
   );
 };
 

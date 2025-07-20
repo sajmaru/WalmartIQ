@@ -17,6 +17,7 @@ const MapSummary = () => {
           <ButtonGroup disableElevation size="small">
             {Object.entries(CROP_METRICS_NAMES).map(([value, label]) => (
               <Button
+                key={`metric-${value}`}
                 variant="contained"
                 color={basedOn.value === value ? 'primary' : 'default'}
                 {...basedOn.bind(value)}>

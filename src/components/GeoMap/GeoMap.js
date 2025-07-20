@@ -13,25 +13,29 @@ import { GeoMapPropTypes, GeoMapDefaultProps } from './props';
 import GeoMapFeature from './GeoMapFeature';
 import { useGeoMap } from './hooks';
 
-const GeoMap = memo((props = GeoMapDefaultProps) => {
+const GeoMap = memo((props) => {
+  // Merge props with defaults to ensure all required props are present
   const {
     width,
     height,
     margin: partialMargin,
-    features,
-    layers,
-    projectionType = 'mercator', // Add default here
-    projectionScale,
-    projectionTranslation,
-    projectionRotation,
-    fitProjection,
-    fillColor,
-    borderWidth,
-    borderColor,
-    isInteractive,
-    onClick,
+    features = [],
+    layers = ['features'],
+    projectionType = 'mercator',
+    projectionScale = 100,
+    projectionTranslation = [0.5, 0.5],
+    projectionRotation = [0, 0, 0],
+    fitProjection = false,
+    fillColor = '#dddddd',
+    borderWidth = 2,
+    borderColor = '#404040',
+    isInteractive = true,
+    onClick = () => {},
+    onMouseEnter = () => {},
+    onMouseMove = () => {},
+    onMouseLeave = () => {},
     tooltip: Tooltip,
-  } = props;
+  } = { ...GeoMapDefaultProps, ...props };
   
   const { margin, outerWidth, outerHeight } = useDimensions(
     width,
@@ -56,10 +60,12 @@ const GeoMap = memo((props = GeoMapDefaultProps) => {
   const theme = useTheme();
 
   const { showTooltipFromEvent, hideTooltip } = useTooltip();
+  
   const handleClick = useCallback(
     (feature, event) => isInteractive && onClick && onClick(feature, event),
     [isInteractive, onClick],
   );
+  
   const handleMouseEnter = useCallback(
     (feature, event) =>
       isInteractive &&
@@ -67,6 +73,7 @@ const GeoMap = memo((props = GeoMapDefaultProps) => {
       showTooltipFromEvent(<Tooltip feature={feature} />, event),
     [isInteractive, showTooltipFromEvent, Tooltip],
   );
+  
   const handleMouseMove = useCallback(
     (feature, event) =>
       isInteractive &&
@@ -74,10 +81,14 @@ const GeoMap = memo((props = GeoMapDefaultProps) => {
       showTooltipFromEvent(<Tooltip feature={feature} />, event),
     [isInteractive, showTooltipFromEvent, Tooltip],
   );
+  
   const handleMouseLeave = useCallback(() => isInteractive && hideTooltip(), [
     isInteractive,
     hideTooltip,
   ]);
+
+  // Ensure features is an array
+  const safeFeatures = Array.isArray(features) ? features : [];
 
   return (
     <SvgWrapper
@@ -89,9 +100,9 @@ const GeoMap = memo((props = GeoMapDefaultProps) => {
         if (layer === 'features') {
           return (
             <Fragment key="features">
-              {features.map((feature) => (
+              {safeFeatures.map((feature, index) => (
                 <GeoMapFeature
-                  key={feature.id}
+                  key={feature.id || feature.properties?.id || `feature-${index}`}
                   feature={feature}
                   path={path}
                   fillColor={getFillColor(feature)}
@@ -116,6 +127,5 @@ const GeoMap = memo((props = GeoMapDefaultProps) => {
 
 GeoMap.displayName = 'GeoMap';
 GeoMap.propTypes = GeoMapPropTypes;
-// Remove defaultProps line - using default parameters instead
 
 export default withContainer(GeoMap);

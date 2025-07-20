@@ -17,6 +17,7 @@ const CropMapSummary = () => {
           <ButtonGroup disableElevation size="small">
             {Object.entries(CROP_METRICS_NAMES).map(([value, label]) => (
               <Button
+                key={`crop-metric-${value}`}
                 variant="contained"
                 color={basedOn.value === value ? 'primary' : 'default'}
                 {...basedOn.bind(value)}>

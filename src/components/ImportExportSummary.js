@@ -29,12 +29,13 @@ const ImportExportSummary = () => {
                 <MenuItem key={name} value={name.split('-')[0]}>{name}</MenuItem>
               ))}
             </Select>
-            <ButtonGroup disableElevation size="small">
+             <ButtonGroup disableElevation size="small">
               {Object.entries({
                 quantity: 'By Quantity',
                 value: 'By Value',
               }).map(([value, label]) => (
                 <Button
+                  key={`trade-${value}`}
                   variant="contained"
                   color={by.value === value ? 'primary' : 'default'}
                   {...by.bind(value)}>

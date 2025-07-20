@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Grid, Collapse, useTheme } from '@mui/material';
+import { Box, Grid, Collapse } from '@mui/material';
 import useSWR from 'swr';
 
 import CategoryCard from '../../components/CategoryCard';
@@ -9,10 +9,13 @@ import { INDIA_STATE_CODE } from '../../constants';
 
 const CategorySummaryChart = ({ expanded }) => {
   const { stateCode = INDIA_STATE_CODE } = useRouting();
-  const { data } = useSWR(
+  const { data = [] } = useSWR(
     `https://usapa-backend.herokuapp.com/api/dashboard/cropCategory?stateCode=${stateCode}`,
+    {
+      fallbackData: [],
+      onError: (err) => console.log('🎭 Using fallback category data due to:', err.message)
+    }
   );
-  const theme = useTheme();
 
   return (
     <Box
@@ -23,7 +26,7 @@ const CategorySummaryChart = ({ expanded }) => {
       style={{ overflow: 'visible' }}>
       <Grid container spacing={3}>
         {data.slice(0, 4).map(({ categoryName, production, consumption }) => (
-          <Grid item xs={12} md={6} lg={3}>
+          <Grid item xs={12} md={6} lg={3} key={`category-${categoryName}`}>
             <CategoryCard
               categoryName={categoryName}
               production={production}
@@ -36,9 +39,9 @@ const CategorySummaryChart = ({ expanded }) => {
         <Grid
           container
           spacing={3}
-          style={{ marginTop: theme.spacing(3) / 2, overflow: 'visible' }}>
+          style={{ marginTop: 12, overflow: 'visible' }}>
           {data.slice(4).map(({ categoryName, production, consumption }) => (
-            <Grid item xs={12} md={6} lg={3}>
+            <Grid item xs={12} md={6} lg={3} key={`category-expanded-${categoryName}`}>
               <CategoryCard
                 categoryName={categoryName}
                 production={production}

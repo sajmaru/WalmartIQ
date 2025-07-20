@@ -145,7 +145,7 @@ const MapSummaryChart = memo(({ on, setMapHeight }) => {
         marginTop={2}
         marginBottom={-3}>
         {Object.entries(legend).map(([crop, cropColor]) => (
-          <Box component="span" padding={1}>
+          <Box component="span" padding={1} key={`legend-${crop}`}>
             <Chip
               style={{ marginLeft: 6, marginRight: 6, display: 'inline-block' }}
               color={cropColor}

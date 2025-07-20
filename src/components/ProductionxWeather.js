@@ -30,6 +30,7 @@ const ProductionxWeather = () => {
               {Object.entries({ production: 'Production', yield: 'yield' }).map(
                 ([value, label]) => (
                   <Button
+                    key={`production-metric-${value}`}
                     variant="contained"
                     color={on.value === value ? 'primary' : 'default'}
                     {...on.bind(value)}>

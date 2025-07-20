@@ -6,7 +6,6 @@ import {
   Box,
   Typography,
   Collapse,
-  useTheme,
 } from '@mui/material';
 import useSwr from 'swr';
 import TopCropChart from './TopCropChart';
@@ -24,12 +23,15 @@ const TopCropSummary = ({ expanded }) => {
     stateCode = INDIA_STATE_CODE,
     year = LATEST_YEAR,
   } = useRouting();
-  const { data } = useSwr(
+  const { data = [] } = useSwr(
     `${API_HOST_URL}api/dashboard/cropSummary?year=${year}&stateCode=${stateCode}&n=${
       stateCode === INDIA_STATE_CODE ? 6 : 9
     }`,
+    {
+      fallbackData: [],
+      onError: (err) => console.log('🎭 Using fallback crop data due to:', err.message)
+    }
   );
-  const theme = useTheme();
 
   return (
     <AnimatedEnter>
@@ -46,11 +48,11 @@ const TopCropSummary = ({ expanded }) => {
               key={`top-crop-${crop}-${index}`}>
               <Card
                 variant="outlined"
-                style={{ overflow: 'visible' }}
+                style={{ overflow: 'visible', cursor: 'pointer' }}
                 onClick={() => goTo({ cropCode: crop, stateCode, year })}>
                 <CardContent>
                   <Box flex={1}>
-                    <Typography variant="h6">{CROP_NAMES[crop]}</Typography>
+                    <Typography variant="h6">{CROP_NAMES[crop] || crop}</Typography>
                     <TopCropChart
                       production={series}
                       years={years}
@@ -64,7 +66,7 @@ const TopCropSummary = ({ expanded }) => {
           ))}
       </Grid>
       <Collapse in={expanded}>
-        <Grid container spacing={3} style={{ marginTop: theme.spacing(3) / 2 }}>
+        <Grid container spacing={3} style={{ marginTop: 12 }}>
           {data
             .slice(3)
             .map(({ crop, series, year: years, insights }, index) => (
@@ -77,10 +79,11 @@ const TopCropSummary = ({ expanded }) => {
                 key={`more-crop-${crop}-${index}`}>
                 <Card
                   variant="outlined"
+                  style={{ cursor: 'pointer' }}
                   onClick={() => goTo({ cropCode: crop, stateCode, year })}>
                   <CardContent>
                     <Box flex={1}>
-                      <Typography variant="h6">{CROP_NAMES[crop]}</Typography>
+                      <Typography variant="h6">{CROP_NAMES[crop] || crop}</Typography>
                       <TopCropChart
                         production={series}
                         years={years}
@@ -99,4 +102,3 @@ const TopCropSummary = ({ expanded }) => {
 };
 
 export default TopCropSummary;
-

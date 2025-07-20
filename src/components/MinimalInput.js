@@ -3,9 +3,7 @@ import { TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { alpha } from '@mui/material/styles';
 
-const StyledTextField = styled(TextField, {
-  shouldForwardProp: (prop) => prop !== 'dense',
-})(({ theme, dense = false }) => ({
+const StyledTextField = styled(TextField)(({ theme, dense = false }) => ({
   '& .MuiInputBase-root': {
     background: theme.palette.background.paper,
     borderStyle: 'none',
@@ -33,11 +31,10 @@ const StyledTextField = styled(TextField, {
   },
 }));
 
-const MinimalInput = ({ dense, ...props }) => {
+const MinimalInput = ({ dense = false, ...props }) => {
   return (
     <StyledTextField
       variant="outlined"
-      dense={dense}
       {...props}
     />
   );

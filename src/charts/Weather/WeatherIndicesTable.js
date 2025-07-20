@@ -9,6 +9,7 @@ import {
   TableSortLabel,
   Toolbar,
   Typography,
+  TableBody,
 } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
 import useSWR from 'swr';
@@ -51,11 +52,16 @@ const stableSort = (array, comparator) => {
   return stabilizedThis.map((el) => el[0]);
 };
 
-const WarehouseTable = ({ on }) => {
+const WeatherIndicesTable = ({ on }) => {
   const { LATEST_YEAR } = useConstants();
   const { stateCode = INDIA_STATE_CODE, year = LATEST_YEAR } = useRouting();
-  const { data: values } = useSWR(
+  
+  const { data: values = [] } = useSWR(
     `${API_HOST_URL}api/${on}/get${on.toUpperCase()}Table?stateCode=${stateCode}&year=${year}`,
+    {
+      fallbackData: [],
+      onError: (err) => console.log('🎭 Using fallback weather indices data due to:', err.message)
+    }
   );
 
   const headCells = useMemo(
@@ -104,54 +110,86 @@ const WarehouseTable = ({ on }) => {
     [handleRequestSort],
   );
 
+  // Helper function to safely get location name
+  const getLocationName = useCallback((thatStateCode, districtCode) => {
+    if (stateCode === INDIA_STATE_CODE) {
+      return STATE_NAMES[thatStateCode] || thatStateCode || 'Unknown';
+    } else {
+      // Handle cases where districtCode might be undefined or not in expected format
+      if (!districtCode) return 'Unknown District';
+      if (typeof districtCode !== 'string') return String(districtCode);
+      
+      const parts = districtCode.split('-');
+      if (parts.length > 1) {
+        return titleCase(parts[1]);
+      }
+      return titleCase(districtCode);
+    }
+  }, [stateCode]);
+
   return (
     <AnimatedEnter>
       <Paper variant="outlined">
         <Toolbar>
           <Typography variant="h6" style={{ flex: 1 }}>
-            {WEATHER_INDICES[on]} for {STATE_NAMES[stateCode]}
+            {WEATHER_INDICES[on]} for {STATE_NAMES[stateCode] || stateCode}
           </Typography>
         </Toolbar>
         <TableContainer>
           <Table>
             <TableHead>
-              {headCells.map((headCell) => (
-                <TableCell
-                  key={headCell.id}
-                  align={headCell.numeric ? 'right' : 'left'}
-                  padding={headCell.disablePadding ? 'none' : 'default'}
-                  sortDirection={orderBy === headCell.id ? order : false}>
-                  <TableSortLabel
-                    active={orderBy === headCell.id}
-                    direction={orderBy === headCell.id ? order : 'asc'}
-                    onClick={createSortHandler(headCell.id)}>
-                    {headCell.label}
-                  </TableSortLabel>
-                </TableCell>
-              ))}
+              <TableRow>
+                {headCells.map((headCell) => (
+                  <TableCell
+                    key={headCell.id}
+                    align={headCell.numeric ? 'right' : 'left'}
+                    padding={headCell.disablePadding ? 'none' : 'normal'}
+                    sortDirection={orderBy === headCell.id ? order : false}>
+                    <TableSortLabel
+                      active={orderBy === headCell.id}
+                      direction={orderBy === headCell.id ? order : 'asc'}
+                      onClick={createSortHandler(headCell.id)}>
+                      {headCell.label}
+                    </TableSortLabel>
+                  </TableCell>
+                ))}
+              </TableRow>
             </TableHead>
-            {stableSort(values, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map(
-                ({
-                  year: thatYear,
-                  month,
-                  stateCode: thatStateCode,
-                  districtCode,
-                  ...params
-                }) => (
-                  <TableRow>
-                    <TableCell>
-                      {stateCode === INDIA_STATE_CODE
-                        ? STATE_NAMES[thatStateCode]
-                        : titleCase(districtCode.split('-')[1])}
-                    </TableCell>
-                    <TableCell>{thatYear}</TableCell>
-                    <TableCell>{MONTH_NAMES[month - 1]}</TableCell>
-                    <TableCell>{readableNumber(params[on])}</TableCell>
-                  </TableRow>
-                ),
+            <TableBody>
+              {values.length > 0 ? (
+                stableSort(values, getComparator(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map(
+                    (
+                      {
+                        year: thatYear,
+                        month,
+                        stateCode: thatStateCode,
+                        districtCode,
+                        ...params
+                      },
+                      index,
+                    ) => (
+                      <TableRow key={`weather-indices-${index}`}>
+                        <TableCell>
+                          {getLocationName(thatStateCode, districtCode)}
+                        </TableCell>
+                        <TableCell>{thatYear || year}</TableCell>
+                        <TableCell>{MONTH_NAMES[month - 1] || `Month ${month}`}</TableCell>
+                        <TableCell>{readableNumber(params[on])}</TableCell>
+                      </TableRow>
+                    ),
+                  )
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={headCells.length} align="center">
+                    <Typography variant="body2" color="textSecondary">
+                      No weather indices data available
+                    </Typography>
+                  </TableCell>
+                </TableRow>
               )}
+            </TableBody>
           </Table>
         </TableContainer>
         <TablePagination
@@ -160,12 +198,12 @@ const WarehouseTable = ({ on }) => {
           count={values.length}
           rowsPerPage={rowsPerPage}
           page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
     </AnimatedEnter>
   );
 };
-export default WarehouseTable;
 
+export default WeatherIndicesTable;

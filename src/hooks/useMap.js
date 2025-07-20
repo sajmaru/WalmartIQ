@@ -1,4 +1,4 @@
-// src/hooks/useMap.js - Simplified for real files
+// src/hooks/useMap.js - Fixed to add unique IDs
 import { useCallback, useContext } from 'react';
 import useSWR from 'swr';
 import { feature } from 'topojson-client';
@@ -40,8 +40,33 @@ const toFeatures = (geo, districtWise) => {
     }
     
     const features = feature(geo, geoObject).features || [];
-    console.log(`✅ Extracted ${features.length} features`);
-    return features;
+    
+    // Add unique IDs to features that don't have them
+    const featuresWithIds = features.map((feat, index) => {
+      if (!feat.id) {
+        // Try to get ID from properties
+        const baseName = feat.properties?.st_nm || 
+                        feat.properties?.district || 
+                        feat.properties?.name || 
+                        `feature`;
+        
+        // Create truly unique ID by combining name with index
+        const uniqueId = `${baseName}_${index}`.replace(/\s+/g, '_').toUpperCase();
+        
+        return {
+          ...feat,
+          id: uniqueId
+        };
+      }
+      // Even if feature has ID, ensure it's unique by adding index if needed
+      return {
+        ...feat,
+        id: `${feat.id}_${index}`
+      };
+    });
+    
+    console.log(`✅ Extracted ${featuresWithIds.length} features`);
+    return featuresWithIds;
   } catch (error) {
     console.error('Error processing geo data:', error);
     return [];

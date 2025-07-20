@@ -11,9 +11,9 @@ import RatesHistory from './RatesHistory';
 const PreviousRates = () => {
   const { data: values } = useSWR(`${API_HOST_URL}api/rates/getCodes`);
   
-  // Fix: Use the VALUE (second element) not the LABEL (first element)
-  const center = useInput(values.centers[0][1]); // Use "mumbai" not "Mumbai"
-  const commodity = useInput(values.commodities[0][0]); // Use "Wheat" (this one is correct)
+  // Fix: Use consistent indexing - both should use [0][1] for value
+  const center = useInput(values?.centers?.[0]?.[1] || 'mumbai'); 
+  const commodity = useInput(values?.commodities?.[0]?.[1] || 'wheat'); // Fix: Use [1] for value
 
   return (
     <Box paddingTop={3}>
@@ -22,18 +22,18 @@ const PreviousRates = () => {
         actions={
           <>
             <Select dense id="center-select" {...center.bind}>
-              {values.centers.map(([name, value], index) => (
+              {values?.centers?.map(([name, value], index) => (
                 <MenuItem key={`center-${value}-${index}`} value={value}>
                   {name.charAt(0) + name.slice(1).toLowerCase()}
                 </MenuItem>
-              ))}
+              )) || []}
             </Select>
             <Select dense id="commodity-select" {...commodity.bind}>
-              {values.commodities.map(([name, value], index) => (
+              {values?.commodities?.map(([name, value], index) => (
                 <MenuItem key={`commodity-${value}-${index}`} value={value}>
                   {name}
                 </MenuItem>
-              ))}
+              )) || []}
             </Select>
           </>
         }

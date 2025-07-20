@@ -1,4 +1,4 @@
-// src/components/NoData.js - Simplified and bulletproof
+// src/components/NoData.js - Complete fix with all required props
 import React, { memo } from 'react';
 import { Box, Card, Typography, CircularProgress } from '@mui/material';
 import { ResponsiveGeoMap } from './GeoMap';
@@ -58,17 +58,26 @@ const NoData = memo(() => {
           </Box>
         )}
 
-        {/* Map with features */}
+        {/* Map with features - COMPLETE PROPS LIST */}
         {features.length > 0 && !isLoading && !error && (
           <>
             <ResponsiveGeoMap
               features={features}
-              fitProjection={true}
               projectionType="mercator"
+              projectionScale={100}
+              projectionTranslation={[0.5, 0.5]}
+              projectionRotation={[0, 0, 0]}
+              fitProjection
+              fillColor="#dddddd"
               borderWidth={2}
               borderColor="#404040"
-              fillColor="#dddddd"
-              isInteractive={true}
+              isInteractive
+              layers={['features']}
+              onMouseEnter={() => {}}
+              onMouseMove={() => {}}
+              onMouseLeave={() => {}}
+              onClick={() => {}}
+              tooltip={null}
             />
             
             {/* Overlay */}

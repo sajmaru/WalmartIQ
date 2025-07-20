@@ -16,11 +16,46 @@ const GeoMapFeature = memo(
     fillColor,
     borderWidth,
     borderColor,
-    onClick,
-    onMouseEnter,
-    onMouseMove,
-    onMouseLeave,
+    onClick = () => {},
+    onMouseEnter = () => {},
+    onMouseMove = () => {},
+    onMouseLeave = () => {},
   }) => {
+    const handleClick = (event) => {
+      console.log('🗺️ GeoMapFeature clicked:', {
+        featureId: feature.id,
+        properties: feature.properties,
+        stateName: feature.properties?.st_nm,
+        districtName: feature.properties?.district
+      });
+      
+      // Prevent event bubbling
+      event.stopPropagation();
+      
+      // Call the onClick handler with the feature
+      if (onClick) {
+        onClick(feature, event);
+      }
+    };
+
+    const handleMouseEnter = (event) => {
+      if (onMouseEnter) {
+        onMouseEnter(feature, event);
+      }
+    };
+
+    const handleMouseMove = (event) => {
+      if (onMouseMove) {
+        onMouseMove(feature, event);
+      }
+    };
+
+    const handleMouseLeave = (event) => {
+      if (onMouseLeave) {
+        onMouseLeave(feature, event);
+      }
+    };
+
     return (
       <path
         key={feature.id}
@@ -29,10 +64,15 @@ const GeoMapFeature = memo(
         stroke={borderColor}
         strokeLinejoin="bevel"
         d={path(feature)}
-        onMouseEnter={(event) => onMouseEnter(feature, event)}
-        onMouseMove={(event) => onMouseMove(feature, event)}
-        onMouseLeave={(event) => onMouseLeave(feature, event)}
-        onClick={(event) => onClick(feature, event)}
+        style={{ 
+          cursor: 'pointer',
+          transition: 'fill 0.2s ease',
+        }}
+        onMouseEnter={handleMouseEnter}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        onClick={handleClick}
+        data-testid={`map-feature-${feature.id}`}
       />
     );
   },
@@ -51,10 +91,10 @@ GeoMapFeature.propTypes = {
   borderWidth: PropTypes.number.isRequired,
   borderColor: PropTypes.string.isRequired,
 
-  onMouseEnter: PropTypes.func.isRequired,
-  onMouseMove: PropTypes.func.isRequired,
-  onMouseLeave: PropTypes.func.isRequired,
-  onClick: PropTypes.func.isRequired,
+  onMouseEnter: PropTypes.func,
+  onMouseMove: PropTypes.func,
+  onMouseLeave: PropTypes.func,
+  onClick: PropTypes.func,
 };
 
 GeoMapFeature.displayName = 'GeoMapFeature';

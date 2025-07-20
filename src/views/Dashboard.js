@@ -51,30 +51,68 @@ const Dashboard = () => {
     [LATEST_YEAR],
   );
 
-  const state = useInput(stateCode);
-  const crop = useInput(cropCode);
-  const selectedYear = useInput(year);
+  const state = useInput(stateCode || INDIA_STATE_CODE);
+  const crop = useInput(cropCode || ALL_CROPS_CODE);
+  const selectedYear = useInput(year || LATEST_YEAR);
 
-  // Memoize the goTo callback to prevent unnecessary re-renders
-  const handleNavigation = useCallback(() => {
+  // Handle dropdown changes with immediate navigation
+  const handleStateChange = useCallback((event) => {
+    const newStateCode = event.target.value;
+    console.log('🏛️ State changed:', stateCode, '→', newStateCode);
+    
+    state.setValue(newStateCode);
     goTo({
-      stateCode: state.value,
+      stateCode: newStateCode,
       cropCode: crop.value,
       year: selectedYear.value,
     });
-  }, [state.value, crop.value, selectedYear.value, goTo]);
+  }, [state, crop.value, selectedYear.value, goTo, stateCode]);
 
-  // Only update when values actually change
+  const handleCropChange = useCallback((event) => {
+    const newCropCode = event.target.value;
+    console.log('🌾 Crop changed:', cropCode, '→', newCropCode);
+    
+    crop.setValue(newCropCode);
+    goTo({
+      stateCode: state.value,
+      cropCode: newCropCode,
+      year: selectedYear.value,
+    });
+  }, [crop, state.value, selectedYear.value, goTo, cropCode]);
+
+  const handleYearChange = useCallback((event) => {
+    const newYear = event.target.value;
+    console.log('📅 Year changed:', year, '→', newYear);
+    
+    selectedYear.setValue(newYear);
+    goTo({
+      stateCode: state.value,
+      cropCode: crop.value,
+      year: newYear,
+    });
+  }, [selectedYear, state.value, crop.value, goTo, year]);
+
+  // Sync input values when route parameters change
   useEffect(() => {
-    // Add a check to prevent unnecessary navigation
-    if (
-      state.value !== stateCode ||
-      crop.value !== cropCode ||
-      selectedYear.value !== year
-    ) {
-      handleNavigation();
+    console.log('🔄 Route params changed:', { stateCode, cropCode, year });
+    
+    const safeStateCode = stateCode || INDIA_STATE_CODE;
+    const safeCropCode = cropCode || ALL_CROPS_CODE;
+    const safeYear = year || LATEST_YEAR;
+    
+    if (state.value !== safeStateCode) {
+      console.log('🔄 Syncing state value:', state.value, '→', safeStateCode);
+      state.setValue(safeStateCode);
     }
-  }, [handleNavigation, stateCode, cropCode, year, state.value, crop.value, selectedYear.value]);
+    if (crop.value !== safeCropCode) {
+      console.log('🔄 Syncing crop value:', crop.value, '→', safeCropCode);
+      crop.setValue(safeCropCode);
+    }
+    if (selectedYear.value !== safeYear) {
+      console.log('🔄 Syncing year value:', selectedYear.value, '→', safeYear);
+      selectedYear.setValue(safeYear);
+    }
+  }, [stateCode, cropCode, year, state, crop, selectedYear, LATEST_YEAR]);
 
   return (
     <>
@@ -84,7 +122,12 @@ const Dashboard = () => {
           title={`${year === LATEST_YEAR ? 'Predicted' : 'Historic'} Dashboard`}
           actions={
             <>
-              <Select id="crop-select" {...crop.bind}>
+              <Select 
+                id="crop-select" 
+                value={crop.value || ALL_CROPS_CODE}
+                onChange={handleCropChange}
+                displayEmpty
+              >
                 <MenuItem key={ALL_CROPS_CODE} value={ALL_CROPS_CODE}>All Crops</MenuItem>
                 {dropdownCrops.map(({ name, code }) => (
                   <MenuItem value={code} key={code}>
@@ -92,7 +135,12 @@ const Dashboard = () => {
                   </MenuItem>
                 ))}
               </Select>
-              <Select id="state-select" {...state.bind}>
+              <Select 
+                id="state-select" 
+                value={state.value || INDIA_STATE_CODE}
+                onChange={handleStateChange}
+                displayEmpty
+              >
                 <MenuItem key={INDIA_STATE_CODE} value={INDIA_STATE_CODE}>All States</MenuItem>
                 {dropdownStates.map(({ name, code }) => (
                   <MenuItem value={code} key={code}>
@@ -100,7 +148,12 @@ const Dashboard = () => {
                   </MenuItem>
                 ))}
               </Select>
-              <Select id="year-select" {...selectedYear.bind}>
+              <Select 
+                id="year-select" 
+                value={selectedYear.value || LATEST_YEAR}
+                onChange={handleYearChange}
+                displayEmpty
+              >
                 {dropdownYears.map((dropdownYear) => (
                   <MenuItem value={dropdownYear} key={dropdownYear}>
                     {dropdownYear}
@@ -111,7 +164,12 @@ const Dashboard = () => {
           }
         />
         <SuspenseProgress>
-          <DashboardContent cropCode={cropCode} stateCode={stateCode} year={year} />
+          <DashboardContent 
+            key={`${cropCode}-${stateCode}-${year}`} // Force re-render on param change
+            cropCode={cropCode} 
+            stateCode={stateCode} 
+            year={year} 
+          />
         </SuspenseProgress>
       </AnimatedEnter>
     </>
@@ -122,34 +180,47 @@ const Dashboard = () => {
 const DashboardContent = React.memo(({ cropCode, stateCode, year }) => {
   const { LATEST_YEAR } = useConstants();
   const {
-    data: { data: dataAvailable },
+    data: { data: dataAvailable } = { data: true }, // Default fallback
+    error
   } = useSWR(
     `${API_HOST_URL}api/dashboard/checkData?stateCode=${stateCode}&cropCode=${cropCode}&year=${year}`,
     {
-      // Add SWR options to reduce re-fetching
+      fallbackData: { data: true },
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
       refreshInterval: 0,
+      onError: (err) => console.log('🎭 Using fallback data availability due to:', err.message)
     }
   );
+
+  console.log('📊 DashboardContent render:', { 
+    cropCode, 
+    stateCode, 
+    year, 
+    dataAvailable,
+    isAllCrops: cropCode === ALL_CROPS_CODE,
+    isIndiaMap: stateCode === INDIA_STATE_CODE 
+  });
 
   if (!dataAvailable) return <NoData />;
 
   return cropCode === ALL_CROPS_CODE ? (
     <>
-      <MapSummary />
-      <CategorySummary />
-      <TopCropSummary />
+      <MapSummary key={`map-${stateCode}-${year}`} />
+      <CategorySummary key={`category-${stateCode}-${year}`} />
+      <TopCropSummary key={`crops-${stateCode}-${year}`} />
       {stateCode === INDIA_STATE_CODE && year === LATEST_YEAR && (
-        <ImportExportSummary />
+        <ImportExportSummary key={`trade-${year}`} />
       )}
     </>
   ) : (
     <>
-      <CropMapSummary />
-      <ProductionxWeather />
+      <CropMapSummary key={`crop-map-${stateCode}-${cropCode}-${year}`} />
+      <ProductionxWeather key={`production-weather-${stateCode}-${cropCode}-${year}`} />
     </>
   );
 });
+
+DashboardContent.displayName = 'DashboardContent';
 
 export default Dashboard;

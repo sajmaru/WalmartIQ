@@ -5,7 +5,12 @@ import { motion } from 'framer-motion';
 
 const MotionBox = motion.create(Box);
 
-const AnimatedEnter = ({ staggerPosition = 0, loaded = true, ...props }) => {
+const AnimatedEnter = ({ 
+  staggerPosition = 0, 
+  loaded = true, 
+  children,
+  ...props 
+}) => {
   const theme = useTheme();
 
   const containerMotion = useMemo(
@@ -35,7 +40,11 @@ const AnimatedEnter = ({ staggerPosition = 0, loaded = true, ...props }) => {
     [staggerPosition, theme, loaded],
   );
 
-  return <MotionBox {...containerMotion} {...props} />;
+  return (
+    <MotionBox {...containerMotion} {...props}>
+      {children}
+    </MotionBox>
+  );
 };
 
 export default AnimatedEnter;

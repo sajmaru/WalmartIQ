@@ -6,7 +6,7 @@ import Disclaimer from '../../components/Disclaimer';
 import { CROP_COLORS } from '../../constants';
 import { readableNumber } from '../../helpers';
 
-const TopCropChart = memo(({ production, years, crop }) => {
+export const TopCropChart = memo(({ production, years, crop }) => {
   return (
     <>
       <Box style={{ height: 220 }}>
@@ -73,3 +73,4 @@ const TopCropChart = memo(({ production, years, crop }) => {
 });
 
 export default TopCropChart;
+

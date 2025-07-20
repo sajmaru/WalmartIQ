@@ -1,25 +1,135 @@
-* {
-  box-sizing: border-box;
-  font-family: Poppins;
+/* Add to your index.css or create a new CSS file */
+
+/* Ensure body and html don't have unexpected margins */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
 }
 
-html {
-  overflow-x: hidden;
+/* Fix for the root container */
+#root {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
   width: 100%;
 }
 
-body {
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  margin: 0;
-  padding: 0;
+/* Ensure main content doesn't overflow */
+.main-content {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-::selection {
-  background: rgba(0, 0, 0, 0.15);
+/* Navbar specific fixes */
+.navbar-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 1200;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
-::-moz-selection {
-  background: rgba(0, 0, 0, 0.15);
+/* Navbar icon centering fixes */
+.navbar-container .MuiListItem-root {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
 }
 
+/* Icon container specific styling */
+.navbar-icon-container {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 64px !important;
+  height: 48px !important;
+}
+
+/* Ensure Material-UI icons are centered */
+.navbar-container .MuiSvgIcon-root {
+  display: block !important;
+  margin: auto !important;
+}
+
+/* Content area adjustments */
+.content-with-navbar {
+  margin-left: 72px; /* NAVBAR_WIDTH */
+  transition: margin-left 0.3s ease;
+}
+
+.content-full-width {
+  margin-left: 0;
+}
+
+/* Fix for maps and charts that might overflow */
+.chart-container,
+.map-container {
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .content-with-navbar {
+    margin-left: 0;
+  }
+  
+  .navbar-container {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  
+  .navbar-container.mobile-open {
+    transform: translateX(0);
+  }
+}
+
+/* Fix for Material-UI Grid container */
+.MuiGrid-container {
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+/* Ensure proper spacing for content */
+.page-content {
+  padding: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Fix for any fixed positioned elements */
+.fixed-element {
+  position: fixed;
+  z-index: 1000;
+}
+
+/* Scrollbar styling for webkit browsers */
+.navbar-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.navbar-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.navbar-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+.navbar-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Additional centering fixes for navbar items */
+.navbar-container .MuiListItem-root > *:first-child {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}

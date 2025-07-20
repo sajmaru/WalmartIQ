@@ -11,19 +11,19 @@ import useMap from '../../hooks/useMap';
 import useRouting from '../../routes/useRouting';
 
 import {
-    ALL_MONTHS_VALUE,
-    API_HOST_URL,
-    INDIA_STATE_CODE,
-    MONTH_NAMES,
-    STATE_CODES,
-    STATE_NAMES,
-    WEATHER_COLORS,
-    WEATHER_PARAMS,
-    WEATHER_UNITS,
+  ALL_MONTHS_VALUE,
+  API_HOST_URL,
+  INDIA_STATE_CODE,
+  MONTH_NAMES,
+  STATE_CODES,
+  STATE_NAMES,
+  WEATHER_COLORS,
+  WEATHER_PARAMS,
+  WEATHER_UNITS,
 } from '../../constants';
 import { readableNumber } from '../../helpers';
 
-const WeatherMap = memo(({ setMapHeight, month, on }) => {
+export const WeatherMap = memo(({ setMapHeight = () => {}, month, on }) => {
   const { LATEST_YEAR } = useConstants();
   const {
     goTo,
@@ -39,10 +39,10 @@ const WeatherMap = memo(({ setMapHeight, month, on }) => {
   const mapRef = useRef(null);
   const mapHeight = mapRef.current?.clientWidth || 700;
 
-  useEffect(() => setMapHeight && setMapHeight(mapHeight), [
-    mapHeight,
-    setMapHeight,
-  ]);
+  useEffect(
+    () => setMapHeight && setMapHeight(mapHeight),
+    [mapHeight, setMapHeight],
+  );
 
   const getSelectedValue = useCallback(
     (datum) => (month === ALL_MONTHS_VALUE ? datum.value : datum.series[month]),
@@ -169,3 +169,4 @@ const WeatherMap = memo(({ setMapHeight, month, on }) => {
   );
 });
 export default WeatherMap;
+

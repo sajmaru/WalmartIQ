@@ -16,7 +16,7 @@ import {
 } from '../../constants';
 import { readableNumber } from '../../helpers';
 
-const WarehouseMap = memo(({ setMapHeight }) => {
+export const WarehouseMap = memo(({ setMapHeight = () => {} }) => {
   const { goTo, stateCode = INDIA_STATE_CODE } = useRouting();
   const { data: features } = useMap(stateCode, stateCode !== INDIA_STATE_CODE);
   const { data: values } = useSWR(
@@ -30,10 +30,10 @@ const WarehouseMap = memo(({ setMapHeight }) => {
     [mapRef],
   );
 
-  useEffect(() => setMapHeight && setMapHeight(mapHeight), [
-    mapHeight,
-    setMapHeight,
-  ]);
+  useEffect(
+    () => setMapHeight && setMapHeight(mapHeight),
+    [mapHeight, setMapHeight],
+  );
 
   const mapProps = useMemo(() => {
     if (!values) return {};
@@ -161,3 +161,4 @@ const WarehouseMap = memo(({ setMapHeight }) => {
   );
 });
 export default WarehouseMap;
+

@@ -20,33 +20,70 @@ const useRouting = () => {
       page = '',
     ) => {
       let path = page;
-      if (year !== LATEST_YEAR) path += `/year/${year}`;
-      if (stateCode !== INDIA_STATE_CODE) path += `/state/${stateCode}`;
-      if (cropCode !== ALL_CROPS_CODE) path += `/crop/${cropCode}`;
-      return path;
+      
+      // Only add parameters if they differ from defaults
+      if (year !== LATEST_YEAR) {
+        path += `/year/${year}`;
+      }
+      if (stateCode !== INDIA_STATE_CODE) {
+        path += `/state/${stateCode}`;
+      }
+      if (cropCode !== ALL_CROPS_CODE) {
+        path += `/crop/${cropCode}`;
+      }
+      
+      // Ensure we have at least the base path
+      return path || '/';
     },
     [LATEST_YEAR],
   );
 
   const goTo = useCallback(
     (newParams, page = '') => {
+      const currentPath = location.pathname;
       const newPath = getPath(newParams, page);
-      // Only navigate if the path is actually different
-      if (newPath !== location.pathname) {
-        navigate(newPath);
-      }
+      
+      console.log('🧭 Navigation:', {
+        from: currentPath,
+        to: newPath,
+        params: newParams,
+        page
+      });
+      
+      // Always navigate, even if path seems the same (force refresh)
+      navigate(newPath, { replace: false });
     },
     [navigate, location.pathname, getPath],
   );
+
+  // Parse current route parameters with proper defaults
+  const currentParams = useMemo(() => {
+    const {
+      stateCode,
+      cropCode,
+      year,
+    } = params;
+
+    // Ensure we always have valid values, never undefined
+    const safeStateCode = stateCode || INDIA_STATE_CODE;
+    const safeCropCode = cropCode || ALL_CROPS_CODE;
+    const safeYear = year ? (typeof year === 'string' ? parseInt(year, 10) : year) : LATEST_YEAR;
+
+    return {
+      stateCode: safeStateCode,
+      cropCode: safeCropCode, 
+      year: safeYear,
+    };
+  }, [params, LATEST_YEAR, INDIA_STATE_CODE, ALL_CROPS_CODE]);
 
   // Memoize the return value to prevent unnecessary re-renders
   const value = useMemo(
     () => ({
       location,
       goTo,
-      ...params,
+      ...currentParams,
     }),
-    [location.pathname, location.search, goTo, params], // Only depend on pathname and search, not entire location object
+    [location.pathname, location.search, goTo, currentParams],
   );
 
   return value;

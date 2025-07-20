@@ -48,29 +48,3 @@ const commonPropTypes = {
 export const GeoMapPropTypes = {
   ...commonPropTypes,
 };
-
-const commonDefaultProps = {
-  features: [],
-  projectionType: 'mercator',
-  projectionScale: 100,
-  projectionTranslation: [0.5, 0.5],
-  projectionRotation: [0, 0, 0],
-  fitProjection: false,
-
-  fillColor: '#dddddd',
-  borderWidth: 0,
-  borderColor: '#000000',
-
-  isInteractive: true,
-  onMouseEnter: () => {},
-  onMouseLeave: () => {},
-  onMouseMove: () => {},
-  onClick: () => {},
-
-  layers: ['features'],
-  legends: [],
-};
-
-export const GeoMapDefaultProps = {
-  ...commonDefaultProps,
-};

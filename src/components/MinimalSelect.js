@@ -26,7 +26,14 @@ const StyledSelect = styled(Select)(({ theme, dense = false }) => ({
   },
 }));
 
-const MinimalSelect = ({ dense = false, children, ...props }) => {
+const MinimalSelect = ({ 
+  dense = false, 
+  children, 
+  value, 
+  onChange, 
+  defaultValue,
+  ...props 
+}) => {
   const IconComponent = useCallback(
     (iconProps) => (
       <ExpandMoreIcon
@@ -42,10 +49,23 @@ const MinimalSelect = ({ dense = false, children, ...props }) => {
     [dense],
   );
 
+  // Ensure we always have a valid value
+  const safeValue = value ?? defaultValue ?? '';
+  
+  console.log('🎛️ MinimalSelect render:', {
+    id: props.id,
+    value,
+    safeValue,
+    hasOnChange: !!onChange
+  });
+
   return (
     <StyledSelect
       variant="outlined"
       IconComponent={IconComponent}
+      value={safeValue}
+      onChange={onChange}
+      displayEmpty
       {...props}
     >
       {children}

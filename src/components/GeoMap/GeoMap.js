@@ -9,12 +9,12 @@
 import React, { Fragment, useCallback, memo } from 'react';
 import { SvgWrapper, withContainer, useDimensions, useTheme } from '@nivo/core';
 import { useTooltip } from '@nivo/tooltip';
-import { GeoMapPropTypes, GeoMapDefaultProps } from './props';
+import { GeoMapPropTypes } from './props';
 import GeoMapFeature from './GeoMapFeature';
 import { useGeoMap } from './hooks';
 
 const GeoMap = memo((props) => {
-  // Merge props with defaults to ensure all required props are present
+  // Use JavaScript default parameters instead of defaultProps
   const {
     width,
     height,
@@ -35,7 +35,7 @@ const GeoMap = memo((props) => {
     onMouseMove = () => {},
     onMouseLeave = () => {},
     tooltip: Tooltip,
-  } = { ...GeoMapDefaultProps, ...props };
+  } = props;
   
   const { margin, outerWidth, outerHeight } = useDimensions(
     width,

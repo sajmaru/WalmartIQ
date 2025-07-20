@@ -22,7 +22,7 @@ import useConstants from '../../hooks/useConstants';
 import useMap from '../../hooks/useMap';
 import useRouting from '../../routes/useRouting';
 
-const MapSummaryChart = memo(({ on, setMapHeight }) => {
+const MapSummaryChart = memo(({ on = 'production', setMapHeight = () => {} }) => {
   const { LATEST_YEAR } = useConstants();
   const {
     goTo,
@@ -33,6 +33,10 @@ const MapSummaryChart = memo(({ on, setMapHeight }) => {
   const { data: features } = useMap(stateCode, stateCode !== INDIA_STATE_CODE);
   const { data: values } = useSWR(
     `${API_HOST_URL}api/dashboard/mapSummary?year=${year}&stateCode=${stateCode}&on=${on}`,
+    {
+      fallbackData: [],
+      onError: (err) => console.log('🎭 Using fallback map summary data due to:', err.message)
+    }
   );
 
   const mapRef = useRef(null);
@@ -41,7 +45,25 @@ const MapSummaryChart = memo(({ on, setMapHeight }) => {
   useEffect(() => setMapHeight(mapHeight), [mapHeight, setMapHeight]);
 
   const { mapProps, legend } = useMemo(() => {
-    if (!values) return {};
+    console.log('🎨 MapSummaryChart colors debug:', {
+      valuesLength: values?.length || 0,
+      stateCode,
+      sampleValue: values?.[0]
+    });
+
+    if (!values || values.length === 0) {
+      return { 
+        mapProps: {
+          fillColor: () => '#f0f0f0',
+          borderWidth: () => 1,
+          borderColor: () => '#ccc',
+          onClick: () => {},
+          tooltip: () => null
+        }, 
+        legend: {} 
+      };
+    }
+    
     const [data, legend] = values.reduce(
       ([accData, accLegend], { location, topCrops }) => {
         const id =
@@ -50,28 +72,41 @@ const MapSummaryChart = memo(({ on, setMapHeight }) => {
           stateCode === INDIA_STATE_CODE
             ? STATE_NAMES[location]
             : location.split('-')[1];
-        const topCrop = topCrops[0].crop;
-        const cropColor = color(CROP_COLORS[topCrop]);
-        const locationColor = cropColor.copy({
-          opacity: 0.5,
+        const topCrop = topCrops[0]?.crop;
+        
+        if (!topCrop) {
+          console.log('🎨 No top crop for location:', location);
+          return [accData, accLegend];
+        }
+        
+        // Get color for the top crop
+        const baseColor = CROP_COLORS[topCrop] || '#4a90e2';
+        const cropColor = color(baseColor);
+        const locationColor = cropColor.copy({ opacity: 0.7 });
+        
+        console.log('🎨 Location color for', id, ':', {
+          topCrop,
+          baseColor,
+          finalColor: locationColor.toString()
         });
+        
         return [
           {
             ...accData,
             [id]: {
               name,
-              locationColor,
+              locationColor: locationColor.toString(),
               topCrops: topCrops
                 .slice(0, 3)
                 .map(({ crop: cropCode, value }) => ({
                   cropCode,
-                  crop: CROP_NAMES[cropCode],
-                  cropColor: CROP_COLORS[cropCode],
+                  crop: CROP_NAMES[cropCode] || cropCode,
+                  cropColor: CROP_COLORS[cropCode] || '#dddddd',
                   value: readableNumber(value),
                 })),
             },
           },
-          { ...accLegend, [CROP_NAMES[topCrop]]: cropColor },
+          { ...accLegend, [CROP_NAMES[topCrop] || topCrop]: cropColor.toString() },
         ];
       },
       [{}, {}],
@@ -79,26 +114,45 @@ const MapSummaryChart = memo(({ on, setMapHeight }) => {
 
     return {
       mapProps: {
-        fillColor: (props) => {
+        fillColor: (feature) => {
           const {
             properties: { st_nm: stateName, district: districtName },
-          } = props;
-          return (
-            (stateCode === INDIA_STATE_CODE
-              ? data[stateName]?.locationColor
-              : data[`${stateName}-${districtName}`.toUpperCase()]
-                  ?.locationColor) || CROP_COLORS[UNASSIGNED_CROP_CODE]
-          );
+          } = feature;
+          const lookupKey = stateCode === INDIA_STATE_CODE
+            ? stateName
+            : `${stateName}-${districtName}`.toUpperCase();
+            
+          const fillColor = data[lookupKey]?.locationColor || CROP_COLORS[UNASSIGNED_CROP_CODE] || '#e0e0e0';
+          
+          console.log('🎨 MapSummary fill color for', lookupKey, ':', fillColor);
+          return fillColor;
         },
-        onClick: ({
-          properties: { st_nm: stateName, district: districtName },
-        }) => {
-          const id =
-            stateCode === INDIA_STATE_CODE
-              ? stateName
-              : `${stateName}-${districtName}`.toUpperCase();
-          if (stateCode === INDIA_STATE_CODE && !!data[id])
-            goTo({ stateCode: STATE_CODES[stateName], year });
+        borderWidth: () => 2,
+        borderColor: () => '#666666',
+        onClick: (feature) => {
+          console.log('🗺️ MapSummary clicked:', feature);
+          
+          const {
+            properties: { st_nm: stateName, district: districtName },
+          } = feature;
+          
+          if (stateCode === INDIA_STATE_CODE && stateName) {
+            // Clicking on India map - navigate to state
+            const targetStateCode = STATE_CODES[stateName];
+            console.log('🗺️ Navigating to state:', stateName, '→', targetStateCode);
+            
+            if (targetStateCode) {
+              goTo({ 
+                stateCode: targetStateCode, 
+                year 
+              });
+            } else {
+              console.warn('🗺️ State code not found for:', stateName);
+            }
+          } else if (stateCode !== INDIA_STATE_CODE && districtName) {
+            // Clicking on state map - could navigate to district view
+            console.log('🗺️ District clicked:', districtName, 'in', stateName);
+          }
         },
         tooltip: ({
           feature: {
@@ -122,7 +176,7 @@ const MapSummaryChart = memo(({ on, setMapHeight }) => {
               rows={
                 data[id]
                   ? data[id].topCrops.map(({ crop, cropColor, value }) => [
-                      <Chip color={cropColor} />,
+                      <Chip key={crop} color={cropColor} />,
                       crop,
                       value,
                     ])
@@ -136,6 +190,14 @@ const MapSummaryChart = memo(({ on, setMapHeight }) => {
     };
   }, [values, stateCode, year, goTo, on]);
 
+  console.log('🗺️ MapSummaryChart render:', {
+    stateCode,
+    featuresLength: features?.length || 0,
+    valuesLength: values?.length || 0,
+    hasClickHandler: !!mapProps.onClick,
+    legendEntries: Object.keys(legend).length
+  });
+
   return (
     <AnimatedEnter>
       <Box
@@ -147,8 +209,15 @@ const MapSummaryChart = memo(({ on, setMapHeight }) => {
         {Object.entries(legend).map(([crop, cropColor]) => (
           <Box component="span" padding={1} key={`legend-${crop}`}>
             <Chip
-              style={{ marginLeft: 6, marginRight: 6, display: 'inline-block' }}
-              color={cropColor}
+              style={{ 
+                marginLeft: 6, 
+                marginRight: 6, 
+                display: 'inline-block',
+                backgroundColor: cropColor,
+                width: 16,
+                height: 16,
+                borderRadius: '50%'
+              }}
             />
             {crop}
           </Box>
@@ -157,22 +226,37 @@ const MapSummaryChart = memo(({ on, setMapHeight }) => {
       <div
         ref={mapRef}
         style={{
-          widht: '100%',
+          width: '100%',
           height: mapHeight,
           padding: 18,
           transition: '0.5s height',
         }}>
-        <ResponsiveGeoMap
-          fitProjection
-          isInteractive
-          borderWidth={2}
-          borderColor="#404040"
-          features={features}
-          {...mapProps}
-        />
+        {features && features.length > 0 ? (
+          <ResponsiveGeoMap
+            fitProjection
+            isInteractive
+            borderWidth={2}
+            borderColor="#666666"
+            features={features}
+            {...mapProps}
+          />
+        ) : (
+          <Box 
+            display="flex" 
+            justifyContent="center" 
+            alignItems="center" 
+            height="100%"
+            style={{ color: '#666' }}
+          >
+            Loading map...
+          </Box>
+        )}
       </div>
       <Disclaimer />
     </AnimatedEnter>
   );
 });
+
+MapSummaryChart.displayName = 'MapSummaryChart';
+
 export default MapSummaryChart;

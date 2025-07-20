@@ -11,17 +11,17 @@ import useMap from '../../hooks/useMap';
 import useRouting from '../../routes/useRouting';
 
 import {
-    API_HOST_URL,
-    INDIA_STATE_CODE,
-    STATE_CODES,
-    STATE_NAMES,
-    WEATHER_INDICES,
-    WEATHER_INDICES_COLORS,
-    WEATHER_INDICES_UNITS,
+  API_HOST_URL,
+  INDIA_STATE_CODE,
+  STATE_CODES,
+  STATE_NAMES,
+  WEATHER_INDICES,
+  WEATHER_INDICES_COLORS,
+  WEATHER_INDICES_UNITS,
 } from '../../constants';
 import { readableNumber } from '../../helpers';
 
-const WeatherIndicesMap = memo(({ setMapHeight, on }) => {
+export const WeatherIndicesMap = memo(({ setMapHeight = () => {}, on }) => {
   const { LATEST_YEAR } = useContants();
   const {
     goTo,
@@ -37,10 +37,10 @@ const WeatherIndicesMap = memo(({ setMapHeight, on }) => {
   const mapRef = useRef(null);
   const mapHeight = mapRef.current?.clientWidth || 700;
 
-  useEffect(() => setMapHeight && setMapHeight(mapHeight), [
-    mapHeight,
-    setMapHeight,
-  ]);
+  useEffect(
+    () => setMapHeight && setMapHeight(mapHeight),
+    [mapHeight, setMapHeight],
+  );
 
   const mapProps = useMemo(() => {
     if (!values) return {};
@@ -154,3 +154,4 @@ const WeatherIndicesMap = memo(({ setMapHeight, on }) => {
   );
 });
 export default WeatherIndicesMap;
+

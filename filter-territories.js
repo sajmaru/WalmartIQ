@@ -23,14 +23,9 @@ const inputFile = path.join(__dirname, 'public', 'maps', 'us-states.json');
 const backupFile = path.join(__dirname, 'public', 'maps', 'us-states-original.json');
 
 try {
-  console.log('🗺️ Starting territory filtering...');
-  console.log('📁 Input file:', inputFile);
-  
+
   // Check if file exists
   if (!fs.existsSync(inputFile)) {
-    console.error('❌ File not found:', inputFile);
-    console.log('📁 Current directory:', __dirname);
-    console.log('📁 Files in public/maps:');
     const mapsDir = path.join(__dirname, 'public', 'maps');
     if (fs.existsSync(mapsDir)) {
       fs.readdirSync(mapsDir).forEach(file => console.log('  -', file));
@@ -54,7 +49,6 @@ try {
     process.exit(1);
   }
   
-  console.log(`📊 Original features: ${data.objects.states.geometries.length}`);
   
   // Filter out territories
   const filteredGeometries = data.objects.states.geometries.filter(geometry => {

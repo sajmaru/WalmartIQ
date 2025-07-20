@@ -22,13 +22,7 @@ const GeoMapFeature = memo(
     onMouseLeave = () => {},
   }) => {
     const handleClick = (event) => {
-      console.log('🗺️ GeoMapFeature clicked:', {
-        featureId: feature.id,
-        properties: feature.properties,
-        stateName: feature.properties?.st_nm,
-        districtName: feature.properties?.district
-      });
-      
+
       // Prevent event bubbling
       event.stopPropagation();
       

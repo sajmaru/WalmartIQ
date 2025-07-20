@@ -28,8 +28,7 @@ const WeatherSummaryCards = () => {
     `${API_HOST_URL}api/weather/getWeatherDataCard?stateCode=${stateCode}&year=${year}`,
     {
       fallbackData: [],
-      onError: (err) =>
-        console.log('🎭 Using fallback weather card data due to:', err.message),
+    
     },
   );
 

@@ -14,13 +14,6 @@ import {
 } from '../constants';
 
 const toFeatures = (geo, stateCode, isCountyLevel) => {
-  console.log('🗺️ Processing geo data:', {
-    hasGeo: !!geo,
-    hasObjects: !!geo?.objects,
-    objectKeys: geo?.objects ? Object.keys(geo.objects) : [],
-    stateCode,
-    isCountyLevel
-  });
 
   if (!geo?.objects) {
     console.warn('No objects in geo data');
@@ -55,7 +48,6 @@ const toFeatures = (geo, stateCode, isCountyLevel) => {
         return countyFips && countyFips.startsWith(stateFips);
       });
       
-      console.log(`🗺️ Filtered ${features.length} counties for ${stateCode} (FIPS: ${stateFips})`);
       
     } else {
       // For US-level map, we want states (excluding territories)
@@ -90,11 +82,7 @@ const toFeatures = (geo, stateCode, isCountyLevel) => {
         return isValidState && !isTerritory;
       });
       
-      console.log(`🗺️ Filtered to ${features.length} North American states (excluded ${allFeatures.length - features.length} territories)`);
-      console.log('🗺️ Excluded territories:', allFeatures
-        .filter(f => territoriesToExclude.includes(f.properties?.name))
-        .map(f => f.properties?.name)
-      );
+  
     }
     
     // Add unique IDs and normalize properties
@@ -136,15 +124,6 @@ const toFeatures = (geo, stateCode, isCountyLevel) => {
       };
     });
     
-    console.log(`✅ Processed ${featuresWithIds.length} features for ${isCountyLevel ? 'county' : 'state'} level`);
-    
-    // Debug: Log sample feature
-    if (featuresWithIds.length > 0) {
-      console.log('🗺️ Sample feature:', {
-        id: featuresWithIds[0].id,
-        properties: featuresWithIds[0].properties
-      });
-    }
     
     return featuresWithIds;
     
@@ -159,14 +138,12 @@ const useMap = (stateCode = USA_STATE_CODE, countyLevel = false) => {
 
   const mapFetcher = useCallback(
     async (url) => {
-      console.log('📍 Fetching:', url, { stateCode, countyLevel });
       
       // Create cache key that includes state for county filtering
       const cacheKey = countyLevel ? `${url}:${stateCode}` : url;
       
       // Check cache
       if (cachedMaps[cacheKey]) {
-        console.log('📍 Using cached data for:', cacheKey);
         return cachedMaps[cacheKey];
       }
 
@@ -178,11 +155,7 @@ const useMap = (stateCode = USA_STATE_CODE, countyLevel = false) => {
         }
         
         const geo = await response.json();
-        console.log('📍 Fetched geo data:', {
-          type: geo.type,
-          hasObjects: !!geo.objects,
-          objectKeys: geo.objects ? Object.keys(geo.objects) : []
-        });
+
         
         // Process the features
         const features = toFeatures(geo, stateCode, countyLevel);
@@ -204,13 +177,7 @@ const useMap = (stateCode = USA_STATE_CODE, countyLevel = false) => {
   const mapFile = MAP_FILES[stateCode];
   const url = mapFile ? `${HOST_URL}maps/${mapFile}` : null;
   
-  console.log('📍 Map request:', { 
-    stateCode, 
-    countyLevel,
-    mapFile, 
-    url,
-    isUSLevel: stateCode === USA_STATE_CODE 
-  });
+
 
   return useSWR(url, mapFetcher, {
     revalidateOnFocus: false,
@@ -218,7 +185,6 @@ const useMap = (stateCode = USA_STATE_CODE, countyLevel = false) => {
     refreshInterval: 0,
     fallbackData: [], // Always provide empty array as fallback
     onError: (error) => console.error('📍 SWR Error:', error),
-    onSuccess: (data) => console.log('📍 SWR Success:', data?.length, 'features')
   });
 };
 

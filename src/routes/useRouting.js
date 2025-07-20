@@ -43,12 +43,6 @@ const useRouting = () => {
       const currentPath = location.pathname;
       const newPath = getPath(newParams, page);
 
-      console.log('🧭 Navigation:', {
-        from: currentPath,
-        to: newPath,
-        params: newParams,
-        page,
-      });
 
       // Always navigate, even if path seems the same (force refresh)
       navigate(newPath, { replace: false });

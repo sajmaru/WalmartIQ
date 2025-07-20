@@ -2,10 +2,6 @@ export const HOST_URL = process.env.NODE_ENV === 'development'
   ? 'http://localhost:3000/' 
   : `${window.location.protocol}//${window.location.host}/`;
 
-console.log('🗺️ Map URL example:', `${HOST_URL}maps/us.json`);
-console.log('🗺️ HOST_URL:', HOST_URL);
-console.log('🗺️ NODE_ENV:', process.env.NODE_ENV);
-
 export const API_HOST_URL = 'https://bd519d3f8f20.ngrok.io/';
 
 export const UNASSIGNED_STATE_CODE = 'UN';

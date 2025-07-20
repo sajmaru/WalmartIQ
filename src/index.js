@@ -51,7 +51,6 @@ const Main = () => (
         // Show mock data indicator in development
         onError: (error) => {
           if (process.env.NODE_ENV === 'development') {
-            console.log('🎭 Using mock data due to error:', error.message);
           }
         },
       }}>

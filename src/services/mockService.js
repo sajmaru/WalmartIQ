@@ -6,11 +6,9 @@ const delay = (ms = 300) => new Promise(resolve => setTimeout(resolve, ms));
 class MockApiService {
   async get(url) {
     await delay(200);
-    console.log('🎭 Mock API:', url);
     
     // Let map files load normally - DON'T intercept them
     if (url.includes('/maps/')) {
-      console.log('📍 Letting real map file load:', url);
       throw new Error('Use real fetch for maps');
     }
     
@@ -69,7 +67,6 @@ export const mockFetcher = async (url) => {
   try {
     // Always use real fetch for map files
     if (url.includes('/maps/')) {
-      console.log('📍 Real fetch for map:', url);
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Map fetch failed: ${response.status}`);

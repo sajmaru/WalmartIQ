@@ -65,8 +65,6 @@ const ProductionTable = () => {
     `${API_HOST_URL}api/dashboard/getCropData?stateCode=${stateCode}&year=${year}&cropCode=${cropCode}`,
     {
       fallbackData: [],
-      onError: (err) =>
-        console.log('🎭 Using fallback production data due to:', err.message),
     },
   );
 

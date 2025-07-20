@@ -59,7 +59,6 @@ const Dashboard = () => {
   const handleStateChange = useCallback(
     (event) => {
       const newStateCode = event.target.value;
-      console.log('🏛️ State changed:', stateCode, '→', newStateCode);
 
       state.setValue(newStateCode);
       goTo({
@@ -74,7 +73,6 @@ const Dashboard = () => {
   const handleCropChange = useCallback(
     (event) => {
       const newCropCode = event.target.value;
-      console.log('🌾 Crop changed:', cropCode, '→', newCropCode);
 
       crop.setValue(newCropCode);
       goTo({
@@ -89,7 +87,6 @@ const Dashboard = () => {
   const handleYearChange = useCallback(
     (event) => {
       const newYear = event.target.value;
-      console.log('📅 Year changed:', year, '→', newYear);
 
       selectedYear.setValue(newYear);
       goTo({
@@ -103,22 +100,18 @@ const Dashboard = () => {
 
   // Sync input values when route parameters change
   useEffect(() => {
-    console.log('🔄 Route params changed:', { stateCode, cropCode, year });
 
     const safeStateCode = stateCode || USA_STATE_CODE;
     const safeCropCode = cropCode || ALL_CROPS_CODE;
     const safeYear = year || LATEST_YEAR;
 
     if (state.value !== safeStateCode) {
-      console.log('🔄 Syncing state value:', state.value, '→', safeStateCode);
       state.setValue(safeStateCode);
     }
     if (crop.value !== safeCropCode) {
-      console.log('🔄 Syncing crop value:', crop.value, '→', safeCropCode);
       crop.setValue(safeCropCode);
     }
     if (selectedYear.value !== safeYear) {
-      console.log('🔄 Syncing year value:', selectedYear.value, '→', safeYear);
       selectedYear.setValue(safeYear);
     }
   }, [stateCode, cropCode, year, state, crop, selectedYear, LATEST_YEAR]);
@@ -199,19 +192,11 @@ const DashboardContent = React.memo(({ cropCode, stateCode, year }) => {
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
       refreshInterval: 0,
-      onError: (err) =>
-        console.log('🎭 Using fallback data availability due to:', err.message),
+      
     },
   );
 
-  console.log('📊 DashboardContent render:', {
-    cropCode,
-    stateCode,
-    year,
-    dataAvailable,
-    isAllCrops: cropCode === ALL_CROPS_CODE,
-    isIndiaMap: stateCode === USA_STATE_CODE,
-  });
+
 
   if (!dataAvailable) return <NoData />;
 

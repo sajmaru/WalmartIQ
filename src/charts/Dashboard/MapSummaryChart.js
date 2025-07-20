@@ -36,11 +36,7 @@ const MapSummaryChart = memo(
       `${API_HOST_URL}api/dashboard/mapSummary?year=${year}&stateCode=${stateCode}&on=${on}`,
       {
         fallbackData: [],
-        onError: (err) =>
-          console.log(
-            '🎭 Using fallback map summary data due to:',
-            err.message,
-          ),
+
       },
     );
 
@@ -50,11 +46,7 @@ const MapSummaryChart = memo(
     useEffect(() => setMapHeight(mapHeight), [mapHeight, setMapHeight]);
 
     const { mapProps, legend } = useMemo(() => {
-      console.log('🎨 MapSummaryChart colors debug:', {
-        valuesLength: values?.length || 0,
-        stateCode,
-        sampleValue: values?.[0],
-      });
+
 
       if (!values || values.length === 0) {
         return {
@@ -80,7 +72,6 @@ const MapSummaryChart = memo(
           const topCrop = topCrops[0]?.crop;
 
           if (!topCrop) {
-            console.log('🎨 No top crop for location:', location);
             return [accData, accLegend];
           }
 
@@ -88,12 +79,6 @@ const MapSummaryChart = memo(
           const baseColor = CROP_COLORS[topCrop] || '#4a90e2';
           const cropColor = color(baseColor);
           const locationColor = cropColor.copy({ opacity: 0.7 });
-
-          console.log('🎨 Location color for', id, ':', {
-            topCrop,
-            baseColor,
-            finalColor: locationColor.toString(),
-          });
 
           return [
             {
@@ -136,18 +121,11 @@ const MapSummaryChart = memo(
               CROP_COLORS[UNASSIGNED_CROP_CODE] ||
               '#e0e0e0';
 
-            console.log(
-              '🎨 MapSummary fill color for',
-              lookupKey,
-              ':',
-              fillColor,
-            );
             return fillColor;
           },
           borderWidth: () => 2,
           borderColor: () => '#666666',
           onClick: (feature) => {
-            console.log('🗺️ MapSummary clicked:', feature);
 
             const {
               properties: { st_nm: stateName, district: districtName },
@@ -156,12 +134,7 @@ const MapSummaryChart = memo(
             if (stateCode === USA_STATE_CODE && stateName) {
               // Clicking on India map - navigate to state
               const targetStateCode = STATE_CODES[stateName];
-              console.log(
-                '🗺️ Navigating to state:',
-                stateName,
-                '→',
-                targetStateCode,
-              );
+
 
               if (targetStateCode) {
                 goTo({
@@ -172,13 +145,6 @@ const MapSummaryChart = memo(
                 console.warn('🗺️ State code not found for:', stateName);
               }
             } else if (stateCode !== USA_STATE_CODE && districtName) {
-              // Clicking on state map - could navigate to district view
-              console.log(
-                '🗺️ District clicked:',
-                districtName,
-                'in',
-                stateName,
-              );
             }
           },
           tooltip: ({
@@ -217,13 +183,6 @@ const MapSummaryChart = memo(
       };
     }, [values, stateCode, year, goTo, on]);
 
-    console.log('🗺️ MapSummaryChart render:', {
-      stateCode,
-      featuresLength: features?.length || 0,
-      valuesLength: values?.length || 0,
-      hasClickHandler: !!mapProps.onClick,
-      legendEntries: Object.keys(legend).length,
-    });
 
     return (
       <AnimatedEnter>

@@ -12,8 +12,6 @@ const CategorySummaryChart = ({ expanded }) => {
     `https://usapa-backend.herokuapp.com/api/dashboard/cropCategory?stateCode=${stateCode}`,
     {
       fallbackData: [],
-      onError: (err) =>
-        console.log('🎭 Using fallback category data due to:', err.message),
     },
   );
 

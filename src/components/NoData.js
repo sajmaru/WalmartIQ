@@ -17,12 +17,6 @@ const NoData = memo(() => {
   // Ensure data is always an array
   const features = Array.isArray(data) ? data : [];
 
-  console.log('NoData render:', {
-    stateCode,
-    featuresLength: features.length,
-    error: error?.message,
-    isLoading,
-  });
 
   return (
     <AnimatedEnter>

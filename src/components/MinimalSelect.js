@@ -51,13 +51,6 @@ const MinimalSelect = ({
 
   // Ensure we always have a valid value
   const safeValue = value ?? defaultValue ?? '';
-  
-  console.log('🎛️ MinimalSelect render:', {
-    id: props.id,
-    value,
-    safeValue,
-    hasOnChange: !!onChange
-  });
 
   return (
     <StyledSelect

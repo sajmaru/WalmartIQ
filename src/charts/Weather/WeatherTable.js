@@ -60,8 +60,7 @@ const WeatherTable = () => {
     `${API_HOST_URL}api/weather/getWeatherTable?stateCode=${stateCode}&year=${year}`,
     {
       fallbackData: [],
-      onError: (err) =>
-        console.log('🎭 Using fallback weather data due to:', err.message),
+     
     },
   );
 

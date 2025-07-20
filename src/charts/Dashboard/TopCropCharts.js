@@ -24,8 +24,7 @@ const TopCropSummary = ({ expanded }) => {
     }`,
     {
       fallbackData: [],
-      onError: (err) =>
-        console.log('🎭 Using fallback crop data due to:', err.message),
+      
     },
   );
 

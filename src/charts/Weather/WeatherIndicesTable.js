@@ -60,11 +60,7 @@ const WeatherIndicesTable = ({ on }) => {
     `${API_HOST_URL}api/${on}/get${on.toUpperCase()}Table?stateCode=${stateCode}&year=${year}`,
     {
       fallbackData: [],
-      onError: (err) =>
-        console.log(
-          '🎭 Using fallback weather indices data due to:',
-          err.message,
-        ),
+      
     },
   );
 

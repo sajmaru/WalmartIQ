@@ -35,8 +35,6 @@ const CropMapChart = memo(({ on = 'production', setMapHeight = () => {} }) => {
     `${API_HOST_URL}api/dashboard/cropMap?year=${year}&stateCode=${stateCode}&cropCode=${cropCode}&on=${on}`,
     {
       fallbackData: [],
-      onError: (err) =>
-        console.log('🎭 Using fallback crop map data due to:', err.message),
     },
   );
 
@@ -49,13 +47,6 @@ const CropMapChart = memo(({ on = 'production', setMapHeight = () => {} }) => {
   );
 
   const mapProps = useMemo(() => {
-    console.log('🎨 CropMapChart colors debug:', {
-      valuesLength: values?.length || 0,
-      cropCode,
-      cropColor: CROP_COLORS[cropCode],
-      stateCode,
-      sampleValue: values?.[0],
-    });
 
     if (!values || values.length === 0) {
       // Return default styling when no data
@@ -77,12 +68,6 @@ const CropMapChart = memo(({ on = 'production', setMapHeight = () => {} }) => {
     const baseColor = CROP_COLORS[cropCode] || '#4a90e2';
     const cropColor = color(baseColor);
 
-    console.log('🎨 Color calculation:', {
-      baseColor,
-      cropColor: cropColor.toString(),
-      maxValue,
-    });
-
     const data = values.reduce((acc, { location, years }) => {
       const id =
         stateCode === USA_STATE_CODE ? STATE_NAMES[location] : location;
@@ -94,13 +79,6 @@ const CropMapChart = memo(({ on = 'production', setMapHeight = () => {} }) => {
       const value = years[0]?.value || 0;
       const opacity = maxValue > 0 ? 0.3 + (0.7 * value) / maxValue : 0.5;
       const locationColor = cropColor.copy({ opacity });
-
-      console.log('🎨 Location color:', {
-        location: id,
-        value,
-        opacity,
-        color: locationColor.toString(),
-      });
 
       return {
         ...acc,
@@ -132,13 +110,11 @@ const CropMapChart = memo(({ on = 'production', setMapHeight = () => {} }) => {
           CROP_COLORS[UNASSIGNED_CROP_CODE] ||
           '#e0e0e0';
 
-        console.log('🎨 Fill color for', lookupKey, ':', fillColor);
         return fillColor;
       },
       borderWidth: () => 2,
       borderColor: () => '#666666',
       onClick: (feature) => {
-        console.log('🗺️ Map clicked:', feature);
 
         const {
           properties: { st_nm: stateName, district: districtName },
@@ -147,12 +123,7 @@ const CropMapChart = memo(({ on = 'production', setMapHeight = () => {} }) => {
         if (stateCode === USA_STATE_CODE && stateName) {
           // Clicking on India map - navigate to state
           const targetStateCode = STATE_CODES[stateName];
-          console.log(
-            '🗺️ Navigating to state:',
-            stateName,
-            '→',
-            targetStateCode,
-          );
+         
 
           if (targetStateCode) {
             goTo({
@@ -165,7 +136,6 @@ const CropMapChart = memo(({ on = 'production', setMapHeight = () => {} }) => {
           }
         } else if (stateCode !== USA_STATE_CODE && districtName) {
           // Clicking on state map - could navigate to district view if implemented
-          console.log('🗺️ District clicked:', districtName, 'in', stateName);
           // For now, just log the click since district view might not be implemented
         }
       },
@@ -200,14 +170,6 @@ const CropMapChart = memo(({ on = 'production', setMapHeight = () => {} }) => {
       },
     };
   }, [values, stateCode, cropCode, year, goTo, on]);
-
-  console.log('🗺️ CropMapChart render:', {
-    stateCode,
-    cropCode,
-    featuresLength: features?.length || 0,
-    valuesLength: values?.length || 0,
-    hasMapProps: !!mapProps.fillColor,
-  });
 
   return (
     <AnimatedEnter>

@@ -7,7 +7,7 @@ import {
   Typography,
   Collapse,
   useTheme,
-} from '@material-ui/core';
+} from '@mui/material';
 import useSwr from 'swr';
 import TopCropChart from './TopCropChart';
 import AnimatedEnter from '../../components/AnimatedEnter';
@@ -34,29 +34,19 @@ const TopCropSummary = ({ expanded }) => {
   return (
     <AnimatedEnter>
       <Grid container spacing={3} alignItems="center" justify="center">
-        {data.slice(0, 3).map(({ crop, series, year: years, insights }) => (
-          <Grid item lg={4} md={12} sm={12} xs={12}>
-            <Card
-              variant="outlined"
-              style={{ overflow: 'visible' }}
-              onClick={() => goTo({ cropCode: crop, stateCode, year })}>
-              <CardContent>
-                <Box flex={1}>
-                  <Typography variant="h6">{CROP_NAMES[crop]}</Typography>
-                  <TopCropChart production={series} years={years} crop={crop} />
-                </Box>
-                <SummaryCards content={insights} />
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-      <Collapse in={expanded}>
-        <Grid container spacing={3} style={{ marginTop: theme.spacing(3) / 2 }}>
-          {data.slice(3).map(({ crop, series, year: years, insights }) => (
-            <Grid item lg={4} md={12} sm={12} xs={12}>
+        {data
+          .slice(0, 3)
+          .map(({ crop, series, year: years, insights }, index) => (
+            <Grid
+              item
+              lg={4}
+              md={12}
+              sm={12}
+              xs={12}
+              key={`top-crop-${crop}-${index}`}>
               <Card
                 variant="outlined"
+                style={{ overflow: 'visible' }}
                 onClick={() => goTo({ cropCode: crop, stateCode, year })}>
                 <CardContent>
                   <Box flex={1}>
@@ -72,6 +62,36 @@ const TopCropSummary = ({ expanded }) => {
               </Card>
             </Grid>
           ))}
+      </Grid>
+      <Collapse in={expanded}>
+        <Grid container spacing={3} style={{ marginTop: theme.spacing(3) / 2 }}>
+          {data
+            .slice(3)
+            .map(({ crop, series, year: years, insights }, index) => (
+              <Grid
+                item
+                lg={4}
+                md={12}
+                sm={12}
+                xs={12}
+                key={`more-crop-${crop}-${index}`}>
+                <Card
+                  variant="outlined"
+                  onClick={() => goTo({ cropCode: crop, stateCode, year })}>
+                  <CardContent>
+                    <Box flex={1}>
+                      <Typography variant="h6">{CROP_NAMES[crop]}</Typography>
+                      <TopCropChart
+                        production={series}
+                        years={years}
+                        crop={crop}
+                      />
+                    </Box>
+                    <SummaryCards content={insights} />
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
         </Grid>
       </Collapse>
     </AnimatedEnter>
@@ -79,3 +99,4 @@ const TopCropSummary = ({ expanded }) => {
 };
 
 export default TopCropSummary;
+

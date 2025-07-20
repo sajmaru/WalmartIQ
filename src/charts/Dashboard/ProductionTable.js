@@ -1,34 +1,30 @@
-import React, { useState, useCallback, useMemo } from 'react';
 import {
-  Toolbar,
-  Typography,
   Paper,
   Table,
-  TableHead,
-  TableSortLabel,
-  TableRow,
   TableCell,
   TableContainer,
+  TableHead,
   TablePagination,
-  IconButton,
-  Tooltip,
-} from '@material-ui/core';
-import { CloudDownload } from '@material-ui/icons';
+  TableRow,
+  TableSortLabel,
+  Toolbar,
+  Typography,
+} from '@mui/material';
+import { useCallback, useMemo, useState } from 'react';
 import useSWR from 'swr';
-import csvDownload from 'json-to-csv-export';
 import AnimatedEnter from '../../components/AnimatedEnter';
-import useRouting from '../../routes/useRouting';
-import useConstants from '../../hooks/useConstants';
 import {
+  ALL_CROPS_CODE,
   API_HOST_URL,
-  STATE_NAMES,
-  INDIA_STATE_CODE,
-  CROP_NAMES,
   CROP_METRICS_NAMES,
   CROP_METRICS_UNITS,
-  ALL_CROPS_CODE,
+  CROP_NAMES,
+  INDIA_STATE_CODE,
+  STATE_NAMES,
 } from '../../constants';
 import { readableNumber, titleCase } from '../../helpers';
+import useConstants from '../../hooks/useConstants';
+import useRouting from '../../routes/useRouting';
 
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
@@ -123,32 +119,6 @@ const ProductionTable = () => {
             Agricultural {year === LATEST_YEAR ? 'Prediction' : 'Data'} for{' '}
             {STATE_NAMES[stateCode]}
           </Typography>
-          <Tooltip title="Download">
-            <IconButton
-              onClick={() =>
-                csvDownload(
-                  values.map(
-                    ({
-                      year: thatYear,
-                      stateCode: thatStateCode,
-                      districtCode,
-                      cropCode: thatCropCode,
-                      ...params
-                    }) => ({
-                      state: STATE_NAMES[thatStateCode],
-                      ...(stateCode !== INDIA_STATE_CODE && {
-                        district: titleCase(districtCode.split('-')[1]),
-                      }),
-                      crop: CROP_NAMES[thatCropCode],
-                      ...params,
-                    }),
-                  ),
-                  `Production ${STATE_NAMES[stateCode]}.csv`,
-                )
-              }>
-              <CloudDownload />
-            </IconButton>
-          </Tooltip>
         </Toolbar>
         <TableContainer>
           <Table>
@@ -208,3 +178,4 @@ const ProductionTable = () => {
 };
 
 export default ProductionTable;
+

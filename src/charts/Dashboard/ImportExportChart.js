@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
-import { Grid, Box, Typography, Card, CardContent } from '@material-ui/core';
+import { Grid, Box, Typography, Card, CardContent } from '@mui/material';
 import { ResponsivePie } from '@nivo/pie';
 import useSWR from 'swr';
 import AnimatedEnter from '../../components/AnimatedEnter';

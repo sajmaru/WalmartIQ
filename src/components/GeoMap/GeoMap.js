@@ -13,14 +13,14 @@ import { GeoMapPropTypes, GeoMapDefaultProps } from './props';
 import GeoMapFeature from './GeoMapFeature';
 import { useGeoMap } from './hooks';
 
-const GeoMap = memo((props) => {
+const GeoMap = memo((props = GeoMapDefaultProps) => {
   const {
     width,
     height,
     margin: partialMargin,
     features,
     layers,
-    projectionType,
+    projectionType = 'mercator', // Add default here
     projectionScale,
     projectionTranslation,
     projectionRotation,
@@ -32,11 +32,13 @@ const GeoMap = memo((props) => {
     onClick,
     tooltip: Tooltip,
   } = props;
+  
   const { margin, outerWidth, outerHeight } = useDimensions(
     width,
     height,
     partialMargin,
   );
+  
   const { path, getFillColor, getBorderWidth, getBorderColor } = useGeoMap({
     width,
     height,
@@ -114,6 +116,6 @@ const GeoMap = memo((props) => {
 
 GeoMap.displayName = 'GeoMap';
 GeoMap.propTypes = GeoMapPropTypes;
-GeoMap.defaultProps = GeoMapDefaultProps;
+// Remove defaultProps line - using default parameters instead
 
 export default withContainer(GeoMap);

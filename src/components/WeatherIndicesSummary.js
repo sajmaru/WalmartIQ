@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Grid, MenuItem } from '@material-ui/core';
+import { Box, Grid, MenuItem } from '@mui/material';
 import WeatherIndicesMap from '../charts/Weather/WeatherIndicesMap';
 import WeatherIndicesTable from '../charts/Weather/WeatherIndicesTable';
 import Header from './Header';
@@ -8,7 +8,7 @@ import Select from './MinimalSelect';
 import useInput from '../hooks/useInput';
 import { WEATHER_INDICES } from '../constants';
 
-const WeatherMapSummary = () => {
+const WeatherIndicesSummary = () => {
   const on = useInput('pasm');
 
   const [mapHeight, setMapHeight] = useState();
@@ -18,9 +18,9 @@ const WeatherMapSummary = () => {
       <Header
         title="Other Meteorological Parameters"
         actions={
-          <Select dense {...on.bind}>
+          <Select id="weather-param-select" dense {...on.bind}>
             {Object.entries(WEATHER_INDICES).map(([value, name]) => (
-              <MenuItem value={value}>{name}</MenuItem>
+              <MenuItem key={value} value={value}>{name}</MenuItem>
             ))}
           </Select>
         }
@@ -40,4 +40,4 @@ const WeatherMapSummary = () => {
     </Box>
   );
 };
-export default WeatherMapSummary;
+export default WeatherIndicesSummary;

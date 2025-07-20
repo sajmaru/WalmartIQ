@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
-import Box from '@material-ui/core/Box';
-import useTheme from '@material-ui/styles/useTheme';
+import Box from '@mui/material/Box';
+import useTheme from '@mui/styles/useTheme';
 import { ResponsiveLine } from '@nivo/line';
 import { BasicTooltip } from '@nivo/tooltip';
 import { readableNumber } from '../helpers';

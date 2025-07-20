@@ -1,33 +1,29 @@
-import React, { useState, useCallback, useMemo } from 'react';
 import {
-  Toolbar,
-  Typography,
   Paper,
   Table,
-  TableHead,
-  TableSortLabel,
-  TableRow,
   TableCell,
   TableContainer,
+  TableHead,
   TablePagination,
-  IconButton,
-  Tooltip,
-} from '@material-ui/core';
-import { CloudDownload } from '@material-ui/icons';
+  TableRow,
+  TableSortLabel,
+  Toolbar,
+  Typography,
+} from '@mui/material';
+import { useCallback, useMemo, useState } from 'react';
 import useSWR from 'swr';
-import csvDownload from 'json-to-csv-export';
 import AnimatedEnter from '../../components/AnimatedEnter';
-import useContants from '../../hooks/useConstants';
-import useRouting from '../../routes/useRouting';
 import {
   API_HOST_URL,
-  STATE_NAMES,
   INDIA_STATE_CODE,
   MONTH_NAMES,
+  STATE_NAMES,
   WEATHER_PARAMS,
   WEATHER_UNITS,
 } from '../../constants';
 import { readableNumber, titleCase } from '../../helpers';
+import useContants from '../../hooks/useConstants';
+import useRouting from '../../routes/useRouting';
 
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
@@ -118,33 +114,6 @@ const WarehouseTable = () => {
             Weather {year === LATEST_YEAR ? 'Prediction' : 'Data'} for{' '}
             {STATE_NAMES[stateCode]}
           </Typography>
-          <Tooltip title="Download">
-            <IconButton
-              onClick={() =>
-                csvDownload(
-                  values.map(
-                    ({
-                      year: thatYear,
-                      month,
-                      stateCode: thatStateCode,
-                      districtCode,
-                      ...params
-                    }) => ({
-                      year: thatYear,
-                      month: MONTH_NAMES[month - 1],
-                      state: STATE_NAMES[thatStateCode],
-                      ...(stateCode !== INDIA_STATE_CODE && {
-                        district: titleCase(districtCode.split('-')[1]),
-                      }),
-                      ...params,
-                    }),
-                  ),
-                  `Weather ${STATE_NAMES[stateCode]}.csv`,
-                )
-              }>
-              <CloudDownload />
-            </IconButton>
-          </Tooltip>
         </Toolbar>
         <TableContainer>
           <Table>
@@ -204,3 +173,4 @@ const WarehouseTable = () => {
   );
 };
 export default WarehouseTable;
+

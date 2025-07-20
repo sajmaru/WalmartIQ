@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Card, CardContent, Typography } from '@material-ui/core';
+import { Grid, Card, CardContent, Typography } from '@mui/material';
 import useSWR from 'swr';
 import AnimatedEnter from '../../components/AnimatedEnter';
 import SuspenseProgress from '../../components/SuspenseProgress';
@@ -17,8 +17,14 @@ const WarehouseSummary = () => {
   return (
     <AnimatedEnter>
       <Grid container spacing={1}>
-        {values.map(({ type, count, capacity }) => (
-          <Grid item lg={4} md={6} sm={12} xs={12}>
+        {values.map(({ type, count, capacity }, index) => (
+          <Grid
+            item
+            lg={4}
+            md={6}
+            sm={12}
+            xs={12}
+            key={`warehouse-summary-${type}-${index}`}>
             <Card variant="outlined">
               <CardContent>
                 <Typography variant="h6">{type}</Typography>
@@ -42,3 +48,4 @@ const WarehouseSummary = () => {
   );
 };
 export default WarehouseSummary;
+

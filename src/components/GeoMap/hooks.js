@@ -45,18 +45,24 @@ export const projectionById = {
 export const useGeoMap = ({
   width,
   height,
-  projectionType,
-  projectionScale,
-  projectionTranslation,
-  projectionRotation,
-  fillColor,
-  borderWidth,
-  borderColor,
-  features,
-  fitProjection,
+  projectionType = 'mercator',
+  projectionScale = 100,
+  projectionTranslation = [0.5, 0.5],
+  projectionRotation = [0, 0, 0],
+  fillColor = '#dddddd',
+  borderWidth = 2,
+  borderColor = '#404040',
+  features = [],
+  fitProjection = true,
 }) => {
   const projection = useMemo(() => {
-    const selectedProjection = projectionById[projectionType]()
+    // Add error handling for projection type
+    const projectionFn = projectionById[projectionType];
+    if (!projectionFn) {
+      console.warn(`Unknown projection type: ${projectionType}, falling back to mercator`);
+    }
+    
+    const selectedProjection = (projectionById[projectionType] || geoMercator)()
       .scale(projectionScale)
       .translate([
         width * projectionTranslation[0],
@@ -64,11 +70,12 @@ export const useGeoMap = ({
       ])
       .rotate(projectionRotation);
 
-    if (fitProjection && selectedProjection.fitSize)
+    if (fitProjection && selectedProjection.fitSize && features.length > 0) {
       selectedProjection.fitSize([width, height], {
         type: 'FeatureCollection',
         features,
       });
+    }
 
     return selectedProjection;
   }, [
@@ -81,13 +88,14 @@ export const useGeoMap = ({
     features,
     fitProjection,
   ]);
+  
   const path = useMemo(() => geoPath().projection(projection), [projection]);
   const graticule = useMemo(() => geoGraticule(), []);
 
-  const getBorderWidth = useMemo(() => makeGetter(borderWidth, 0), [
+  const getBorderWidth = useMemo(() => makeGetter(borderWidth, 2), [
     borderWidth,
   ]);
-  const getBorderColor = useMemo(() => makeGetter(borderColor, '#000000'), [
+  const getBorderColor = useMemo(() => makeGetter(borderColor, '#404040'), [
     borderColor,
   ]);
   const getFillColor = useMemo(() => makeGetter(fillColor, '#dddddd'), [

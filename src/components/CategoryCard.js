@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, CardContent, Typography, Box, Divider } from '@material-ui/core';
-import useTheme from '@material-ui/styles/useTheme';
+import { Card, CardContent, Typography, Box, Divider } from '@mui/material';
+import useTheme from '@mui/styles/useTheme';
 
 import MiniGraph from './MiniGraph';
 import Disclaimer from './Disclaimer';

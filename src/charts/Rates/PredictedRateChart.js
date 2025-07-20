@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import Box from '@material-ui/core/Box';
+import Box from '@mui/material/Box';
 import { ResponsiveLine } from '@nivo/line';
 import Disclaimer from '../../components/Disclaimer';
 
@@ -72,3 +72,4 @@ const PredictedRateChart = memo(({ rates, years, color }) => {
 });
 
 export default PredictedRateChart;
+

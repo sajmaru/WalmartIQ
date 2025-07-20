@@ -9,7 +9,7 @@ const PredictedRates = () => {
     <>
       <Header title="Predicting Pricing" />
       <SuspenseProgress>
-        <RateInsights />
+        <RateInsights key="predicted-rates" />
       </SuspenseProgress>
     </>
   );

@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo } from 'react';
-import { MenuItem } from '@material-ui/core';
+import React, { useEffect, useMemo, useCallback } from 'react';
+import { MenuItem } from '@mui/material';
 import useSWR from 'swr';
 import AnimatedEnter from '../components/AnimatedEnter';
 import Select from '../components/MinimalSelect';
@@ -13,7 +13,7 @@ import CropMapSummary from '../components/CropMapSummary';
 import ProductionxWeather from '../components/ProductionxWeather';
 import NoData from '../components/NoData';
 import useInput from '../hooks/useInput';
-import useContants from '../hooks/useConstants';
+import useConstants from '../hooks/useConstants';
 import useRouting from '../routes/useRouting';
 
 import {
@@ -37,7 +37,7 @@ const dropdownCrops = CROP_NAMES_ARRAY.filter(
 );
 
 const Dashboard = () => {
-  const { LATEST_YEAR } = useContants();
+  const { LATEST_YEAR } = useConstants();
   const {
     goTo,
     stateCode = INDIA_STATE_CODE,
@@ -45,6 +45,7 @@ const Dashboard = () => {
     year = LATEST_YEAR,
   } = useRouting();
 
+  // Memoize the dropdown years to prevent recalculation
   const dropdownYears = useMemo(
     () => Array.from(range(LATEST_YEAR - 10, LATEST_YEAR)).reverse(),
     [LATEST_YEAR],
@@ -54,13 +55,26 @@ const Dashboard = () => {
   const crop = useInput(cropCode);
   const selectedYear = useInput(year);
 
-  useEffect(() => {
+  // Memoize the goTo callback to prevent unnecessary re-renders
+  const handleNavigation = useCallback(() => {
     goTo({
       stateCode: state.value,
       cropCode: crop.value,
       year: selectedYear.value,
     });
   }, [state.value, crop.value, selectedYear.value, goTo]);
+
+  // Only update when values actually change
+  useEffect(() => {
+    // Add a check to prevent unnecessary navigation
+    if (
+      state.value !== stateCode ||
+      crop.value !== cropCode ||
+      selectedYear.value !== year
+    ) {
+      handleNavigation();
+    }
+  }, [handleNavigation, stateCode, cropCode, year, state.value, crop.value, selectedYear.value]);
 
   return (
     <>
@@ -70,23 +84,23 @@ const Dashboard = () => {
           title={`${year === LATEST_YEAR ? 'Predicted' : 'Historic'} Dashboard`}
           actions={
             <>
-              <Select {...crop.bind}>
-                <MenuItem value={ALL_CROPS_CODE}>All Crops</MenuItem>
+              <Select id="crop-select" {...crop.bind}>
+                <MenuItem key={ALL_CROPS_CODE} value={ALL_CROPS_CODE}>All Crops</MenuItem>
                 {dropdownCrops.map(({ name, code }) => (
                   <MenuItem value={code} key={code}>
                     {name}
                   </MenuItem>
                 ))}
               </Select>
-              <Select {...state.bind}>
-                <MenuItem value={INDIA_STATE_CODE}>All States</MenuItem>
+              <Select id="state-select" {...state.bind}>
+                <MenuItem key={INDIA_STATE_CODE} value={INDIA_STATE_CODE}>All States</MenuItem>
                 {dropdownStates.map(({ name, code }) => (
                   <MenuItem value={code} key={code}>
                     {name}
                   </MenuItem>
                 ))}
               </Select>
-              <Select {...selectedYear.bind}>
+              <Select id="year-select" {...selectedYear.bind}>
                 {dropdownYears.map((dropdownYear) => (
                   <MenuItem value={dropdownYear} key={dropdownYear}>
                     {dropdownYear}
@@ -97,19 +111,26 @@ const Dashboard = () => {
           }
         />
         <SuspenseProgress>
-          <DashboardContent {...{ cropCode, stateCode, year }} />
+          <DashboardContent cropCode={cropCode} stateCode={stateCode} year={year} />
         </SuspenseProgress>
       </AnimatedEnter>
     </>
   );
 };
 
-const DashboardContent = ({ cropCode, stateCode, year }) => {
-  const { LATEST_YEAR } = useContants();
+// Memoize the dashboard content to prevent unnecessary re-renders
+const DashboardContent = React.memo(({ cropCode, stateCode, year }) => {
+  const { LATEST_YEAR } = useConstants();
   const {
     data: { data: dataAvailable },
   } = useSWR(
     `${API_HOST_URL}api/dashboard/checkData?stateCode=${stateCode}&cropCode=${cropCode}&year=${year}`,
+    {
+      // Add SWR options to reduce re-fetching
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      refreshInterval: 0,
+    }
   );
 
   if (!dataAvailable) return <NoData />;
@@ -129,6 +150,6 @@ const DashboardContent = ({ cropCode, stateCode, year }) => {
       <ProductionxWeather />
     </>
   );
-};
+});
 
 export default Dashboard;

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Card, CardContent, Typography, Grid } from '@material-ui/core';
+import { Card, CardContent, Typography, Grid } from '@mui/material';
 import useSWR from 'swr';
 
 import CropProductionChart from './CropProductionChart';

@@ -6,7 +6,7 @@ import {
   Typography,
   Box,
   useTheme,
-} from '@material-ui/core';
+} from '@mui/material';
 import useSWR from 'swr';
 import AnimatedEnter from '../../components/AnimatedEnter';
 import SuspenseProgress from '../../components/SuspenseProgress';

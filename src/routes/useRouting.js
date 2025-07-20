@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from 'react';
-import { useLocation, useHistory, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import useConstants from '../hooks/useConstants';
 import { INDIA_STATE_CODE, ALL_CROPS_CODE } from '../constants';
 
 const useRouting = () => {
   const location = useLocation();
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useParams();
   const { LATEST_YEAR } = useConstants();
 
@@ -17,7 +17,7 @@ const useRouting = () => {
         cropCode = ALL_CROPS_CODE,
         year = LATEST_YEAR,
       },
-      page,
+      page = '',
     ) => {
       let path = page;
       if (year !== LATEST_YEAR) path += `/year/${year}`;
@@ -31,18 +31,22 @@ const useRouting = () => {
   const goTo = useCallback(
     (newParams, page = '') => {
       const newPath = getPath(newParams, page);
-      if (newPath !== location.pathname) history.push(newPath);
+      // Only navigate if the path is actually different
+      if (newPath !== location.pathname) {
+        navigate(newPath);
+      }
     },
-    [history, location.pathname, getPath],
+    [navigate, location.pathname, getPath],
   );
 
+  // Memoize the return value to prevent unnecessary re-renders
   const value = useMemo(
     () => ({
       location,
       goTo,
       ...params,
     }),
-    [location, goTo, params],
+    [location.pathname, location.search, goTo, params], // Only depend on pathname and search, not entire location object
   );
 
   return value;

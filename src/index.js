@@ -1,26 +1,30 @@
 import React, { lazy, Suspense } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { SWRConfig } from 'swr';
-import { ThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import grey from '@material-ui/core/colors/grey';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import grey from '@mui/material/colors/grey';
 import { MapProvider } from './context/Maps';
 import { ConstantsProvider } from './context/Constants';
+import { mockFetcher } from './services/mockService';
 
 import * as serviceWorker from './serviceWorker';
-
 import './index.css';
 
 const App = lazy(() => import('./App'));
 const rootElement = document.getElementById('root');
 
-const fetcher = (...args) =>
-  fetch(...args)
-    .then((response) => response.json())
-    .catch(console.error);
+// Use mock fetcher in development, real fetcher in production
+const fetcher =
+  process.env.NODE_ENV === 'development'
+    ? mockFetcher
+    : (...args) =>
+        fetch(...args)
+          .then((response) => response.json())
+          .catch(console.error);
 
-const theme = createMuiTheme({
+const theme = createTheme({
   typography: {
     fontFamily: '"Poppins", sans-serif',
   },
@@ -34,12 +38,32 @@ const theme = createMuiTheme({
 
 const Main = () => (
   <Suspense fallback={<div />}>
-    <SWRConfig value={{ suspense: true, fetcher, refreshInterval: 0 }}>
-      <ThemeProvider {...{ theme }}>
+    <SWRConfig
+      value={{
+        suspense: true,
+        fetcher,
+        refreshInterval: 0,
+        revalidateOnFocus: false, // Don't refetch when window regains focus
+        revalidateOnReconnect: false, // Don't refetch when network reconnects
+        dedupingInterval: 2000, // Dedupe requests within 2 seconds
+        errorRetryCount: 1, // Only retry once on error
+        errorRetryInterval: 5000, // Wait 5 seconds before retry
+        // Show mock data indicator in development
+        onError: (error) => {
+          if (process.env.NODE_ENV === 'development') {
+            console.log('🎭 Using mock data due to error:', error.message);
+          }
+        },
+      }}>
+      <ThemeProvider theme={theme}>
         <ConstantsProvider>
           <MapProvider>
             <CssBaseline />
-            <Router>
+            <Router
+              future={{
+                v7_startTransition: true,
+                v7_relativeSplatPath: true,
+              }}>
               <App />
             </Router>
           </MapProvider>
@@ -49,6 +73,7 @@ const Main = () => (
   </Suspense>
 );
 
-render(<Main />, rootElement);
+const root = createRoot(rootElement);
+root.render(<Main />);
 
 serviceWorker.unregister();

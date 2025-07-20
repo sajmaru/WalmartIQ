@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import Box from '@material-ui/core/Box';
+import Box from '@mui/material/Box';
 import { ResponsiveLine } from '@nivo/line';
 import { BasicTooltip } from '@nivo/tooltip';
 import Disclaimer from '../../components/Disclaimer';

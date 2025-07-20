@@ -1,64 +1,58 @@
 import React, { useCallback } from 'react';
-import { Select } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { Select } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-const useMinimalSelectStyles = makeStyles((theme) => ({
-  Select: ({ dense = false }) => ({
-    background: theme.palette.background.paper,
-    borderStyle: 'none',
-    borderWidth: 0,
+const StyledSelect = styled(Select, {
+  shouldForwardProp: (prop) => prop !== 'dense',
+})(({ theme, dense = false }) => ({
+  background: theme.palette.background.paper,
+  borderStyle: 'none',
+  borderWidth: 0,
+  borderRadius: 6,
+  boxShadow: theme.shadows[0],
+  fontSize: dense ? '0.8125rem' : '1rem',
+  minWidth: dense ? 160 : 200,
+  '&:focus': {
     borderRadius: 6,
-    boxShadow: theme.shadows[0],
-    ...(dense
-      ? {
-          fontSize: '0.8125rem',
-          minWidth: 160,
-          paddingLeft: 8,
-          paddingRight: 36,
-          paddingTop: 6,
-          paddingBottom: 6,
-        }
-      : {
-          minWidth: 200,
-          paddingLeft: 12,
-          paddingRight: 48,
-          paddingTop: 12,
-          paddingBottom: 12,
-        }),
-    '&:focus': {
-      borderRadius: 6,
-      background: theme.palette.background.paper,
-    },
-  }),
-  ExpandIcon: ({ dense = false }) => ({
-    right: dense ? 4 : 12,
-    position: 'absolute',
-    userSelect: 'none',
-    pointerEvents: 'none',
-  }),
+    background: theme.palette.background.paper,
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    border: 'none',
+  },
+  '& .MuiSelect-select': {
+    paddingLeft: dense ? 8 : 12,
+    paddingRight: dense ? 36 : 48,
+    paddingTop: dense ? 6 : 12,
+    paddingBottom: dense ? 6 : 12,
+  },
 }));
 
-const MinimalSelect = ({ dense, classes = {}, ...props }) => {
-  const styles = useMinimalSelectStyles({ dense });
-
+const MinimalSelect = ({ dense, children, ...props }) => {
   const IconComponent = useCallback(
-    ({ className, ...iconProps }) => (
+    (iconProps) => (
       <ExpandMoreIcon
-        className={[styles.ExpandIcon, className]}
         {...iconProps}
+        sx={{
+          right: dense ? 4 : 12,
+          position: 'absolute',
+          userSelect: 'none',
+          pointerEvents: 'none',
+        }}
       />
     ),
-    [styles.ExpandIcon],
+    [dense],
   );
 
   return (
-    <Select
-      disableUnderline
-      classes={{ ...classes, root: [styles.Select, classes.root].join(' ') }}
-      {...{ IconComponent }}
+    <StyledSelect
+      variant="outlined"
+      dense={dense}
+      IconComponent={IconComponent}
       {...props}
-    />
+    >
+      {children}
+    </StyledSelect>
   );
 };
 

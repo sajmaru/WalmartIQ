@@ -1,56 +1,43 @@
-import React, { useCallback } from 'react';
-import { TextField, fade } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
+import React from 'react';
+import { TextField } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { alpha } from '@mui/material/styles';
 
-const useMinimalInputStyles = makeStyles((theme) => ({
-  root: {
-    'label + &': {
-      marginTop: theme.spacing(3),
-    },
-  },
-  Input: ({ dense = false }) => ({
+const StyledTextField = styled(TextField, {
+  shouldForwardProp: (prop) => prop !== 'dense',
+})(({ theme, dense = false }) => ({
+  '& .MuiInputBase-root': {
     background: theme.palette.background.paper,
     borderStyle: 'none',
     borderWidth: 0,
     borderRadius: 6,
     boxShadow: theme.shadows[0],
     transition: theme.transitions.create(['border-color', 'box-shadow']),
-    ...(dense
-      ? {
-          fontSize: '0.8125rem',
-          minWidth: 160,
-          paddingLeft: 8,
-          paddingRight: 36,
-          paddingTop: 6,
-          paddingBottom: 6,
-        }
-      : {
-          minWidth: 200,
-          paddingLeft: 12,
-          paddingRight: 48,
-          paddingTop: 12,
-          paddingBottom: 12,
-        }),
-    '&:focus': {
-      borderRadius: 6,
-      background: theme.palette.background.paper,
-      boxShadow: `${fade(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
-      borderColor: theme.palette.primary.main,
-    },
-  }),
+    fontSize: dense ? '0.8125rem' : '1rem',
+    minWidth: dense ? 160 : 200,
+    paddingLeft: dense ? 8 : 12,
+    paddingRight: dense ? 36 : 48,
+    paddingTop: dense ? 6 : 12,
+    paddingBottom: dense ? 6 : 12,
+  },
+  '& .MuiOutlinedInput-notchedOutline': {
+    border: 'none',
+  },
+  '& .MuiInputBase-root.Mui-focused': {
+    borderRadius: 6,
+    background: theme.palette.background.paper,
+    boxShadow: `${alpha(theme.palette.primary.main, 0.25)} 0 0 0 0.2rem`,
+  },
+  '& .MuiInputLabel-root': {
+    marginTop: dense ? theme.spacing(3) : 0,
+  },
 }));
 
-const MinimalInput = ({ dense, classes = {}, ...props }) => {
-  const styles = useMinimalInputStyles({ dense });
-
+const MinimalInput = ({ dense, ...props }) => {
   return (
-    <TextField
-      disableUnderline
-      classes={{
-        ...classes,
-        root: [styles.root, styles.Input, classes.root].join(' '),
-      }}
+    <StyledTextField
       variant="outlined"
+      dense={dense}
       {...props}
     />
   );

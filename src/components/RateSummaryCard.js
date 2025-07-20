@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Grid, Typography } from '@material-ui/core';
+import { Box, Grid, Typography } from '@mui/material';
 
 const RateSummaryCard = ({ insights }) => {
   return (
@@ -15,8 +15,8 @@ const RateSummaryCard = ({ insights }) => {
             borderRadius: 4,
           }}>
           <Typography variant="overline">Rainfall</Typography>
-          {insights.rainfall.map((text) => (
-            <Typography variant="body2">{text}</Typography>
+          {insights.rainfall.map((text, index) => (
+            <Typography key={`rainfall-${index}`} variant="body2">{text}</Typography>
           ))}
         </Box>
       </Grid>
@@ -31,8 +31,8 @@ const RateSummaryCard = ({ insights }) => {
             borderRadius: 4,
           }}>
           <Typography variant="overline">Consumption</Typography>
-          {insights.consumption.map((text) => (
-            <Typography variant="body2">{text}</Typography>
+          {insights.consumption.map((text, index) => (
+            <Typography key={`consumption-${index}`} variant="body2">{text}</Typography>
           ))}
         </Box>
       </Grid>
@@ -47,8 +47,8 @@ const RateSummaryCard = ({ insights }) => {
             borderRadius: 4,
           }}>
           <Typography variant="overline">Rates</Typography>
-          {insights.rates.map((text) => (
-            <Typography variant="body2">{text}</Typography>
+          {insights.rates.map((text, index) => (
+            <Typography key={`rates-${index}`} variant="body2">{text}</Typography>
           ))}
         </Box>
       </Grid>
@@ -63,8 +63,8 @@ const RateSummaryCard = ({ insights }) => {
             borderRadius: 4,
           }}>
           <Typography variant="overline">Production</Typography>
-          {insights.production.map((text) => (
-            <Typography variant="body2">{text}</Typography>
+          {insights.production.map((text, index) => (
+            <Typography key={`production-${index}`} variant="body2">{text}</Typography>
           ))}
         </Box>
       </Grid>

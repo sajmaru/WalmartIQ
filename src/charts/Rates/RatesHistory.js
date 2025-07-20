@@ -5,7 +5,7 @@ import {
   CardContent,
   Typography,
   useTheme,
-} from '@material-ui/core';
+} from '@mui/material';
 import useSWR from 'swr';
 
 import RatesChart from './RatesChart';

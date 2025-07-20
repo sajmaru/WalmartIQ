@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ButtonGroup, Button, Box, Grid } from '@material-ui/core';
+import { ButtonGroup, Button, Box, Grid } from '@mui/material';
 import MapSummaryChart from '../charts/Dashboard/MapSummaryChart';
 import ProductionTable from '../charts/Dashboard/ProductionTable';
 import SuspenseProgress from './SuspenseProgress';

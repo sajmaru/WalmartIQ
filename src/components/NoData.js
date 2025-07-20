@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Box, Card, Typography } from '@material-ui/core';
+import { Box, Card, Typography } from '@mui/material';
 import { ResponsiveGeoMap } from './GeoMap';
 import AnimatedEnter from './AnimatedEnter';
 import useMap from '../hooks/useMap';
@@ -21,9 +21,11 @@ const NoData = memo(() => {
           position: 'relative',
         }}>
         <ResponsiveGeoMap
-          fitProjection
+          fitProjection={true}
+          projectionType="mercator" // Add explicit projection type
           borderWidth={2}
           borderColor="#404040"
+          fillColor="#dddddd"
           features={features}
         />
         <Box
@@ -53,3 +55,4 @@ const NoData = memo(() => {
   );
 });
 export default NoData;
+

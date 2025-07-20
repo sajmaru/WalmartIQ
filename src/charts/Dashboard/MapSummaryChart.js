@@ -1,26 +1,26 @@
-import React, { useMemo, useRef, useEffect, memo } from 'react';
-import { Box } from '@material-ui/core';
-import { TableTooltip, Chip } from '@nivo/tooltip';
+import { Box } from '@mui/material';
+import { Chip, TableTooltip } from '@nivo/tooltip';
 import { color } from 'd3-color';
+import { memo, useEffect, useMemo, useRef } from 'react';
 import useSWR from 'swr';
-import { ResponsiveGeoMap } from '../../components/GeoMap';
 import AnimatedEnter from '../../components/AnimatedEnter';
 import Disclaimer from '../../components/Disclaimer';
-import useMap from '../../hooks/useMap';
-import useConstants from '../../hooks/useConstants';
-import useRouting from '../../routes/useRouting';
+import { ResponsiveGeoMap } from '../../components/GeoMap';
 import {
-  STATE_NAMES,
-  STATE_CODES,
-  INDIA_STATE_CODE,
-  CROP_NAMES,
-  CROP_COLORS,
-  CROP_METRICS_NAMES,
-  CROP_METRICS_UNITS,
-  UNASSIGNED_CROP_CODE,
-  API_HOST_URL,
+    API_HOST_URL,
+    CROP_COLORS,
+    CROP_METRICS_NAMES,
+    CROP_METRICS_UNITS,
+    CROP_NAMES,
+    INDIA_STATE_CODE,
+    STATE_CODES,
+    STATE_NAMES,
+    UNASSIGNED_CROP_CODE,
 } from '../../constants';
 import { readableNumber } from '../../helpers';
+import useConstants from '../../hooks/useConstants';
+import useMap from '../../hooks/useMap';
+import useRouting from '../../routes/useRouting';
 
 const MapSummaryChart = memo(({ on, setMapHeight }) => {
   const { LATEST_YEAR } = useConstants();

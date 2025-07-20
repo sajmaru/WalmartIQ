@@ -1,12 +1,12 @@
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 
 const useVerticalListStyles = makeStyles({
   parent: ({ before, after, spacing = '0.5rem', style = {} }) => ({
     ...style,
-    '& > *:not(:first-child)': {
+    '& > *:not(:first-of-type)': {
       marginTop: spacing,
     },
-    '& > *:first-child': {
+    '& > *:first-of-type': {
       marginTop: before,
     },
     '& > *:last-child': {

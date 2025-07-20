@@ -1,5 +1,4 @@
-import React from 'react';
-import { Box } from '@material-ui/core';
+import { Box } from '@mui/material';
 import { ResponsiveLine } from '@nivo/line';
 import { WEATHER_COLORS } from '../../constants';
 

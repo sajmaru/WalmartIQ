@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Card } from '@material-ui/core';
+import { Box, Typography, Card } from '@mui/material';
 
 import { NAVBAR_WIDTH } from '../components/Navbar';
 import LitCrops from '../assets/LitCrops';

@@ -1,7 +1,8 @@
 import React, { lazy, Suspense, useMemo, memo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Box, Typography, ListItem } from '@material-ui/core';
-import { makeStyles, useTheme } from '@material-ui/styles';
+import { Box, Typography, ListItem } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import { motion } from 'framer-motion';
 import { pages } from '../routes/Router';
 
@@ -10,48 +11,51 @@ const Logo = lazy(() => import('../assets/LitCrops'));
 export const NAVBAR_WIDTH = 72;
 export const EXPANDED_NAVBAR_WIDTH = 288;
 
-const useNavbarStyles = makeStyles((theme) => ({
-  Container: {
-    backgroundColor: theme.palette.background.paper,
-    height: '100%',
-    overflowX: 'hidden',
-    position: 'fixed',
-    zIndex: theme.zIndex.appBar,
-  },
-  Item: {
-    display: 'flex',
-    flexDirection: 'row',
-    textDecoration: 'none',
-    justifyContent: 'unset',
-    transition: theme.transitions.create('color'),
-  },
-  ItemIcon: {
-    width: NAVBAR_WIDTH,
-    height: 64,
-    flexShrink: 0,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ItemText: {
-    display: 'flex',
-    flexShrink: 0,
-    width: EXPANDED_NAVBAR_WIDTH - NAVBAR_WIDTH,
-    alignItems: 'center',
-    fontSize: '1.15em',
-    paddingLeft: 12,
-    paddingRight: 12,
-  },
-  LargeItemText: {
-    fontSize: '2.5em',
-  },
+const NavbarContainer = styled(motion.create(Box))(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper,
+  height: '100%',
+  overflowX: 'hidden',
+  position: 'fixed',
+  zIndex: theme.zIndex.appBar,
 }));
 
-const MotionBox = motion.custom(Box);
-const MotionListItem = motion.custom(ListItem);
+const NavbarItem = styled(ListItem, {
+  shouldForwardProp: (prop) => !['button', 'dense', 'disableGutters'].includes(prop),
+})(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  textDecoration: 'none',
+  justifyContent: 'unset',
+  transition: theme.transitions.create('color'),
+}));
+
+const ItemIcon = styled(motion.create(Box))({
+  width: NAVBAR_WIDTH,
+  height: 64,
+  flexShrink: 0,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+});
+
+const ItemText = styled(Typography)({
+  display: 'flex',
+  flexShrink: 0,
+  width: EXPANDED_NAVBAR_WIDTH - NAVBAR_WIDTH,
+  alignItems: 'center',
+  fontSize: '1.15em',
+  paddingLeft: 12,
+  paddingRight: 12,
+});
+
+const LargeItemText = styled(ItemText)({
+  fontSize: '2.5em',
+});
+
+const MotionBox = motion.create(Box);
+const MotionNavbarItem = motion.create(NavbarItem);
 
 const Navbar = memo(() => {
-  const styles = useNavbarStyles();
   const theme = useTheme();
   const location = useLocation();
 
@@ -110,44 +114,40 @@ const Navbar = memo(() => {
   );
 
   return (
-    <MotionBox {...navbarMotion} classes={{ root: styles.Container }}>
-      <ListItem disableGutters>
-        <MotionBox {...iconMotion} classes={{ root: styles.ItemIcon }}>
+    <NavbarContainer {...navbarMotion}>
+      <ListItem>
+        <ItemIcon {...iconMotion}>
           <Suspense fallback={<div />}>
             <Logo style={{ fontSize: NAVBAR_WIDTH - 32 }} />
           </Suspense>
-        </MotionBox>
-        <Typography
-          variant="button"
-          classes={{ root: [styles.ItemText, styles.LargeItemText].join(' ') }}>
+        </ItemIcon>
+        <LargeItemText variant="button">
           USAPA
-        </Typography>
+        </LargeItemText>
       </ListItem>
       {pages.map((page, i) =>
         page.showInNavbar === true ? (
-          <MotionListItem
-            button
-            dense
-            disableGutters
+          <MotionNavbarItem
+            key={page.pageLink}
             {...itemMotion}
             animate={location.pathname === page.pageLink ? 'focused' : 'normal'}
             component={Link}
-            classes={{ root: styles.Item }}
             to={page.pageLink}
-            key={page.pageLink}>
-            <MotionBox
+            sx={{ cursor: 'pointer' }} // Add cursor pointer instead of button prop
+          >
+            <ItemIcon
               custom={i + 1}
               {...iconMotion}
-              classes={{ root: styles.ItemIcon }}>
+            >
               <page.navbarIcon style={{ fontSize: 28 }} />
-            </MotionBox>
-            <Typography variant="button" classes={{ root: styles.ItemText }}>
+            </ItemIcon>
+            <ItemText variant="button">
               {page.displayName}
-            </Typography>
-          </MotionListItem>
+            </ItemText>
+          </MotionNavbarItem>
         ) : null,
       )}
-    </MotionBox>
+    </NavbarContainer>
   );
 });
 

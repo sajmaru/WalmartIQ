@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect } from 'react';
-import { Box } from '@material-ui/core';
-import { makeStyles } from '@material-ui/styles';
+import { Box } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import { AnimatePresence } from 'framer-motion';
 import useSWR from 'swr';
 import Navbar, { NAVBAR_WIDTH } from './components/Navbar';

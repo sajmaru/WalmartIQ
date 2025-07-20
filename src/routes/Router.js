@@ -1,13 +1,12 @@
 import React, { lazy } from 'react';
-import { Switch, Route, Redirect, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import {
   HomeOutlined as DashboardIcon,
   HouseOutlined as WarehouseDashboardIcon,
   CloudOutlined as WeatherDashboardIcon,
   FolderOpen as PDFDirectoryIcon,
   TrendingUpOutlined as RatesDashboardIcon,
-  PersonOutlined as AdminPanelIcon,
-} from '@material-ui/icons';
+} from '@mui/icons-material';
 
 const Welcome = lazy(() => import('../views/Welcome'));
 const Dashboard = lazy(() => import('../views/Dashboard'));
@@ -15,7 +14,6 @@ const WeatherDashboard = lazy(() => import('../views/WeatherDashboard'));
 const WarehouseDashboard = lazy(() => import('../views/WarehouseDashboard'));
 const PDFDirectory = lazy(() => import('../views/PDFDirectory'));
 const RatesDashboard = lazy(() => import('../views/RatesDashboard'));
-const AdminPanel = lazy(() => import('../views/AdminPanel'));
 
 const dashboardVariants = [
   '/year/:year',
@@ -64,13 +62,6 @@ export const pages = [
     navbarIcon: PDFDirectoryIcon,
   },
   {
-    pageLink: '/admin',
-    component: AdminPanel,
-    displayName: 'Admin',
-    showInNavbar: true,
-    navbarIcon: AdminPanelIcon,
-  },
-  {
     pageLink: '/welcome',
     component: Welcome,
   },
@@ -105,17 +96,16 @@ const Router = () => {
   const location = useLocation();
 
   return (
-    <Switch location={location}>
+    <Routes location={location}>
       {pages.map((page) => (
         <Route
-          exact
           key={page.pageLink}
           path={page.pageLink}
-          component={page.component}
+          element={<page.component />}
         />
       ))}
-      <Redirect to="/" />
-    </Switch>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 };
 

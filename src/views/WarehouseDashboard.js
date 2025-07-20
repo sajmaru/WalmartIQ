@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { MenuItem, Grid, Box } from '@material-ui/core';
+import { MenuItem, Grid, Box } from '@mui/material';
 import useSWR from 'swr';
 import AnimatedEnter from '../components/AnimatedEnter';
 import Select from '../components/MinimalSelect';
@@ -44,10 +44,10 @@ const WarehouseDashboard = () => {
           title="Warehouse"
           actions={
             <>
-              <Select {...state.bind}>
-                <MenuItem value={INDIA_STATE_CODE}>All States</MenuItem>
+              <Select id="state-select" {...state.bind}>
+                <MenuItem key={INDIA_STATE_CODE} value={INDIA_STATE_CODE}>All States</MenuItem>
                 {dropdownStates.map(({ name, code }) => (
-                  <MenuItem value={code} key={code}>
+                  <MenuItem key={code} value={code}>
                     {name}
                   </MenuItem>
                 ))}

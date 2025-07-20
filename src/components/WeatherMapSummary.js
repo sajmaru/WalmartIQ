@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Grid, MenuItem } from '@material-ui/core';
+import { Box, Grid, MenuItem } from '@mui/material';
 import WeatherMap from '../charts/Weather/WeatherMap';
 import WeatherSummaryCards from '../charts/Weather/WeatherSummaryCards';
 import SuspenseProgress from './SuspenseProgress';
@@ -23,15 +23,15 @@ const WeatherMapSummary = () => {
               flex: 1,
               justifyContent: 'space-between',
             }}>
-            <Select dense {...on.bind}>
+            <Select id="weather-param-select" dense {...on.bind}>
               {Object.entries(WEATHER_PARAMS).map(([value, name]) => (
-                <MenuItem value={value}>{name}</MenuItem>
+                <MenuItem key={value} value={value}>{name}</MenuItem>
               ))}
             </Select>
-            <Select dense {...month.bind}>
-              <MenuItem value={ALL_MONTHS_VALUE}>All months</MenuItem>
+            <Select id="month-select" dense {...month.bind}>
+              <MenuItem key={ALL_MONTHS_VALUE} value={ALL_MONTHS_VALUE}>All months</MenuItem>
               {MONTH_NAMES.map((m, index) => (
-                <MenuItem value={index}>{m}</MenuItem>
+                <MenuItem key={index} value={index}>{m}</MenuItem>
               ))}
             </Select>
           </Box>

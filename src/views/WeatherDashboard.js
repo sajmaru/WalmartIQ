@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { MenuItem } from '@material-ui/core';
+import { MenuItem } from '@mui/material';
 import useSWR from 'swr';
 import AnimatedEnter from '../components/AnimatedEnter';
 import Select from '../components/MinimalSelect';
@@ -58,17 +58,17 @@ const WeatherDashboard = () => {
         title={`${year === LATEST_YEAR ? 'Predicted' : 'Historic'} Weather`}
         actions={
           <>
-            <Select {...state.bind}>
-              <MenuItem value={INDIA_STATE_CODE}>All States</MenuItem>
+            <Select id="state-select" {...state.bind}>
+              <MenuItem key={INDIA_STATE_CODE} value={INDIA_STATE_CODE}>All States</MenuItem>
               {dropdownStates.map(({ name, code }) => (
-                <MenuItem value={code} key={code}>
+                <MenuItem key={code} value={code}>
                   {name}
                 </MenuItem>
               ))}
             </Select>
-            <Select {...selectedYear.bind}>
+            <Select id="year-select" {...selectedYear.bind}>
               {dropdownYears.map((dropdownYear) => (
-                <MenuItem value={dropdownYear} key={dropdownYear}>
+                <MenuItem key={dropdownYear} value={dropdownYear}>
                   {dropdownYear}
                 </MenuItem>
               ))}

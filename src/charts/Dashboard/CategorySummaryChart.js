@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Grid, Collapse, useTheme } from '@material-ui/core';
+import { Box, Grid, Collapse, useTheme } from '@mui/material';
 import useSWR from 'swr';
 
 import CategoryCard from '../../components/CategoryCard';

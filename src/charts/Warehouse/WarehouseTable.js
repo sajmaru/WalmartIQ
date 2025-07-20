@@ -1,25 +1,22 @@
-import React, { useState, useCallback, useMemo } from 'react';
 import {
-  Toolbar,
-  Typography,
   Paper,
   Table,
-  TableHead,
-  TableSortLabel,
-  TableRow,
   TableCell,
   TableContainer,
+  TableHead,
   TablePagination,
-  IconButton,
-  Tooltip,
-} from '@material-ui/core';
-import { CloudDownload } from '@material-ui/icons';
+  TableRow,
+  TableSortLabel,
+  Toolbar,
+  Typography,
+  TableBody,
+} from '@mui/material';
+import { useCallback, useMemo, useState } from 'react';
 import useSWR from 'swr';
-import csvDownload from 'json-to-csv-export';
 import AnimatedEnter from '../../components/AnimatedEnter';
-import useRouting from '../../routes/useRouting';
-import { API_HOST_URL, STATE_NAMES, INDIA_STATE_CODE } from '../../constants';
+import { API_HOST_URL, INDIA_STATE_CODE, STATE_NAMES } from '../../constants';
 import { readableNumber, titleCase } from '../../helpers';
+import useRouting from '../../routes/useRouting';
 
 const descendingComparator = (a, b, orderBy) => {
   if (b[orderBy] < a[orderBy]) {
@@ -103,72 +100,51 @@ const WarehouseTable = () => {
           <Typography variant="h6" style={{ flex: 1 }}>
             Warehouses in {STATE_NAMES[stateCode]}
           </Typography>
-          <Tooltip title="Download">
-            <IconButton
-              onClick={() =>
-                csvDownload(
-                  values.map(
-                    ({
-                      type,
-                      warehouse,
-                      total: capacity,
-                      stateCode: thatStateCode,
-                      districtCode,
-                    }) => ({
-                      type,
-                      warehouse,
-                      capacity,
-                      state: STATE_NAMES[thatStateCode],
-                      district: titleCase(districtCode.split('-')[1]),
-                    }),
-                  ),
-                  `Warehouses ${STATE_NAMES[stateCode]}.csv`,
-                )
-              }>
-              <CloudDownload />
-            </IconButton>
-          </Tooltip>
         </Toolbar>
         <TableContainer>
           <Table>
             <TableHead>
-              {headCells.map((headCell) => (
-                <TableCell
-                  key={headCell.id}
-                  align={headCell.numeric ? 'right' : 'left'}
-                  padding={headCell.disablePadding ? 'none' : 'default'}
-                  sortDirection={orderBy === headCell.id ? order : false}>
-                  <TableSortLabel
-                    active={orderBy === headCell.id}
-                    direction={orderBy === headCell.id ? order : 'asc'}
-                    onClick={createSortHandler(headCell.id)}>
-                    {headCell.label}
-                  </TableSortLabel>
-                </TableCell>
-              ))}
+              <TableRow>
+                {headCells.map((headCell) => (
+                  <TableCell
+                    key={headCell.id}
+                    align={headCell.numeric ? 'right' : 'left'}
+                    padding={headCell.disablePadding ? 'none' : 'normal'}
+                    sortDirection={orderBy === headCell.id ? order : false}>
+                    <TableSortLabel /* ... existing props ... */>
+                      {headCell.label}
+                    </TableSortLabel>
+                  </TableCell>
+                ))}
+              </TableRow>
             </TableHead>
-            {stableSort(values, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map(
-                ({
-                  type,
-                  total: capacity,
-                  warehouse,
-                  stateCode: thatStateCode,
-                  districtCode,
-                }) => (
-                  <TableRow>
-                    <TableCell>{type}</TableCell>
-                    <TableCell>{warehouse}</TableCell>
-                    <TableCell>{readableNumber(capacity)}</TableCell>
-                    <TableCell>
-                      {stateCode === INDIA_STATE_CODE
-                        ? STATE_NAMES[thatStateCode]
-                        : titleCase(districtCode.split('-')[1])}
-                    </TableCell>
-                  </TableRow>
-                ),
-              )}
+            <TableBody>
+              {stableSort(values, getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map(
+                  (
+                    {
+                      type,
+                      total: capacity,
+                      warehouse,
+                      stateCode: thatStateCode,
+                      districtCode,
+                    },
+                    index,
+                  ) => (
+                    <TableRow key={`warehouse-${index}`}>
+                      <TableCell>{type}</TableCell>
+                      <TableCell>{warehouse}</TableCell>
+                      <TableCell>{readableNumber(capacity)}</TableCell>
+                      <TableCell>
+                        {stateCode === INDIA_STATE_CODE
+                          ? STATE_NAMES[thatStateCode]
+                          : titleCase(districtCode.split('-')[1])}
+                      </TableCell>
+                    </TableRow>
+                  ),
+                )}
+            </TableBody>
           </Table>
         </TableContainer>
         <TablePagination
@@ -177,11 +153,12 @@ const WarehouseTable = () => {
           count={values.length}
           rowsPerPage={rowsPerPage}
           page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
     </AnimatedEnter>
   );
 };
 export default WarehouseTable;
+

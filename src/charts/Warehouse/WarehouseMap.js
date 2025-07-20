@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useEffect, memo } from 'react';
-import { Box, useTheme } from '@material-ui/core';
+import { Box, useTheme } from '@mui/material';
 import { TableTooltip } from '@nivo/tooltip';
 import { color } from 'd3-color';
 import useSWR from 'swr';

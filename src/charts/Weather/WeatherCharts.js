@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Box, CardContent, Card } from '@material-ui/core';
+import { Box, CardContent, Card } from '@mui/material';
 import useSWR from 'swr';
 import WeatherParamChart from './WeatherParamChart';
 import { API_HOST_URL, INDIA_STATE_CODE } from '../../constants';

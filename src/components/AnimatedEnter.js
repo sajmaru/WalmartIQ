@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
-import { Box } from '@material-ui/core';
-import { useTheme } from '@material-ui/styles';
+import { Box } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { motion } from 'framer-motion';
 
-const MotionBox = motion.custom(Box);
+const MotionBox = motion.create(Box);
 
 const AnimatedEnter = ({ staggerPosition = 0, loaded = true, ...props }) => {
   const theme = useTheme();

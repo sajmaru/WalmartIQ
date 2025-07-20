@@ -7,7 +7,7 @@ import {
   CardContent,
   CardMedia,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import useSWR from 'swr';
 import AnimatedEnter from '../components/AnimatedEnter';
 import Header from '../components/Header';
@@ -15,7 +15,7 @@ import MinimalSelect from '../components/MinimalSelect';
 import useInput from '../hooks/useInput';
 import { API_HOST_URL } from '../constants';
 
-const LiveData = () => {
+const PDFDirectory = () => {
   const { data: values } = useSWR(
     `${API_HOST_URL}api/directory/getDirectoryList`,
   );
@@ -33,9 +33,14 @@ const LiveData = () => {
         large
         title="PDF Directory"
         actions={
-          <MinimalSelect {...categories.bind}>
-            {categoryValues.map((value) => (
-              <MenuItem {...{ value }}>{value}</MenuItem>
+          <MinimalSelect 
+            id="category-select"
+            {...categories.bind}
+          >
+            {categoryValues.map((value, index) => (
+              <MenuItem key={`category-${index}`} value={value}>
+                {value}
+              </MenuItem>
             ))}
           </MinimalSelect>
         }
@@ -44,15 +49,17 @@ const LiveData = () => {
         <Grid container spacing={3}>
           {values
             .filter((value) => value.category === categories.value)
-            .map((value) => (
-              <Grid item md={3} sm={4} xs={6}>
+            .map((value, index) => (
+              <Grid item md={3} sm={4} xs={6} key={`pdf-${index}`}>
                 <Card
+                  sx={{ cursor: 'pointer' }}
                   onClick={() => {
                     window.open(
                       `${API_HOST_URL}api/directory/files/${value.filename}`,
                       '_blank',
                     );
-                  }}>
+                  }}
+                >
                   <CardMedia
                     image={`${API_HOST_URL}api/directory/thumbnails/${value.thumbnail}`}
                     title={value.name}
@@ -70,4 +77,4 @@ const LiveData = () => {
   );
 };
 
-export default LiveData;
+export default PDFDirectory;

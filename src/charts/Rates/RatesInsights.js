@@ -5,7 +5,7 @@ import {
   Grid,
   Card,
   CardContent,
-} from '@material-ui/core';
+} from '@mui/material';
 import useSWR from 'swr';
 import AnimatedEnter from '../../components/AnimatedEnter';
 import { API_HOST_URL } from '../../constants';
@@ -19,17 +19,17 @@ const RateInsights = () => {
   return (
     <AnimatedEnter>
       <Grid container spacing={3}>
-        {data.map(({ crop, years, rates, insights }) => (
-          <Grid item xs={12} md={6}>
+        {data.map(({ crop, years, rates, insights }, index) => (
+          <Grid item xs={12} md={6} key={`rate-insight-${crop}-${index}`}>
             <Card variant="outlined" style={{ overflow: 'visible' }}>
               <CardContent>
                 <Typography variant="h6">{crop}</Typography>
                 <PredictedRateChart
-                  {...{ rates }}
-                  {...{ years }}
+                  rates={rates}
+                  years={years}
                   color={theme.palette.primary.dark}
                 />
-                <RateSummaryCard {...{ insights }} />
+                <RateSummaryCard insights={insights} />
               </CardContent>
             </Card>
           </Grid>

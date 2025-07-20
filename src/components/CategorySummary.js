@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Box } from '@material-ui/core';
+import { Button, Box } from '@mui/material';
 
 import Header from './Header';
 import SuspenseProgress from './SuspenseProgress';

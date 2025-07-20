@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Box, ButtonGroup, MenuItem } from '@material-ui/core';
+import { Button, Box, ButtonGroup, MenuItem } from '@mui/material';
 
 import Header from './Header';
 import SuspenseProgress from './SuspenseProgress';
@@ -38,7 +38,7 @@ const ProductionxWeather = () => {
                 ),
               )}
             </ButtonGroup>
-            <Select {...weatherParam.bind} dense>
+            <Select id="weather-param-select" {...weatherParam.bind} dense>
               {Object.entries(weatherConstants).map(([value, name]) => (
                 <MenuItem value={value} key={value}>
                   {name}

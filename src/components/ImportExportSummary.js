@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, ButtonGroup, Button, MenuItem } from '@material-ui/core';
+import { Box, ButtonGroup, Button, MenuItem } from '@mui/material';
 
 import Header from './Header';
 import SuspenseProgress from './SuspenseProgress';
@@ -24,9 +24,9 @@ const ImportExportSummary = () => {
         title="Trade"
         actions={
           <>
-            <Select dense {...year.bind}>
+            <Select id="year-select" dense {...year.bind}>
               {['2016-17', '2017-18', '2018-19'].map((name) => (
-                <MenuItem value={name.split('-')[0]}>{name}</MenuItem>
+                <MenuItem key={name} value={name.split('-')[0]}>{name}</MenuItem>
               ))}
             </Select>
             <ButtonGroup disableElevation size="small">

@@ -1,25 +1,25 @@
-import React, { useMemo, useRef, useEffect, memo, useCallback } from 'react';
-import { Box } from '@material-ui/core';
+import { Box } from '@mui/material';
 import { TableTooltip } from '@nivo/tooltip';
 import { color } from 'd3-color';
+import { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import useSWR from 'swr';
-import { ResponsiveGeoMap } from '../../components/GeoMap';
 import AnimatedEnter from '../../components/AnimatedEnter';
 import Disclaimer from '../../components/Disclaimer';
-import useMap from '../../hooks/useMap';
+import { ResponsiveGeoMap } from '../../components/GeoMap';
 import useConstants from '../../hooks/useConstants';
+import useMap from '../../hooks/useMap';
 import useRouting from '../../routes/useRouting';
 
 import {
-  STATE_NAMES,
-  STATE_CODES,
-  INDIA_STATE_CODE,
-  API_HOST_URL,
-  ALL_MONTHS_VALUE,
-  MONTH_NAMES,
-  WEATHER_PARAMS,
-  WEATHER_UNITS,
-  WEATHER_COLORS,
+    ALL_MONTHS_VALUE,
+    API_HOST_URL,
+    INDIA_STATE_CODE,
+    MONTH_NAMES,
+    STATE_CODES,
+    STATE_NAMES,
+    WEATHER_COLORS,
+    WEATHER_PARAMS,
+    WEATHER_UNITS,
 } from '../../constants';
 import { readableNumber } from '../../helpers';
 

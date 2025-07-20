@@ -1,6 +1,7 @@
 import {
   Paper,
   Table,
+  TableBody,
   TableCell,
   TableContainer,
   TableHead,
@@ -9,7 +10,6 @@ import {
   TableSortLabel,
   Toolbar,
   Typography,
-  TableBody,
 } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
 import useSWR from 'swr';
@@ -20,8 +20,8 @@ import {
   CROP_METRICS_NAMES,
   CROP_METRICS_UNITS,
   CROP_NAMES,
-  INDIA_STATE_CODE,
   STATE_NAMES,
+  USA_STATE_CODE,
 } from '../../constants';
 import { readableNumber, titleCase } from '../../helpers';
 import useConstants from '../../hooks/useConstants';
@@ -56,23 +56,24 @@ const stableSort = (array, comparator) => {
 const ProductionTable = () => {
   const { LATEST_YEAR } = useConstants();
   const {
-    stateCode = INDIA_STATE_CODE,
+    stateCode = USA_STATE_CODE,
     year = LATEST_YEAR,
     cropCode = ALL_CROPS_CODE,
   } = useRouting();
-  
+
   const { data: values = [] } = useSWR(
     `${API_HOST_URL}api/dashboard/getCropData?stateCode=${stateCode}&year=${year}&cropCode=${cropCode}`,
     {
       fallbackData: [],
-      onError: (err) => console.log('🎭 Using fallback production data due to:', err.message)
-    }
+      onError: (err) =>
+        console.log('🎭 Using fallback production data due to:', err.message),
+    },
   );
 
   const headCells = useMemo(
     () => [
       {
-        id: stateCode === INDIA_STATE_CODE ? 'stateCode' : 'districtCode',
+        id: stateCode === USA_STATE_CODE ? 'stateCode' : 'districtCode',
         label: 'Location',
       },
       { id: 'year', label: 'Year' },
@@ -119,20 +120,23 @@ const ProductionTable = () => {
   );
 
   // Helper function to safely get location name
-  const getLocationName = useCallback((thatStateCode, districtCode) => {
-    if (stateCode === INDIA_STATE_CODE) {
-      return STATE_NAMES[thatStateCode] || thatStateCode || 'Unknown';
-    } else {
-      if (!districtCode) return 'Unknown District';
-      if (typeof districtCode !== 'string') return String(districtCode);
-      
-      const parts = districtCode.split('-');
-      if (parts.length > 1) {
-        return titleCase(parts[1]);
+  const getLocationName = useCallback(
+    (thatStateCode, districtCode) => {
+      if (stateCode === USA_STATE_CODE) {
+        return STATE_NAMES[thatStateCode] || thatStateCode || 'Unknown';
+      } else {
+        if (!districtCode) return 'Unknown District';
+        if (typeof districtCode !== 'string') return String(districtCode);
+
+        const parts = districtCode.split('-');
+        if (parts.length > 1) {
+          return titleCase(parts[1]);
+        }
+        return titleCase(districtCode);
       }
-      return titleCase(districtCode);
-    }
-  }, [stateCode]);
+    },
+    [stateCode],
+  );
 
   return (
     <AnimatedEnter>
@@ -177,18 +181,23 @@ const ProductionTable = () => {
                       },
                       index,
                     ) => (
-                      <TableRow key={`production-${thatStateCode}-${thatCropCode}-${index}`}>
+                      <TableRow
+                        key={`production-${thatStateCode}-${thatCropCode}-${index}`}>
                         <TableCell>
                           {getLocationName(thatStateCode, districtCode)}
                         </TableCell>
                         <TableCell>{year}</TableCell>
-                        <TableCell>{CROP_NAMES[thatCropCode] || thatCropCode}</TableCell>
+                        <TableCell>
+                          {CROP_NAMES[thatCropCode] || thatCropCode}
+                        </TableCell>
                         {/* FIX: Add unique keys */}
-                        {Object.entries(params).map(([paramKey, value], paramIndex) => (
-                          <TableCell key={`param-${paramKey}-${paramIndex}`}>
-                            {readableNumber(value)}
-                          </TableCell>
-                        ))}
+                        {Object.entries(params).map(
+                          ([paramKey, value], paramIndex) => (
+                            <TableCell key={`param-${paramKey}-${paramIndex}`}>
+                              {readableNumber(value)}
+                            </TableCell>
+                          ),
+                        )}
                       </TableRow>
                     ),
                   )

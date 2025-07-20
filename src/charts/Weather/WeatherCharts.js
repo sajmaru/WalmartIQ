@@ -1,14 +1,14 @@
-import React, { useMemo } from 'react';
-import { Box, CardContent, Card } from '@mui/material';
+import { Box, Card, CardContent } from '@mui/material';
+import { useMemo } from 'react';
 import useSWR from 'swr';
-import WeatherParamChart from './WeatherParamChart';
-import { API_HOST_URL, INDIA_STATE_CODE } from '../../constants';
-import useRouting from '../../routes/useRouting';
+import { API_HOST_URL, USA_STATE_CODE } from '../../constants';
 import useConstants from '../../hooks/useConstants';
+import useRouting from '../../routes/useRouting';
+import WeatherParamChart from './WeatherParamChart';
 
 const WeatherCharts = ({ on, n }) => {
   const { LATEST_YEAR } = useConstants();
-  const { stateCode = INDIA_STATE_CODE, year = LATEST_YEAR } = useRouting();
+  const { stateCode = USA_STATE_CODE, year = LATEST_YEAR } = useRouting();
 
   const { data } = useSWR(
     `${API_HOST_URL}api/weather/getWeatherDataTotal?stateCode=${stateCode}&on=${on}&year=${year}&n=${n}`,
@@ -43,3 +43,4 @@ const WeatherCharts = ({ on, n }) => {
 };
 
 export default WeatherCharts;
+

@@ -1,29 +1,29 @@
-import React, { useEffect } from 'react';
-import { MenuItem, Grid, Box } from '@mui/material';
+import { Box, Grid, MenuItem } from '@mui/material';
+import { useEffect } from 'react';
 import useSWR from 'swr';
-import AnimatedEnter from '../components/AnimatedEnter';
-import Select from '../components/MinimalSelect';
-import Header from '../components/Header';
-import SuspenseProgress from '../components/SuspenseProgress';
 import WarehouseMap from '../charts/Warehouse/WarehouseMap';
 import WarehouseSummary from '../charts/Warehouse/WarehouseSummary';
+import AnimatedEnter from '../components/AnimatedEnter';
+import Header from '../components/Header';
+import Select from '../components/MinimalSelect';
 import NoData from '../components/NoData';
+import SuspenseProgress from '../components/SuspenseProgress';
 import useInput from '../hooks/useInput';
 import useRouting from '../routes/useRouting';
 
 import {
-  UNASSIGNED_STATE_CODE,
-  INDIA_STATE_CODE,
-  STATE_NAMES_ARRAY,
   API_HOST_URL,
+  STATE_NAMES_ARRAY,
+  UNASSIGNED_STATE_CODE,
+  USA_STATE_CODE,
 } from '../constants';
 
 const dropdownStates = STATE_NAMES_ARRAY.filter(
-  ({ code }) => code !== UNASSIGNED_STATE_CODE && code !== INDIA_STATE_CODE,
+  ({ code }) => code !== UNASSIGNED_STATE_CODE && code !== USA_STATE_CODE,
 );
 
 const WarehouseDashboard = () => {
-  const { goTo, stateCode = INDIA_STATE_CODE } = useRouting();
+  const { goTo, stateCode = USA_STATE_CODE } = useRouting();
 
   const state = useInput(stateCode);
 
@@ -45,7 +45,9 @@ const WarehouseDashboard = () => {
           actions={
             <>
               <Select id="state-select" {...state.bind}>
-                <MenuItem key={INDIA_STATE_CODE} value={INDIA_STATE_CODE}>All States</MenuItem>
+                <MenuItem key={USA_STATE_CODE} value={USA_STATE_CODE}>
+                  All States
+                </MenuItem>
                 {dropdownStates.map(({ name, code }) => (
                   <MenuItem key={code} value={code}>
                     {name}
@@ -85,3 +87,4 @@ const WarehouseDashboardContent = ({ stateCode }) => {
 };
 
 export default WarehouseDashboard;
+

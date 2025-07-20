@@ -1,37 +1,33 @@
-import React, { useEffect, useMemo } from 'react';
 import { MenuItem } from '@mui/material';
+import { useEffect, useMemo } from 'react';
 import useSWR from 'swr';
 import AnimatedEnter from '../components/AnimatedEnter';
-import Select from '../components/MinimalSelect';
 import Header from '../components/Header';
-import SuspenseProgress from '../components/SuspenseProgress';
+import Select from '../components/MinimalSelect';
 import NoData from '../components/NoData';
-import WeatherMapSummary from '../components/WeatherMapSummary';
+import SuspenseProgress from '../components/SuspenseProgress';
 import WeatherIndicesSummary from '../components/WeatherIndicesSummary';
-import useInput from '../hooks/useInput';
+import WeatherMapSummary from '../components/WeatherMapSummary';
 import useConstants from '../hooks/useConstants';
+import useInput from '../hooks/useInput';
 import useRouting from '../routes/useRouting';
 
+import WeatherHistory from '../components/WeatherHistory';
 import {
-  UNASSIGNED_STATE_CODE,
-  INDIA_STATE_CODE,
-  STATE_NAMES_ARRAY,
   API_HOST_URL,
+  STATE_NAMES_ARRAY,
+  UNASSIGNED_STATE_CODE,
+  USA_STATE_CODE,
 } from '../constants';
 import { range } from '../helpers';
-import WeatherHistory from '../components/WeatherHistory';
 
 const dropdownStates = STATE_NAMES_ARRAY.filter(
-  ({ code }) => code !== UNASSIGNED_STATE_CODE && code !== INDIA_STATE_CODE,
+  ({ code }) => code !== UNASSIGNED_STATE_CODE && code !== USA_STATE_CODE,
 );
 
 const WeatherDashboard = () => {
   const { LATEST_YEAR } = useConstants();
-  const {
-    goTo,
-    stateCode = INDIA_STATE_CODE,
-    year = LATEST_YEAR,
-  } = useRouting();
+  const { goTo, stateCode = USA_STATE_CODE, year = LATEST_YEAR } = useRouting();
 
   const dropdownYears = useMemo(
     () => Array.from(range(LATEST_YEAR - 10, LATEST_YEAR)).reverse(),
@@ -59,7 +55,9 @@ const WeatherDashboard = () => {
         actions={
           <>
             <Select id="state-select" {...state.bind}>
-              <MenuItem key={INDIA_STATE_CODE} value={INDIA_STATE_CODE}>All States</MenuItem>
+              <MenuItem key={USA_STATE_CODE} value={USA_STATE_CODE}>
+                All States
+              </MenuItem>
               {dropdownStates.map(({ name, code }) => (
                 <MenuItem key={code} value={code}>
                   {name}
@@ -102,3 +100,4 @@ const WeatherDashboardContent = ({ stateCode, year }) => {
 };
 
 export default WeatherDashboard;
+

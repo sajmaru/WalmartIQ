@@ -12,9 +12,9 @@ import useRouting from '../../routes/useRouting';
 
 import {
   API_HOST_URL,
-  INDIA_STATE_CODE,
   STATE_CODES,
   STATE_NAMES,
+  USA_STATE_CODE,
   WEATHER_INDICES,
   WEATHER_INDICES_COLORS,
   WEATHER_INDICES_UNITS,
@@ -23,13 +23,9 @@ import { readableNumber } from '../../helpers';
 
 export const WeatherIndicesMap = memo(({ setMapHeight = () => {}, on }) => {
   const { LATEST_YEAR } = useContants();
-  const {
-    goTo,
-    stateCode = INDIA_STATE_CODE,
-    year = LATEST_YEAR,
-  } = useRouting();
+  const { goTo, stateCode = USA_STATE_CODE, year = LATEST_YEAR } = useRouting();
 
-  const { data: features } = useMap(stateCode, stateCode !== INDIA_STATE_CODE);
+  const { data: features } = useMap(stateCode, stateCode !== USA_STATE_CODE);
   const { data: values } = useSWR(
     `${API_HOST_URL}api/${on}/get${on.toUpperCase()}Data?stateCode=${stateCode}&year=${year}&n=3`,
   );
@@ -58,9 +54,9 @@ export const WeatherIndicesMap = memo(({ setMapHeight = () => {}, on }) => {
     const paramColor = color(WEATHER_INDICES_COLORS[on]);
     const data = values.reduce((accData, { location, years }) => {
       const id =
-        stateCode === INDIA_STATE_CODE ? STATE_NAMES[location] : location;
+        stateCode === USA_STATE_CODE ? STATE_NAMES[location] : location;
       const name =
-        stateCode === INDIA_STATE_CODE
+        stateCode === USA_STATE_CODE
           ? STATE_NAMES[location]
           : location.split('-')[1];
       const thisValue = years[0].value;
@@ -83,7 +79,7 @@ export const WeatherIndicesMap = memo(({ setMapHeight = () => {}, on }) => {
           properties: { st_nm: stateName, district: districtName },
         } = props;
         return (
-          (stateCode === INDIA_STATE_CODE
+          (stateCode === USA_STATE_CODE
             ? data[stateName]?.locationColor
             : data[`${stateName}-${districtName}`.toUpperCase()]
                 ?.locationColor) || '#ffffff'
@@ -93,10 +89,10 @@ export const WeatherIndicesMap = memo(({ setMapHeight = () => {}, on }) => {
         properties: { st_nm: stateName, district: districtName },
       }) => {
         const id =
-          stateCode === INDIA_STATE_CODE
+          stateCode === USA_STATE_CODE
             ? stateName
             : `${stateName}-${districtName}`.toUpperCase();
-        if (stateCode === INDIA_STATE_CODE && !!data[id])
+        if (stateCode === USA_STATE_CODE && !!data[id])
           goTo({ stateCode: STATE_CODES[stateName] }, '/weather');
       },
       tooltip: ({
@@ -105,14 +101,14 @@ export const WeatherIndicesMap = memo(({ setMapHeight = () => {}, on }) => {
         },
       }) => {
         const id =
-          stateCode === INDIA_STATE_CODE
+          stateCode === USA_STATE_CODE
             ? stateName
             : `${stateName}-${districtName}`.toUpperCase();
         return (
           <TableTooltip
             title={
               <b>
-                {stateCode === INDIA_STATE_CODE ? stateName : districtName} -{' '}
+                {stateCode === USA_STATE_CODE ? stateName : districtName} -{' '}
                 {WEATHER_INDICES[on]}
               </b>
             }

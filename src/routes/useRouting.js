@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
+import { ALL_CROPS_CODE, USA_STATE_CODE } from '../constants';
 import useConstants from '../hooks/useConstants';
-import { INDIA_STATE_CODE, ALL_CROPS_CODE } from '../constants';
 
 const useRouting = () => {
   const location = useLocation();
@@ -13,25 +13,25 @@ const useRouting = () => {
   const getPath = useCallback(
     (
       {
-        stateCode = INDIA_STATE_CODE,
+        stateCode = USA_STATE_CODE,
         cropCode = ALL_CROPS_CODE,
         year = LATEST_YEAR,
       },
       page = '',
     ) => {
       let path = page;
-      
+
       // Only add parameters if they differ from defaults
       if (year !== LATEST_YEAR) {
         path += `/year/${year}`;
       }
-      if (stateCode !== INDIA_STATE_CODE) {
+      if (stateCode !== USA_STATE_CODE) {
         path += `/state/${stateCode}`;
       }
       if (cropCode !== ALL_CROPS_CODE) {
         path += `/crop/${cropCode}`;
       }
-      
+
       // Ensure we have at least the base path
       return path || '/';
     },
@@ -42,14 +42,14 @@ const useRouting = () => {
     (newParams, page = '') => {
       const currentPath = location.pathname;
       const newPath = getPath(newParams, page);
-      
+
       console.log('🧭 Navigation:', {
         from: currentPath,
         to: newPath,
         params: newParams,
-        page
+        page,
       });
-      
+
       // Always navigate, even if path seems the same (force refresh)
       navigate(newPath, { replace: false });
     },
@@ -58,23 +58,23 @@ const useRouting = () => {
 
   // Parse current route parameters with proper defaults
   const currentParams = useMemo(() => {
-    const {
-      stateCode,
-      cropCode,
-      year,
-    } = params;
+    const { stateCode, cropCode, year } = params;
 
     // Ensure we always have valid values, never undefined
-    const safeStateCode = stateCode || INDIA_STATE_CODE;
+    const safeStateCode = stateCode || USA_STATE_CODE;
     const safeCropCode = cropCode || ALL_CROPS_CODE;
-    const safeYear = year ? (typeof year === 'string' ? parseInt(year, 10) : year) : LATEST_YEAR;
+    const safeYear = year
+      ? typeof year === 'string'
+        ? parseInt(year, 10)
+        : year
+      : LATEST_YEAR;
 
     return {
       stateCode: safeStateCode,
-      cropCode: safeCropCode, 
+      cropCode: safeCropCode,
       year: safeYear,
     };
-  }, [params, LATEST_YEAR, INDIA_STATE_CODE, ALL_CROPS_CODE]);
+  }, [params, LATEST_YEAR, USA_STATE_CODE, ALL_CROPS_CODE]);
 
   // Memoize the return value to prevent unnecessary re-renders
   const value = useMemo(

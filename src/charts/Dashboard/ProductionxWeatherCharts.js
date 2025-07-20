@@ -1,12 +1,12 @@
-import React, { useMemo } from 'react';
-import { Card, CardContent, Typography, Grid } from '@mui/material';
+import { Card, CardContent, Grid, Typography } from '@mui/material';
+import { useMemo } from 'react';
 import useSWR from 'swr';
 
-import CropProductionChart from './CropProductionChart';
-import useRouting from '../../routes/useRouting';
 import useContants from '../../hooks/useConstants';
+import useRouting from '../../routes/useRouting';
+import CropProductionChart from './CropProductionChart';
 
-import { INDIA_STATE_CODE, API_HOST_URL } from '../../constants';
+import { API_HOST_URL, USA_STATE_CODE } from '../../constants';
 import WeatherChart from './WeatherChart';
 
 const weatherConstants = {
@@ -20,7 +20,7 @@ const weatherConstants = {
 const ProductionxWeatherCharts = ({ on, weatherParam }) => {
   const { LATEST_YEAR } = useContants();
   const {
-    stateCode = INDIA_STATE_CODE,
+    stateCode = USA_STATE_CODE,
     cropCode,
     year = LATEST_YEAR,
   } = useRouting();
@@ -77,3 +77,4 @@ const ProductionxWeatherCharts = ({ on, weatherParam }) => {
 };
 
 export default ProductionxWeatherCharts;
+

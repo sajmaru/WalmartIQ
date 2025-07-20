@@ -1,36 +1,36 @@
-import React from 'react';
 import {
-  Grid,
+  Box,
   Card,
   CardContent,
+  Grid,
   Typography,
-  Box,
   useTheme,
 } from '@mui/material';
 import useSWR from 'swr';
 import AnimatedEnter from '../../components/AnimatedEnter';
-import SuspenseProgress from '../../components/SuspenseProgress';
 import DynamicText from '../../components/DynamicText';
-import useConstants from '../../hooks/useConstants';
-import useRouting from '../../routes/useRouting';
-import WeatherTable from './WeatherTable';
+import SuspenseProgress from '../../components/SuspenseProgress';
 import {
   API_HOST_URL,
-  INDIA_STATE_CODE,
+  USA_STATE_CODE,
   WEATHER_PARAMS,
   WEATHER_UNITS,
 } from '../../constants';
 import { readableNumber } from '../../helpers';
+import useConstants from '../../hooks/useConstants';
+import useRouting from '../../routes/useRouting';
+import WeatherTable from './WeatherTable';
 
 const WeatherSummaryCards = () => {
   const { LATEST_YEAR } = useConstants();
-  const { stateCode = INDIA_STATE_CODE, year = LATEST_YEAR } = useRouting();
+  const { stateCode = USA_STATE_CODE, year = LATEST_YEAR } = useRouting();
   const { data: values = [] } = useSWR(
     `${API_HOST_URL}api/weather/getWeatherDataCard?stateCode=${stateCode}&year=${year}`,
     {
       fallbackData: [],
-      onError: (err) => console.log('🎭 Using fallback weather card data due to:', err.message)
-    }
+      onError: (err) =>
+        console.log('🎭 Using fallback weather card data due to:', err.message),
+    },
   );
 
   const theme = useTheme();
@@ -40,7 +40,13 @@ const WeatherSummaryCards = () => {
       <Grid container spacing={1}>
         {/* FIX: Add unique key prop using param as identifier */}
         {values.map(({ param, value, change }, index) => (
-          <Grid item lg={3} md={3} sm={6} xs={6} key={`weather-card-${param}-${index}`}>
+          <Grid
+            item
+            lg={3}
+            md={3}
+            sm={6}
+            xs={6}
+            key={`weather-card-${param}-${index}`}>
             <Card variant="outlined">
               <CardContent>
                 <Typography variant="overline">

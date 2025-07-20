@@ -1,24 +1,27 @@
 // src/components/NoData.js - Complete fix with all required props
-import React, { memo } from 'react';
-import { Box, Card, Typography, CircularProgress } from '@mui/material';
-import { ResponsiveGeoMap } from './GeoMap';
-import AnimatedEnter from './AnimatedEnter';
+import { Box, Card, CircularProgress, Typography } from '@mui/material';
+import { memo } from 'react';
+import { USA_STATE_CODE } from '../constants';
 import useMap from '../hooks/useMap';
 import useRouting from '../routes/useRouting';
-import { INDIA_STATE_CODE } from '../constants';
+import AnimatedEnter from './AnimatedEnter';
+import { ResponsiveGeoMap } from './GeoMap';
 
 const NoData = memo(() => {
-  const { stateCode = INDIA_STATE_CODE } = useRouting();
-  const { data, error, isLoading } = useMap(stateCode, stateCode !== INDIA_STATE_CODE);
-  
+  const { stateCode = USA_STATE_CODE } = useRouting();
+  const { data, error, isLoading } = useMap(
+    stateCode,
+    stateCode !== USA_STATE_CODE,
+  );
+
   // Ensure data is always an array
   const features = Array.isArray(data) ? data : [];
-  
-  console.log('NoData render:', { 
-    stateCode, 
-    featuresLength: features.length, 
-    error: error?.message, 
-    isLoading 
+
+  console.log('NoData render:', {
+    stateCode,
+    featuresLength: features.length,
+    error: error?.message,
+    isLoading,
   });
 
   return (
@@ -31,10 +34,13 @@ const NoData = memo(() => {
           padding: 18,
           position: 'relative',
         }}>
-        
         {/* Loading */}
         {isLoading && (
-          <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="100%">
             <Card>
               <Box padding={4} display="flex" alignItems="center" gap={2}>
                 <CircularProgress size={24} />
@@ -46,7 +52,11 @@ const NoData = memo(() => {
 
         {/* Error */}
         {error && !isLoading && (
-          <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="100%">
             <Card>
               <Box padding={4}>
                 <Typography variant="h6" color="error">
@@ -79,7 +89,7 @@ const NoData = memo(() => {
               onClick={() => {}}
               tooltip={null}
             />
-            
+
             {/* Overlay */}
             <Box
               style={{
@@ -105,15 +115,15 @@ const NoData = memo(() => {
 
         {/* No features */}
         {features.length === 0 && !isLoading && !error && (
-          <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="100%">
             <Card>
               <Box padding={4} textAlign="center">
-                <Typography variant="h6">
-                  🗺️ No map data
-                </Typography>
-                <Typography variant="body2">
-                  State: {stateCode}
-                </Typography>
+                <Typography variant="h6">🗺️ No map data</Typography>
+                <Typography variant="body2">State: {stateCode}</Typography>
               </Box>
             </Card>
           </Box>

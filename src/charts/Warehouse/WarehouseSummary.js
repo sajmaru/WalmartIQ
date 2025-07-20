@@ -1,15 +1,14 @@
-import React from 'react';
-import { Grid, Card, CardContent, Typography } from '@mui/material';
+import { Card, CardContent, Grid, Typography } from '@mui/material';
 import useSWR from 'swr';
 import AnimatedEnter from '../../components/AnimatedEnter';
 import SuspenseProgress from '../../components/SuspenseProgress';
-import useRouting from '../../routes/useRouting';
-import { API_HOST_URL, INDIA_STATE_CODE } from '../../constants';
+import { API_HOST_URL, USA_STATE_CODE } from '../../constants';
 import { readableNumber } from '../../helpers';
+import useRouting from '../../routes/useRouting';
 import WarehouseTable from './WarehouseTable';
 
 const WarehouseSummary = () => {
-  const { stateCode = INDIA_STATE_CODE } = useRouting();
+  const { stateCode = USA_STATE_CODE } = useRouting();
   const { data: values } = useSWR(
     `${API_HOST_URL}api/storage/getStorageTotal?stateCode=${stateCode}`,
   );

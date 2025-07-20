@@ -2,53 +2,130 @@ export const HOST_URL = process.env.NODE_ENV === 'development'
   ? 'http://localhost:3000/' 
   : `${window.location.protocol}//${window.location.host}/`;
 
-console.log('🗺️ Map URL example:', `${HOST_URL}maps/india.json`);
+console.log('🗺️ Map URL example:', `${HOST_URL}maps/us.json`);
 console.log('🗺️ HOST_URL:', HOST_URL);
 console.log('🗺️ NODE_ENV:', process.env.NODE_ENV);
 
 export const API_HOST_URL = 'https://bd519d3f8f20.ngrok.io/';
 
 export const UNASSIGNED_STATE_CODE = 'UN';
-export const INDIA_STATE_CODE = 'TT';
+export const USA_STATE_CODE = 'US'; // Equivalent to previous INDIA_STATE_CODE
 
+// FIPS code to state information mapping (Continental US only - 48 states)
+export const US_STATE_FIPS = {
+  "01": { name: "Alabama", code: "AL" },
+  "04": { name: "Arizona", code: "AZ" },
+  "05": { name: "Arkansas", code: "AR" },
+  "06": { name: "California", code: "CA" },
+  "08": { name: "Colorado", code: "CO" },
+  "09": { name: "Connecticut", code: "CT" },
+  "10": { name: "Delaware", code: "DE" },
+  "12": { name: "Florida", code: "FL" },
+  "13": { name: "Georgia", code: "GA" },
+  "16": { name: "Idaho", code: "ID" },
+  "17": { name: "Illinois", code: "IL" },
+  "18": { name: "Indiana", code: "IN" },
+  "19": { name: "Iowa", code: "IA" },
+  "20": { name: "Kansas", code: "KS" },
+  "21": { name: "Kentucky", code: "KY" },
+  "22": { name: "Louisiana", code: "LA" },
+  "23": { name: "Maine", code: "ME" },
+  "24": { name: "Maryland", code: "MD" },
+  "25": { name: "Massachusetts", code: "MA" },
+  "26": { name: "Michigan", code: "MI" },
+  "27": { name: "Minnesota", code: "MN" },
+  "28": { name: "Mississippi", code: "MS" },
+  "29": { name: "Missouri", code: "MO" },
+  "30": { name: "Montana", code: "MT" },
+  "31": { name: "Nebraska", code: "NE" },
+  "32": { name: "Nevada", code: "NV" },
+  "33": { name: "New Hampshire", code: "NH" },
+  "34": { name: "New Jersey", code: "NJ" },
+  "35": { name: "New Mexico", code: "NM" },
+  "36": { name: "New York", code: "NY" },
+  "37": { name: "North Carolina", code: "NC" },
+  "38": { name: "North Dakota", code: "ND" },
+  "39": { name: "Ohio", code: "OH" },
+  "40": { name: "Oklahoma", code: "OK" },
+  "41": { name: "Oregon", code: "OR" },
+  "42": { name: "Pennsylvania", code: "PA" },
+  "44": { name: "Rhode Island", code: "RI" },
+  "45": { name: "South Carolina", code: "SC" },
+  "46": { name: "South Dakota", code: "SD" },
+  "47": { name: "Tennessee", code: "TN" },
+  "48": { name: "Texas", code: "TX" },
+  "49": { name: "Utah", code: "UT" },
+  "50": { name: "Vermont", code: "VT" },
+  "51": { name: "Virginia", code: "VA" },
+  "53": { name: "Washington", code: "WA" },
+  "54": { name: "West Virginia", code: "WV" },
+  "55": { name: "Wisconsin", code: "WI" },
+  "56": { name: "Wyoming", code: "WY" }
+};
+
+// Excluded states/territories (for reference)
+export const US_EXCLUDED_FIPS = {
+  "02": { name: "Alaska", code: "AK", reason: "Non-continental" },
+  "11": { name: "District of Columbia", code: "DC", reason: "Federal district" },
+  "15": { name: "Hawaii", code: "HI", reason: "Non-continental" },
+  "60": { name: "American Samoa", code: "AS", reason: "Territory" },
+  "66": { name: "Guam", code: "GU", reason: "Territory" },
+  "69": { name: "Northern Mariana Islands", code: "MP", reason: "Territory" },
+  "72": { name: "Puerto Rico", code: "PR", reason: "Territory" },
+  "78": { name: "Virgin Islands", code: "VI", reason: "Territory" }
+};
+
+// State names by code (Continental US only - 48 states)
 export const STATE_NAMES = {
-  [INDIA_STATE_CODE]: 'India',
-  AP: 'Andhra Pradesh',
-  AR: 'Arunachal Pradesh',
-  AS: 'Assam',
-  BR: 'Bihar',
-  CT: 'Chhattisgarh',
-  GA: 'Goa',
-  GJ: 'Gujarat',
-  HR: 'Haryana',
-  HP: 'Himachal Pradesh',
-  JH: 'Jharkhand',
-  KA: 'Karnataka',
-  KL: 'Kerala',
-  MP: 'Madhya Pradesh',
-  MH: 'Maharashtra',
-  MN: 'Manipur',
-  ML: 'Meghalaya',
-  MZ: 'Mizoram',
-  NL: 'Nagaland',
-  OR: 'Odisha',
-  PB: 'Punjab',
-  RJ: 'Rajasthan',
-  SK: 'Sikkim',
-  TN: 'Tamil Nadu',
-  TG: 'Telangana',
-  TR: 'Tripura',
-  UT: 'Uttarakhand',
-  UP: 'Uttar Pradesh',
-  WB: 'West Bengal',
-  AN: 'Andaman and Nicobar Islands',
-  CH: 'Chandigarh',
-  DN: 'Dadra and Nagar Haveli and Daman and Diu',
-  DL: 'Delhi',
-  JK: 'Jammu and Kashmir',
-  LA: 'Ladakh',
-  LD: 'Lakshadweep',
-  PY: 'Puducherry',
+  [USA_STATE_CODE]: 'United States',
+  AL: 'Alabama',
+  AZ: 'Arizona',
+  AR: 'Arkansas',
+  CA: 'California',
+  CO: 'Colorado',
+  CT: 'Connecticut',
+  DE: 'Delaware',
+  FL: 'Florida',
+  GA: 'Georgia',
+  ID: 'Idaho',
+  IL: 'Illinois',
+  IN: 'Indiana',
+  IA: 'Iowa',
+  KS: 'Kansas',
+  KY: 'Kentucky',
+  LA: 'Louisiana',
+  ME: 'Maine',
+  MD: 'Maryland',
+  MA: 'Massachusetts',
+  MI: 'Michigan',
+  MN: 'Minnesota',
+  MS: 'Mississippi',
+  MO: 'Missouri',
+  MT: 'Montana',
+  NE: 'Nebraska',
+  NV: 'Nevada',
+  NH: 'New Hampshire',
+  NJ: 'New Jersey',
+  NM: 'New Mexico',
+  NY: 'New York',
+  NC: 'North Carolina',
+  ND: 'North Dakota',
+  OH: 'Ohio',
+  OK: 'Oklahoma',
+  OR: 'Oregon',
+  PA: 'Pennsylvania',
+  RI: 'Rhode Island',
+  SC: 'South Carolina',
+  SD: 'South Dakota',
+  TN: 'Tennessee',
+  TX: 'Texas',
+  UT: 'Utah',
+  VT: 'Vermont',
+  VA: 'Virginia',
+  WA: 'Washington',
+  WV: 'West Virginia',
+  WI: 'Wisconsin',
+  WY: 'Wyoming',
   [UNASSIGNED_STATE_CODE]: 'Unassigned',
 };
 
@@ -64,106 +141,120 @@ export const STATE_CODES = STATE_NAMES_ARRAY.reduce(
   {},
 );
 
+// FIPS to state code mapping (for converting FIPS to our state codes)
+export const FIPS_TO_STATE_CODE = Object.entries(US_STATE_FIPS).reduce(
+  (acc, [fips, { code }]) => ({ ...acc, [fips]: code }),
+  {}
+);
+
+// State code to FIPS mapping (reverse lookup)
+export const STATE_CODE_TO_FIPS = Object.entries(US_STATE_FIPS).reduce(
+  (acc, [fips, { code }]) => ({ ...acc, [code]: fips }),
+  {}
+);
+
+// Map files configuration
 export const MAP_FILES = {
-  AP: 'andhrapradesh.json',
-  AR: 'arunachalpradesh.json',
-  AS: 'assam.json',
-  BR: 'bihar.json',
-  CT: 'chhattisgarh.json',
-  GA: 'goa.json',
-  GJ: 'gujarat.json',
-  HR: 'haryana.json',
-  HP: 'himachalpradesh.json',
-  JK: 'jammukashmir.json',
-  JH: 'jharkhand.json',
-  KA: 'karnataka.json',
-  KL: 'kerala.json',
-  MP: 'madhyapradesh.json',
-  MH: 'maharashtra.json',
-  MN: 'manipur.json',
-  ML: 'meghalaya.json',
-  MZ: 'mizoram.json',
-  NL: 'nagaland.json',
-  OR: 'odisha.json',
-  PB: 'punjab.json',
-  RJ: 'rajasthan.json',
-  SK: 'sikkim.json',
-  TN: 'tamilnadu.json',
-  TG: 'telangana.json',
-  TR: 'tripura.json',
-  UT: 'uttarakhand.json',
-  UP: 'uttarpradesh.json',
-  WB: 'westbengal.json',
-  AN: 'andamannicobarislands.json',
-  CH: 'chandigarh.json',
-  DN: 'dnh-and-dd.json',
-  DL: 'delhi.json',
-  LA: 'ladakh.json',
-  LD: 'lakshadweep.json',
-  PY: 'puducherry.json',
-  [INDIA_STATE_CODE]: 'india.json',
+  // Main US map
+  [USA_STATE_CODE]: 'us-states.json',
+  
+  // Individual states will use filtered counties from us-counties.json
+  // We'll handle this dynamically in the useMap hook (Continental US only)
+  AL: 'us-counties.json',
+  AZ: 'us-counties.json',
+  AR: 'us-counties.json',
+  CA: 'us-counties.json',
+  CO: 'us-counties.json',
+  CT: 'us-counties.json',
+  DE: 'us-counties.json',
+  FL: 'us-counties.json',
+  GA: 'us-counties.json',
+  ID: 'us-counties.json',
+  IL: 'us-counties.json',
+  IN: 'us-counties.json',
+  IA: 'us-counties.json',
+  KS: 'us-counties.json',
+  KY: 'us-counties.json',
+  LA: 'us-counties.json',
+  ME: 'us-counties.json',
+  MD: 'us-counties.json',
+  MA: 'us-counties.json',
+  MI: 'us-counties.json',
+  MN: 'us-counties.json',
+  MS: 'us-counties.json',
+  MO: 'us-counties.json',
+  MT: 'us-counties.json',
+  NE: 'us-counties.json',
+  NV: 'us-counties.json',
+  NH: 'us-counties.json',
+  NJ: 'us-counties.json',
+  NM: 'us-counties.json',
+  NY: 'us-counties.json',
+  NC: 'us-counties.json',
+  ND: 'us-counties.json',
+  OH: 'us-counties.json',
+  OK: 'us-counties.json',
+  OR: 'us-counties.json',
+  PA: 'us-counties.json',
+  RI: 'us-counties.json',
+  SC: 'us-counties.json',
+  SD: 'us-counties.json',
+  TN: 'us-counties.json',
+  TX: 'us-counties.json',
+  UT: 'us-counties.json',
+  VT: 'us-counties.json',
+  VA: 'us-counties.json',
+  WA: 'us-counties.json',
+  WV: 'us-counties.json',
+  WI: 'us-counties.json',
+  WY: 'us-counties.json',
 };
 
 export const UNASSIGNED_CROP_CODE = 'UN';
 export const ALL_CROPS_CODE = 'ALL';
 
+// US Crop names - major agricultural crops
 export const CROP_NAMES = {
   [ALL_CROPS_CODE]: 'All Crops',
+  
+  // Major Field Crops
+  CO: 'Corn',
+  SO: 'Soybeans',
   WH: 'Wheat',
-  BA: 'Banana',
-  CA: 'Cashewnut',
-  CO: 'Coconut',
-  CR: 'Coriander',
-  SW: 'Sweet Potato',
-  TA: 'Tapioca',
-  TU: 'Turmeric',
-  GI: 'Ginger',
-  ME: 'Mesta',
-  SO: 'Soyabean',
-  OO: 'Other Oilseeds',
-  CP: 'Cowpea(Lobia)',
-  OI: 'Oilseeds Total',
-  AR: 'Arhar/Tur',
-  BJ: 'Bajra',
-  CS: 'Castor Seed',
-  CT: 'Cotton(lint)',
-  DR: 'Dry Chillies',
-  GR: 'Groundnut',
-  JO: 'Jowar',
-  MA: 'Maize',
-  MO: 'Moong(Green Gram)',
+  CT: 'Cotton',
   RI: 'Rice',
-  SE: 'Sesamum',
-  SM: 'Small Millets',
-  SU: 'Sugarcane',
+  SG: 'Sorghum',
+  BA: 'Barley',
+  OA: 'Oats',
+  RY: 'Rye',
+  
+  // Specialty Crops
+  AL: 'Almonds',
+  AP: 'Apples',
+  AV: 'Avocados',
+  BR: 'Broccoli',
+  CA: 'Carrots',
+  CI: 'Citrus',
+  CR: 'Cranberries',
+  GR: 'Grapes',
+  LE: 'Lettuce',
+  ON: 'Onions',
+  OR: 'Oranges',
+  PE: 'Peaches',
+  PO: 'Potatoes',
+  ST: 'Strawberries',
+  TO: 'Tomatoes',
+  
+  // Other Important Crops
+  HA: 'Hay',
+  SU: 'Sugar Beets',
+  SC: 'Sugarcane',
   SN: 'Sunflower',
-  TO: 'Tobacco',
-  UR: 'Urad',
-  GM: 'Gram',
-  ON: 'Onion',
-  RA: 'Ragi',
-  RP: 'Rapeseed & Mustard',
-  HO: 'Horse-gram',
-  AC: 'Arecanut',
-  OP: 'Other Rabi Pulses',
-  LI: 'Linseed',
-  SA: 'Safflower',
-  OK: 'Other Kharif Pulses',
-  PO: 'Potato',
-  NI: 'Niger Seed',
-  JU: 'Jute',
-  MS: 'Masoor',
-  PE: 'Peas & Beans (Pulses)',
-  BL: 'Black Pepper',
-  GA: 'Garlic',
-  SH: 'Sannhamp',
-  BR: 'Barley',
-  KH: 'Khesari',
-  MT: 'Moth',
-  OC: 'Other Cereals',
-  GU: 'Guar Seed',
-  CD: 'Cardamom',
-  OS: 'Other Summer Pulses',
+  CA: 'Canola',
+  PE: 'Peanuts',
+  SW: 'Sweet Potatoes',
+  TA: 'Tobacco',
+  
   [UNASSIGNED_CROP_CODE]: 'Data not available',
 };
 
@@ -174,75 +265,58 @@ export const CROP_NAMES_ARRAY = Object.entries(CROP_NAMES).map(
   }),
 );
 
+// US Crop colors - updated for major US crops
 export const CROP_COLORS = {
-  RI: '#FFD147',
-  SN: '#ffc107',
-  WH: '#ffb300',
-  RP: '#ff6f00',
-  TU: '#ffab00',
-  OP: '#2979ff',
-  CP: '#b0bec5',
-  UR: '#78909c',
-  CS: '#455a64',
-  SO: '#8d6e63',
-  PO: '#795548',
-  CO: '#6d4c41',
-  CT: '#80deea',
-  MT: '#006064',
-  SM: '#18ffff',
-  CD: '#f4511e',
-  GR: '#ff9e80',
-  MS: '#ff3d00',
-  KH: '#dd2c00',
-  OK: '#b388ff',
-  GU: '#81c784',
-  CR: '#388e3c',
-  ME: '#1b5e20',
-  AC: '#999999',
-  JU: '#9e9e9e',
-  BL: '#424242',
-  OC: '#5c6bc0',
-  GM: '#304ffe',
-  PE: '#8bc34a',
-  SU: '#b2ff59',
-  BR: '#dce775',
-  MO: '#d4e157',
-  RA: '#c0ca33',
-  BJ: '#9e9d24',
-  GI: '#ffcc80',
-  SW: '#ef6c00',
-  SA: '#ffd180',
-  AR: '#ff9100',
-  GA: '#f8bbd0',
-  ON: '#ec407a',
-  TA: '#c2185b',
-  HO: '#880e4f',
-  LI: '#ff80ab',
-  SH: '#f50057',
-  OI: '#6a1b9a',
-  JO: '#4a148c',
-  DR: '#e53935',
-  OO: '#ff8a80',
-  TO: '#d50000',
-  SE: '#00897b',
-  OS: '#64ffda',
-  CA: '#fff9c4',
-  BA: '#ffeb3b',
-  MA: '#ffff00',
-  NI: '#01579b',
-  [UNASSIGNED_CROP_CODE]: '#ffffff',
+  // Major Field Crops
+  CO: '#FFD700', // Corn - Golden
+  SO: '#90EE90', // Soybeans - Light Green
+  WH: '#DEB887', // Wheat - Burlywood
+  CT: '#F0F8FF', // Cotton - Alice Blue
+  RI: '#E6E6FA', // Rice - Lavender
+  SG: '#CD853F', // Sorghum - Peru
+  BA: '#F4A460', // Barley - Sandy Brown
+  OA: '#FFEFD5', // Oats - Papaya Whip
+  RY: '#D2B48C', // Rye - Tan
+  
+  // Fruits & Vegetables
+  AL: '#DDA0DD', // Almonds - Plum
+  AP: '#FF6347', // Apples - Tomato Red
+  AV: '#9ACD32', // Avocados - Yellow Green
+  BR: '#228B22', // Broccoli - Forest Green
+  CA: '#FF8C00', // Carrots - Dark Orange
+  CI: '#FFA500', // Citrus - Orange
+  CR: '#DC143C', // Cranberries - Crimson
+  GR: '#800080', // Grapes - Purple
+  LE: '#ADFF2F', // Lettuce - Green Yellow
+  ON: '#F5F5DC', // Onions - Beige
+  OR: '#FF4500', // Oranges - Orange Red
+  PE: '#FFCCCB', // Peaches - Light Pink
+  PO: '#8B4513', // Potatoes - Saddle Brown
+  ST: '#FF1493', // Strawberries - Deep Pink
+  TO: '#FF6347', // Tomatoes - Tomato
+  
+  // Other Crops
+  HA: '#32CD32', // Hay - Lime Green
+  SU: '#F5F5F5', // Sugar Beets - White Smoke
+  SC: '#98FB98', // Sugarcane - Pale Green
+  SN: '#FFFF00', // Sunflower - Yellow
+  PE: '#DEB887', // Peanuts - Burlywood
+  SW: '#FF8C00', // Sweet Potatoes - Dark Orange
+  TA: '#8FBC8F', // Tobacco - Dark Sea Green
+  
+  [UNASSIGNED_CROP_CODE]: '#E5E5E5', // Light Gray
 };
 
 export const CROP_METRICS_NAMES = {
   production: 'Production',
   yield: 'Yield',
-  area: 'Cultivation Area',
+  area: 'Harvested Area',
 };
 
 export const CROP_METRICS_UNITS = {
-  production: 'Tonnes',
-  yield: 'Tonnes/Hectare',
-  area: 'Hectare',
+  production: 'Bushels', // Changed from Tonnes to Bushels (US standard)
+  yield: 'Bu/Acre',      // Changed from Tonnes/Hectare to Bushels/Acre
+  area: 'Acres',         // Changed from Hectares to Acres
 };
 
 export const CROP_METRICS_ARRAY = Object.entries(CROP_METRICS_NAMES).map(
@@ -277,10 +351,10 @@ export const WEATHER_PARAMS = {
 };
 
 export const WEATHER_UNITS = {
-  temp: '°C',
+  temp: '°F', // Changed from Celsius to Fahrenheit
   clco: '%',
   evpt: '%',
-  prep: 'mm',
+  prep: 'in', // Changed from mm to inches
 };
 
 export const WEATHER_COLORS = {

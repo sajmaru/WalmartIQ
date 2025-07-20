@@ -1,24 +1,24 @@
-import React, { useMemo, useRef, useEffect, memo } from 'react';
 import { Box, useTheme } from '@mui/material';
 import { TableTooltip } from '@nivo/tooltip';
 import { color } from 'd3-color';
+import { memo, useEffect, useMemo, useRef } from 'react';
 import useSWR from 'swr';
-import { ResponsiveGeoMap } from '../../components/GeoMap';
 import AnimatedEnter from '../../components/AnimatedEnter';
 import Disclaimer from '../../components/Disclaimer';
-import useMap from '../../hooks/useMap';
-import useRouting from '../../routes/useRouting';
+import { ResponsiveGeoMap } from '../../components/GeoMap';
 import {
-  STATE_NAMES,
-  STATE_CODES,
-  INDIA_STATE_CODE,
   API_HOST_URL,
+  STATE_CODES,
+  STATE_NAMES,
+  USA_STATE_CODE,
 } from '../../constants';
 import { readableNumber } from '../../helpers';
+import useMap from '../../hooks/useMap';
+import useRouting from '../../routes/useRouting';
 
 export const WarehouseMap = memo(({ setMapHeight = () => {} }) => {
-  const { goTo, stateCode = INDIA_STATE_CODE } = useRouting();
-  const { data: features } = useMap(stateCode, stateCode !== INDIA_STATE_CODE);
+  const { goTo, stateCode = USA_STATE_CODE } = useRouting();
+  const { data: features } = useMap(stateCode, stateCode !== USA_STATE_CODE);
   const { data: values } = useSWR(
     `${API_HOST_URL}api/storage/getStorageSummary?stateCode=${stateCode}`,
   );
@@ -58,9 +58,9 @@ export const WarehouseMap = memo(({ setMapHeight = () => {} }) => {
     const cropColor = color(theme.palette.primary.main);
     const data = values.reduce((acc, { location, warehouses }) => {
       const id =
-        stateCode === INDIA_STATE_CODE ? STATE_NAMES[location] : location;
+        stateCode === USA_STATE_CODE ? STATE_NAMES[location] : location;
       const name =
-        stateCode === INDIA_STATE_CODE
+        stateCode === USA_STATE_CODE
           ? STATE_NAMES[location]
           : location.split('-')[1];
       const locationColor = cropColor.copy({
@@ -90,7 +90,7 @@ export const WarehouseMap = memo(({ setMapHeight = () => {} }) => {
           properties: { st_nm: stateName, district: districtName },
         } = props;
         return (
-          (stateCode === INDIA_STATE_CODE
+          (stateCode === USA_STATE_CODE
             ? data[stateName]?.locationColor
             : data[`${stateName}-${districtName}`.toUpperCase()]
                 ?.locationColor) || '#ffffff'
@@ -100,10 +100,10 @@ export const WarehouseMap = memo(({ setMapHeight = () => {} }) => {
         properties: { st_nm: stateName, district: districtName },
       }) => {
         const id =
-          stateCode === INDIA_STATE_CODE
+          stateCode === USA_STATE_CODE
             ? stateName
             : `${stateName}-${districtName}`.toUpperCase();
-        if (stateCode === INDIA_STATE_CODE && !!data[id])
+        if (stateCode === USA_STATE_CODE && !!data[id])
           goTo({ stateCode: STATE_CODES[stateName] }, '/warehouse');
       },
       tooltip: ({
@@ -112,16 +112,14 @@ export const WarehouseMap = memo(({ setMapHeight = () => {} }) => {
         },
       }) => {
         const id =
-          stateCode === INDIA_STATE_CODE
+          stateCode === USA_STATE_CODE
             ? stateName
             : `${stateName}-${districtName}`.toUpperCase();
         return (
           <TableTooltip
             title={
               <>
-                <b>
-                  {stateCode === INDIA_STATE_CODE ? stateName : districtName}
-                </b>
+                <b>{stateCode === USA_STATE_CODE ? stateName : districtName}</b>
               </>
             }
             rows={

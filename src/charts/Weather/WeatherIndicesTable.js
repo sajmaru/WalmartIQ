@@ -1,6 +1,7 @@
 import {
   Paper,
   Table,
+  TableBody,
   TableCell,
   TableContainer,
   TableHead,
@@ -9,16 +10,15 @@ import {
   TableSortLabel,
   Toolbar,
   Typography,
-  TableBody,
 } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
 import useSWR from 'swr';
 import AnimatedEnter from '../../components/AnimatedEnter';
 import {
   API_HOST_URL,
-  INDIA_STATE_CODE,
   MONTH_NAMES,
   STATE_NAMES,
+  USA_STATE_CODE,
   WEATHER_INDICES,
   WEATHER_INDICES_UNITS,
 } from '../../constants';
@@ -54,20 +54,24 @@ const stableSort = (array, comparator) => {
 
 const WeatherIndicesTable = ({ on }) => {
   const { LATEST_YEAR } = useConstants();
-  const { stateCode = INDIA_STATE_CODE, year = LATEST_YEAR } = useRouting();
-  
+  const { stateCode = USA_STATE_CODE, year = LATEST_YEAR } = useRouting();
+
   const { data: values = [] } = useSWR(
     `${API_HOST_URL}api/${on}/get${on.toUpperCase()}Table?stateCode=${stateCode}&year=${year}`,
     {
       fallbackData: [],
-      onError: (err) => console.log('🎭 Using fallback weather indices data due to:', err.message)
-    }
+      onError: (err) =>
+        console.log(
+          '🎭 Using fallback weather indices data due to:',
+          err.message,
+        ),
+    },
   );
 
   const headCells = useMemo(
     () => [
       {
-        id: stateCode === INDIA_STATE_CODE ? 'stateCode' : 'districtCode',
+        id: stateCode === USA_STATE_CODE ? 'stateCode' : 'districtCode',
         label: 'Location',
       },
       { id: 'year', label: 'Year' },
@@ -112,20 +116,23 @@ const WeatherIndicesTable = ({ on }) => {
   );
 
   // Helper function to safely get location name
-  const getLocationName = useCallback((thatStateCode, districtCode) => {
-    if (stateCode === INDIA_STATE_CODE) {
-      return STATE_NAMES[thatStateCode] || thatStateCode || 'Unknown';
-    } else {
-      if (!districtCode) return 'Unknown District';
-      if (typeof districtCode !== 'string') return String(districtCode);
-      
-      const parts = districtCode.split('-');
-      if (parts.length > 1) {
-        return titleCase(parts[1]);
+  const getLocationName = useCallback(
+    (thatStateCode, districtCode) => {
+      if (stateCode === USA_STATE_CODE) {
+        return STATE_NAMES[thatStateCode] || thatStateCode || 'Unknown';
+      } else {
+        if (!districtCode) return 'Unknown District';
+        if (typeof districtCode !== 'string') return String(districtCode);
+
+        const parts = districtCode.split('-');
+        if (parts.length > 1) {
+          return titleCase(parts[1]);
+        }
+        return titleCase(districtCode);
       }
-      return titleCase(districtCode);
-    }
-  }, [stateCode]);
+    },
+    [stateCode],
+  );
 
   return (
     <AnimatedEnter>
@@ -170,12 +177,15 @@ const WeatherIndicesTable = ({ on }) => {
                       },
                       index,
                     ) => (
-                      <TableRow key={`weather-indices-${thatStateCode}-${month}-${index}`}>
+                      <TableRow
+                        key={`weather-indices-${thatStateCode}-${month}-${index}`}>
                         <TableCell>
                           {getLocationName(thatStateCode, districtCode)}
                         </TableCell>
                         <TableCell>{thatYear || year}</TableCell>
-                        <TableCell>{MONTH_NAMES[month - 1] || `Month ${month}`}</TableCell>
+                        <TableCell>
+                          {MONTH_NAMES[month - 1] || `Month ${month}`}
+                        </TableCell>
                         <TableCell>{readableNumber(params[on])}</TableCell>
                       </TableRow>
                     ),

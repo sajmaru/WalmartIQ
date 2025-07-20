@@ -1,36 +1,32 @@
-import React from 'react';
 import {
-  Grid,
+  Box,
   Card,
   CardContent,
-  Box,
-  Typography,
   Collapse,
+  Grid,
+  Typography,
 } from '@mui/material';
 import useSwr from 'swr';
-import TopCropChart from './TopCropChart';
 import AnimatedEnter from '../../components/AnimatedEnter';
 import SummaryCards from '../../components/SummaryCards';
 import useConstants from '../../hooks/useConstants';
 import useRouting from '../../routes/useRouting';
+import TopCropChart from './TopCropChart';
 
-import { CROP_NAMES, INDIA_STATE_CODE, API_HOST_URL } from '../../constants';
+import { API_HOST_URL, CROP_NAMES, USA_STATE_CODE } from '../../constants';
 
 const TopCropSummary = ({ expanded }) => {
   const { LATEST_YEAR } = useConstants();
-  const {
-    goTo,
-    stateCode = INDIA_STATE_CODE,
-    year = LATEST_YEAR,
-  } = useRouting();
+  const { goTo, stateCode = USA_STATE_CODE, year = LATEST_YEAR } = useRouting();
   const { data = [] } = useSwr(
     `${API_HOST_URL}api/dashboard/cropSummary?year=${year}&stateCode=${stateCode}&n=${
-      stateCode === INDIA_STATE_CODE ? 6 : 9
+      stateCode === USA_STATE_CODE ? 6 : 9
     }`,
     {
       fallbackData: [],
-      onError: (err) => console.log('🎭 Using fallback crop data due to:', err.message)
-    }
+      onError: (err) =>
+        console.log('🎭 Using fallback crop data due to:', err.message),
+    },
   );
 
   return (
@@ -52,7 +48,9 @@ const TopCropSummary = ({ expanded }) => {
                 onClick={() => goTo({ cropCode: crop, stateCode, year })}>
                 <CardContent>
                   <Box flex={1}>
-                    <Typography variant="h6">{CROP_NAMES[crop] || crop}</Typography>
+                    <Typography variant="h6">
+                      {CROP_NAMES[crop] || crop}
+                    </Typography>
                     <TopCropChart
                       production={series}
                       years={years}
@@ -83,7 +81,9 @@ const TopCropSummary = ({ expanded }) => {
                   onClick={() => goTo({ cropCode: crop, stateCode, year })}>
                   <CardContent>
                     <Box flex={1}>
-                      <Typography variant="h6">{CROP_NAMES[crop] || crop}</Typography>
+                      <Typography variant="h6">
+                        {CROP_NAMES[crop] || crop}
+                      </Typography>
                       <TopCropChart
                         production={series}
                         years={years}

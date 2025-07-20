@@ -85,6 +85,7 @@ const WeatherIndicesTable = ({ on }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(8);
 
+  // FIX: Add proper pagination handlers
   const handleChangePage = useCallback((_event, newPage) => {
     setPage(newPage);
   }, []);
@@ -115,7 +116,6 @@ const WeatherIndicesTable = ({ on }) => {
     if (stateCode === INDIA_STATE_CODE) {
       return STATE_NAMES[thatStateCode] || thatStateCode || 'Unknown';
     } else {
-      // Handle cases where districtCode might be undefined or not in expected format
       if (!districtCode) return 'Unknown District';
       if (typeof districtCode !== 'string') return String(districtCode);
       
@@ -170,7 +170,7 @@ const WeatherIndicesTable = ({ on }) => {
                       },
                       index,
                     ) => (
-                      <TableRow key={`weather-indices-${index}`}>
+                      <TableRow key={`weather-indices-${thatStateCode}-${month}-${index}`}>
                         <TableCell>
                           {getLocationName(thatStateCode, districtCode)}
                         </TableCell>
@@ -192,6 +192,7 @@ const WeatherIndicesTable = ({ on }) => {
             </TableBody>
           </Table>
         </TableContainer>
+        {/* FIX: Add missing onPageChange */}
         <TablePagination
           rowsPerPageOptions={[8, 15, 25]}
           component="div"
@@ -207,3 +208,4 @@ const WeatherIndicesTable = ({ on }) => {
 };
 
 export default WeatherIndicesTable;
+

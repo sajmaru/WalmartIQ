@@ -25,8 +25,12 @@ import { readableNumber } from '../../helpers';
 const WeatherSummaryCards = () => {
   const { LATEST_YEAR } = useConstants();
   const { stateCode = INDIA_STATE_CODE, year = LATEST_YEAR } = useRouting();
-  const { data: values } = useSWR(
+  const { data: values = [] } = useSWR(
     `${API_HOST_URL}api/weather/getWeatherDataCard?stateCode=${stateCode}&year=${year}`,
+    {
+      fallbackData: [],
+      onError: (err) => console.log('🎭 Using fallback weather card data due to:', err.message)
+    }
   );
 
   const theme = useTheme();
@@ -34,8 +38,9 @@ const WeatherSummaryCards = () => {
   return (
     <AnimatedEnter>
       <Grid container spacing={1}>
-        {values.map(({ param, value, change }) => (
-          <Grid item lg={3} md={3} sm={6} xs={6}>
+        {/* FIX: Add unique key prop using param as identifier */}
+        {values.map(({ param, value, change }, index) => (
+          <Grid item lg={3} md={3} sm={6} xs={6} key={`weather-card-${param}-${index}`}>
             <Card variant="outlined">
               <CardContent>
                 <Typography variant="overline">
@@ -52,10 +57,10 @@ const WeatherSummaryCards = () => {
                           : theme.palette.success.main,
                       marginRight: theme.spacing(1),
                     }}>
-                    {(change < 0 ? '-' : '+') + change}%
+                    {(change < 0 ? '-' : '+') + Math.abs(change)}%
                   </Typography>
                   <Typography variant="h5" component="span">
-                    {readableNumber(value) + WEATHER_UNITS[param]}
+                    {readableNumber(value) + (WEATHER_UNITS[param] || '')}
                   </Typography>
                 </Box>
               </CardContent>
@@ -71,4 +76,5 @@ const WeatherSummaryCards = () => {
     </AnimatedEnter>
   );
 };
+
 export default WeatherSummaryCards;

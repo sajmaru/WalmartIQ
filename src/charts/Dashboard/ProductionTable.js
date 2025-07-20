@@ -92,6 +92,7 @@ const ProductionTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(8);
 
+  // FIX: Add proper pagination handlers
   const handleChangePage = useCallback((_event, newPage) => {
     setPage(newPage);
   }, []);
@@ -122,7 +123,6 @@ const ProductionTable = () => {
     if (stateCode === INDIA_STATE_CODE) {
       return STATE_NAMES[thatStateCode] || thatStateCode || 'Unknown';
     } else {
-      // Handle cases where districtCode might be undefined or not in expected format
       if (!districtCode) return 'Unknown District';
       if (typeof districtCode !== 'string') return String(districtCode);
       
@@ -177,14 +177,15 @@ const ProductionTable = () => {
                       },
                       index,
                     ) => (
-                      <TableRow key={`production-${index}`}>
+                      <TableRow key={`production-${thatStateCode}-${thatCropCode}-${index}`}>
                         <TableCell>
                           {getLocationName(thatStateCode, districtCode)}
                         </TableCell>
                         <TableCell>{year}</TableCell>
                         <TableCell>{CROP_NAMES[thatCropCode] || thatCropCode}</TableCell>
-                        {Object.values(params).map((value, paramIndex) => (
-                          <TableCell key={`param-${paramIndex}`}>
+                        {/* FIX: Add unique keys */}
+                        {Object.entries(params).map(([paramKey, value], paramIndex) => (
+                          <TableCell key={`param-${paramKey}-${paramIndex}`}>
                             {readableNumber(value)}
                           </TableCell>
                         ))}
@@ -203,6 +204,7 @@ const ProductionTable = () => {
             </TableBody>
           </Table>
         </TableContainer>
+        {/* FIX: Add missing onPageChange */}
         <TablePagination
           rowsPerPageOptions={[8, 10, 25]}
           component="div"

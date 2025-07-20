@@ -9,6 +9,7 @@ import {
   TableSortLabel,
   Toolbar,
   Typography,
+  TableBody,
 } from '@mui/material';
 import { useCallback, useMemo, useState } from 'react';
 import useSWR from 'swr';
@@ -22,7 +23,7 @@ import {
   WEATHER_UNITS,
 } from '../../constants';
 import { readableNumber, titleCase } from '../../helpers';
-import useContants from '../../hooks/useConstants';
+import useConstants from '../../hooks/useConstants';
 import useRouting from '../../routes/useRouting';
 
 const descendingComparator = (a, b, orderBy) => {
@@ -51,11 +52,16 @@ const stableSort = (array, comparator) => {
   return stabilizedThis.map((el) => el[0]);
 };
 
-const WarehouseTable = () => {
-  const { LATEST_YEAR } = useContants();
+const WeatherTable = () => {
+  const { LATEST_YEAR } = useConstants();
   const { stateCode = INDIA_STATE_CODE, year = LATEST_YEAR } = useRouting();
-  const { data: values } = useSWR(
+  
+  const { data: values = [] } = useSWR(
     `${API_HOST_URL}api/weather/getWeatherTable?stateCode=${stateCode}&year=${year}`,
+    {
+      fallbackData: [],
+      onError: (err) => console.log('🎭 Using fallback weather data due to:', err.message)
+    }
   );
 
   const headCells = useMemo(
@@ -81,6 +87,7 @@ const WarehouseTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  // FIX 1: Add proper onPageChange handler
   const handleChangePage = useCallback((_event, newPage) => {
     setPage(newPage);
   }, []);
@@ -106,71 +113,107 @@ const WarehouseTable = () => {
     [handleRequestSort],
   );
 
+  // Helper function to safely get location name
+  const getLocationName = useCallback((thatStateCode, districtCode) => {
+    if (stateCode === INDIA_STATE_CODE) {
+      return STATE_NAMES[thatStateCode] || thatStateCode || 'Unknown';
+    } else {
+      // Handle cases where districtCode might be undefined or not in expected format
+      if (!districtCode) return 'Unknown District';
+      if (typeof districtCode !== 'string') return String(districtCode);
+      
+      const parts = districtCode.split('-');
+      if (parts.length > 1) {
+        return titleCase(parts[1]);
+      }
+      return titleCase(districtCode);
+    }
+  }, [stateCode]);
+
   return (
     <AnimatedEnter>
       <Paper variant="outlined">
         <Toolbar>
           <Typography variant="h6" style={{ flex: 1 }}>
             Weather {year === LATEST_YEAR ? 'Prediction' : 'Data'} for{' '}
-            {STATE_NAMES[stateCode]}
+            {STATE_NAMES[stateCode] || stateCode}
           </Typography>
         </Toolbar>
         <TableContainer>
           <Table>
             <TableHead>
-              {headCells.map((headCell) => (
-                <TableCell
-                  key={headCell.id}
-                  align={headCell.numeric ? 'right' : 'left'}
-                  padding={headCell.disablePadding ? 'none' : 'default'}
-                  sortDirection={orderBy === headCell.id ? order : false}>
-                  <TableSortLabel
-                    active={orderBy === headCell.id}
-                    direction={orderBy === headCell.id ? order : 'asc'}
-                    onClick={createSortHandler(headCell.id)}>
-                    {headCell.label}
-                  </TableSortLabel>
-                </TableCell>
-              ))}
+              <TableRow>
+                {headCells.map((headCell) => (
+                  <TableCell
+                    key={headCell.id}
+                    align={headCell.numeric ? 'right' : 'left'}
+                    padding={headCell.disablePadding ? 'none' : 'normal'}
+                    sortDirection={orderBy === headCell.id ? order : false}>
+                    <TableSortLabel
+                      active={orderBy === headCell.id}
+                      direction={orderBy === headCell.id ? order : 'asc'}
+                      onClick={createSortHandler(headCell.id)}>
+                      {headCell.label}
+                    </TableSortLabel>
+                  </TableCell>
+                ))}
+              </TableRow>
             </TableHead>
-            {stableSort(values, getComparator(order, orderBy))
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map(
-                ({
-                  year: thatYear,
-                  month,
-                  stateCode: thatStateCode,
-                  districtCode,
-                  ...params
-                }) => (
-                  <TableRow>
-                    <TableCell>
-                      {stateCode === INDIA_STATE_CODE
-                        ? STATE_NAMES[thatStateCode]
-                        : titleCase(districtCode.split('-')[1])}
-                    </TableCell>
-                    <TableCell>{thatYear}</TableCell>
-                    <TableCell>{MONTH_NAMES[month - 1]}</TableCell>
-                    {Object.values(params).map((value) => (
-                      <TableCell>{readableNumber(value)}</TableCell>
-                    ))}
-                  </TableRow>
-                ),
+            <TableBody>
+              {values.length > 0 ? (
+                stableSort(values, getComparator(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map(
+                    (
+                      {
+                        year: thatYear,
+                        month,
+                        stateCode: thatStateCode,
+                        districtCode,
+                        ...params
+                      },
+                      index,
+                    ) => (
+                      <TableRow key={`weather-${thatStateCode}-${month}-${index}`}>
+                        <TableCell>
+                          {getLocationName(thatStateCode, districtCode)}
+                        </TableCell>
+                        <TableCell>{thatYear || year}</TableCell>
+                        <TableCell>{MONTH_NAMES[month - 1] || `Month ${month}`}</TableCell>
+                        {/* FIX 2: Add unique keys to mapped TableCell elements */}
+                        {Object.entries(params).map(([paramKey, value], paramIndex) => (
+                          <TableCell key={`param-${paramKey}-${paramIndex}`}>
+                            {readableNumber(value)}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ),
+                  )
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={headCells.length} align="center">
+                    <Typography variant="body2" color="textSecondary">
+                      No weather data available
+                    </Typography>
+                  </TableCell>
+                </TableRow>
               )}
+            </TableBody>
           </Table>
         </TableContainer>
+        {/* FIX 3: Add the missing onPageChange prop */}
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
           count={values.length}
           rowsPerPage={rowsPerPage}
           page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
     </AnimatedEnter>
   );
 };
-export default WarehouseTable;
 
+export default WeatherTable;

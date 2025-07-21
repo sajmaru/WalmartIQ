@@ -10,7 +10,7 @@ const CategorySummary = () => {
 
   return (
     <Box padding={4} flex={1}>
-      <Header title="Category Summary" />
+      <Header title="SBU Summary" />
       <Box>
         <SuspenseProgress>
           <CategorySummaryChart expanded={expanded} />

@@ -8,13 +8,13 @@ import Disclaimer from '../../components/Disclaimer';
 import { ResponsiveGeoMap } from '../../components/GeoMap';
 import {
   API_HOST_URL,
-  CROP_COLORS,
-  CROP_METRICS_NAMES,
-  CROP_METRICS_UNITS,
-  CROP_NAMES,
+  SBU_COLORS,
+  SALES_METRICS_NAMES,
+  SALES_METRICS_UNITS,
+  SBU_NAMES,
   STATE_CODES,
   STATE_NAMES,
-  UNASSIGNED_CROP_CODE,
+  UNASSIGNED_SBU_CODE,
   USA_STATE_CODE,
   FIPS_TO_STATE_CODE,
   getStateCodeFromName,
@@ -25,7 +25,7 @@ import useMap from '../../hooks/useMap';
 import useRouting from '../../routes/useRouting';
 
 const MapSummaryChart = memo(
-  ({ on = 'production', setMapHeight = () => {} }) => {
+  ({ on = 'gmv', setMapHeight = () => {} }) => {
     const { LATEST_YEAR } = useConstants();
     const {
       goTo,
@@ -64,23 +64,23 @@ const MapSummaryChart = memo(
       }
 
       const [data, legend] = values.reduce(
-        ([accData, accLegend], { location, topCrops }) => {
+        ([accData, accLegend], { location, topSBUs }) => {
           const id =
             stateCode === USA_STATE_CODE ? STATE_NAMES[location] : location;
           const name =
             stateCode === USA_STATE_CODE
               ? STATE_NAMES[location]
               : location.split('-')[1];
-          const topCrop = topCrops[0]?.crop;
+          const topSBU = topSBUs[0]?.sbu;
 
-          if (!topCrop) {
+          if (!topSBU) {
             return [accData, accLegend];
           }
 
-          // Get color for the top crop
-          const baseColor = CROP_COLORS[topCrop] || '#4a90e2';
-          const cropColor = color(baseColor);
-          const locationColor = cropColor.copy({ opacity: 0.7 });
+          // Get color for the top SBU
+          const baseColor = SBU_COLORS[topSBU] || '#4a90e2';
+          const sbuColor = color(baseColor);
+          const locationColor = sbuColor.copy({ opacity: 0.7 });
 
           return [
             {
@@ -88,19 +88,23 @@ const MapSummaryChart = memo(
               [id]: {
                 name,
                 locationColor: locationColor.toString(),
-                topCrops: topCrops
+                topSBUs: topSBUs
                   .slice(0, 3)
-                  .map(({ crop: cropCode, value }) => ({
-                    cropCode,
-                    crop: CROP_NAMES[cropCode] || cropCode,
-                    cropColor: CROP_COLORS[cropCode] || '#dddddd',
-                    value: readableNumber(value),
+                  .map(({ sbu: sbuCode, value }) => ({
+                    sbuCode,
+                    sbu: SBU_NAMES[sbuCode] || sbuCode,
+                    sbuColor: SBU_COLORS[sbuCode] || '#dddddd',
+                    value: on === 'gmv' 
+                      ? `$${readableNumber(value / 1000000)}M`
+                      : on === 'units'
+                      ? `${readableNumber(value / 1000)}K`
+                      : `$${readableNumber(value)}`,
                   })),
               },
             },
             {
               ...accLegend,
-              [CROP_NAMES[topCrop] || topCrop]: cropColor.toString(),
+              [SBU_NAMES[topSBU] || topSBU]: sbuColor.toString(),
             },
           ];
         },
@@ -120,7 +124,7 @@ const MapSummaryChart = memo(
 
             const fillColor =
               data[lookupKey]?.locationColor ||
-              CROP_COLORS[UNASSIGNED_CROP_CODE] ||
+              SBU_COLORS[UNASSIGNED_SBU_CODE] ||
               '#e0e0e0';
 
             return fillColor;
@@ -177,17 +181,17 @@ const MapSummaryChart = memo(
                     <b>
                       {stateCode === USA_STATE_CODE ? stateName : districtName}
                     </b>{' '}
-                    - {CROP_METRICS_NAMES[on]} ({CROP_METRICS_UNITS[on]})
+                    - {SALES_METRICS_NAMES[on]} ({SALES_METRICS_UNITS[on]})
                   </>
                 }
                 rows={
                   data[id]
-                    ? data[id].topCrops.map(({ crop, cropColor, value }) => [
-                        <Chip key={crop} color={cropColor} />,
-                        crop,
+                    ? data[id].topSBUs.map(({ sbu, sbuColor, value }) => [
+                        <Chip key={sbu} color={sbuColor} />,
+                        sbu,
                         value,
                       ])
-                    : [[CROP_NAMES[UNASSIGNED_CROP_CODE], '', '']]
+                    : [[SBU_NAMES[UNASSIGNED_SBU_CODE], '', '']]
                 }
               />
             );
@@ -205,20 +209,20 @@ const MapSummaryChart = memo(
           flexWrap="wrap"
           marginTop={2}
           marginBottom={-3}>
-          {Object.entries(legend).map(([crop, cropColor]) => (
-            <Box component="span" padding={1} key={`legend-${crop}`}>
+          {Object.entries(legend).map(([sbu, sbuColor]) => (
+            <Box component="span" padding={1} key={`legend-${sbu}`}>
               <Chip
                 style={{
                   marginLeft: 6,
                   marginRight: 6,
                   display: 'inline-block',
-                  backgroundColor: cropColor,
+                  backgroundColor: sbuColor,
                   width: 16,
                   height: 16,
                   borderRadius: '50%',
                 }}
               />
-              {crop}
+              {sbu}
             </Box>
           ))}
         </Box>

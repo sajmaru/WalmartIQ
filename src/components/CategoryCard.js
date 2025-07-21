@@ -8,7 +8,7 @@ import DynamicText from './DynamicText';
 
 import { readableNumber } from '../helpers';
 
-const CategoryCard = ({ categoryName, production, consumption }) => {
+const CategoryCard = ({ categoryName, sales, orders }) => {
   const theme = useTheme();
 
   return (
@@ -30,7 +30,7 @@ const CategoryCard = ({ categoryName, production, consumption }) => {
           flex: 1,
           flexDirection: 'column',
         }}>
-        {consumption && (
+        {orders && (
           <>
             <Box
               display="flex"
@@ -38,41 +38,41 @@ const CategoryCard = ({ categoryName, production, consumption }) => {
               marginBottom={1}
               style={{ marginTop: -10 }}>
               <MiniGraph
-                series={consumption.series}
-                years={consumption.year}
+                series={orders.series}
+                years={orders.year}
                 color="#424651"
               />
               <Box>
                 <Typography variant="overline">
-                  <DynamicText>Consumption</DynamicText>
+                  <DynamicText>Orders</DynamicText>
                 </Typography>
                 <Typography
                   variant="h6"
                   align="right"
                   style={{
                     color:
-                      consumption.series[consumption.series.length - 1] <
-                      consumption.series[consumption.series.length - 2]
+                      orders.series[orders.series.length - 1] <
+                      orders.series[orders.series.length - 2]
                         ? theme.palette.error.main
                         : theme.palette.success.main,
                   }}>
-                  {consumption.series[consumption.series.length - 1] <
-                  consumption.series[consumption.series.length - 2]
-                    ? `-${consumption.change}%`
-                    : `+${consumption.change}%`}
+                  {orders.series[orders.series.length - 1] <
+                  orders.series[orders.series.length - 2]
+                    ? `-${orders.change}%`
+                    : `+${orders.change}%`}
                 </Typography>
                 <Typography variant="h5" align="right">
-                  {readableNumber(consumption.value)}
+                  {readableNumber(orders.value / 1000)}K
                 </Typography>
                 <Typography variant="body1" align="right">
-                  Tonnes
+                  Orders
                 </Typography>
               </Box>
             </Box>
             <Divider />
           </>
         )}
-        <Box display="flex" flex={1} marginTop={consumption ? 1 : 0}>
+        <Box display="flex" flex={1} marginTop={orders ? 1 : 0}>
           <Box
             style={{
               display: 'flex',
@@ -82,32 +82,32 @@ const CategoryCard = ({ categoryName, production, consumption }) => {
             }}>
             <Box>
               <Typography variant="overline">
-                <DynamicText>Production</DynamicText>
+                <DynamicText>Sales</DynamicText>
               </Typography>
               <Typography
                 variant="h6"
                 align="left"
                 style={{
                   color:
-                    production.series[production.series.length - 1] <
-                    production.series[production.series.length - 2]
+                    sales.series[sales.series.length - 1] <
+                    sales.series[sales.series.length - 2]
                       ? theme.palette.error.main
                       : theme.palette.success.main,
                 }}>
-                {production.series[production.series.length - 1] <
-                production.series[production.series.length - 2]
-                  ? `-${production.change}%`
-                  : `+${production.change}%`}
+                {sales.series[sales.series.length - 1] <
+                sales.series[sales.series.length - 2]
+                  ? `-${sales.change}%`
+                  : `+${sales.change}%`}
               </Typography>
               <Typography variant="h5" align="left">
-                {readableNumber(production.value)}
+                ${readableNumber(sales.value / 1000000)}M
               </Typography>
               <Typography variant="body1" align="left">
-                Tonnes
+                Revenue
               </Typography>
             </Box>
           </Box>
-          <MiniGraph series={production.series} years={production.year} />
+          <MiniGraph series={sales.series} years={sales.year} />
         </Box>
         <Disclaimer />
       </CardContent>

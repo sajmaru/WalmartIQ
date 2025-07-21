@@ -21,21 +21,21 @@ const Welcome = () => {
         <LitCrops /> USAPA
       </Typography>
       <Typography variant="h5">
-        Unified System for Agricultural Prediction using Artificial Intelligence
+        Unified Sales Analytics & Performance Assessment
       </Typography>
       <Box style={{ marginTop: 108, display: 'flex', flexDirection: 'row' }}>
         <Card
           style={{ cursor: 'pointer', margin: 12 }}
           onClick={() => goTo({}, '/')}>
           <Box style={{ padding: 24, textAlign: 'center' }}>
-            <Typography variant="h5">Crop Yield/Production</Typography>
+            <Typography variant="h5">Sales Performance</Typography>
           </Box>
         </Card>
         <Card
           style={{ cursor: 'pointer', margin: 12 }}
           onClick={() => goTo({}, '/weather')}>
           <Box style={{ padding: 24, textAlign: 'center' }}>
-            <Typography variant="h5">Weather</Typography>
+            <Typography variant="h5">Market Conditions</Typography>
           </Box>
         </Card>
 
@@ -43,21 +43,21 @@ const Welcome = () => {
           style={{ cursor: 'pointer', margin: 12 }}
           onClick={() => goTo({}, '/warehouse')}>
           <Box style={{ padding: 24, textAlign: 'center' }}>
-            <Typography variant="h5">Warehousing</Typography>
+            <Typography variant="h5">Distribution</Typography>
           </Box>
         </Card>
         <Card
           style={{ cursor: 'pointer', margin: 12 }}
-          onClick={() => goTo({}, '/rates')}>
+          onClick={() => goTo({}, '/pricing')}>
           <Box style={{ padding: 24, textAlign: 'center' }}>
-            <Typography variant="h5">Crop Rates</Typography>
+            <Typography variant="h5">Pricing Analytics</Typography>
           </Box>
         </Card>
         <Card
           style={{ cursor: 'pointer', margin: 12 }}
           onClick={() => goTo({}, '/directory')}>
           <Box style={{ padding: 24, textAlign: 'center' }}>
-            <Typography variant="h5">Budget</Typography>
+            <Typography variant="h5">Reports</Typography>
           </Box>
         </Card>
       </Box>

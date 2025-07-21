@@ -5,7 +5,7 @@ export const HOST_URL = process.env.NODE_ENV === 'development'
 export const API_HOST_URL = 'https://bd519d3f8f20.ngrok.io/';
 
 export const UNASSIGNED_STATE_CODE = 'UN';
-export const USA_STATE_CODE = 'US'; // Equivalent to previous INDIA_STATE_CODE
+export const USA_STATE_CODE = 'US';
 
 // FIPS code to state information mapping (Continental US only - 48 states)
 export const US_STATE_FIPS = {
@@ -219,7 +219,6 @@ export const MAP_FILES = {
   [USA_STATE_CODE]: 'us-states.json',
   
   // Individual states will use filtered counties from us-counties.json
-  // We'll handle this dynamically in the useMap hook (Continental US only)
   AL: 'us-counties.json',
   AZ: 'us-counties.json',
   AR: 'us-counties.json',
@@ -270,116 +269,150 @@ export const MAP_FILES = {
   WY: 'us-counties.json',
 };
 
-export const UNASSIGNED_CROP_CODE = 'UN';
-export const ALL_CROPS_CODE = 'ALL';
+export const UNASSIGNED_SBU_CODE = 'UN';
+export const ALL_SBUS_CODE = 'ALL';
+export const ALL_DEPTS_CODE = 'ALL_DEPTS';
 
-// US Crop names - major agricultural crops
-export const CROP_NAMES = {
-  [ALL_CROPS_CODE]: 'All Crops',
-  
-  // Major Field Crops
-  CO: 'Corn',
-  SO: 'Soybeans',
-  WH: 'Wheat',
-  CT: 'Cotton',
-  RI: 'Rice',
-  SG: 'Sorghum',
-  BA: 'Barley',
-  OA: 'Oats',
-  RY: 'Rye',
-  
-  // Specialty Crops
-  AL: 'Almonds',
-  AP: 'Apples',
-  AV: 'Avocados',
-  BR: 'Broccoli',
-  CA: 'Carrots',
-  CI: 'Citrus',
-  CR: 'Cranberries',
-  GR: 'Grapes',
-  LE: 'Lettuce',
-  ON: 'Onions',
-  OR: 'Oranges',
-  PE: 'Peaches',
-  PO: 'Potatoes',
-  ST: 'Strawberries',
-  TO: 'Tomatoes',
-  
-  // Other Important Crops
-  HA: 'Hay',
-  SU: 'Sugar Beets',
-  SC: 'Sugarcane',
-  SN: 'Sunflower',
-  CA: 'Canola',
-  PE: 'Peanuts',
-  SW: 'Sweet Potatoes',
-  TA: 'Tobacco',
-  
-  [UNASSIGNED_CROP_CODE]: 'Data not available',
+// SBU (Strategic Business Units) and their departments
+export const SBU_DEPARTMENTS = {
+  'Electronics': ['Smartphones', 'Laptops', 'Tablets', 'Gaming', 'Audio'],
+  'Clothing': ['Men\'s Apparel', 'Women\'s Apparel', 'Kids\' Apparel', 'Shoes', 'Accessories'],
+  'Home & Garden': ['Furniture', 'Decor', 'Kitchen', 'Bedding', 'Garden'],
+  'Sports': ['Athletic Wear', 'Equipment', 'Outdoor Gear', 'Fitness'],
+  'Beauty': ['Skincare', 'Makeup', 'Fragrance', 'Hair Care']
 };
 
-export const CROP_NAMES_ARRAY = Object.entries(CROP_NAMES).map(
+// SBU names with codes
+export const SBU_NAMES = {
+  [ALL_SBUS_CODE]: 'All SBUs',
+  
+  // Strategic Business Units
+  EL: 'Electronics',
+  CL: 'Clothing', 
+  HG: 'Home & Garden',
+  SP: 'Sports',
+  BT: 'Beauty',
+  
+  [UNASSIGNED_SBU_CODE]: 'Data not available',
+};
+
+// Department names with codes  
+export const DEPT_NAMES = {
+  [ALL_DEPTS_CODE]: 'All Departments',
+  
+  // Electronics Departments
+  EL_SM: 'Smartphones',
+  EL_LA: 'Laptops',
+  EL_TA: 'Tablets', 
+  EL_GA: 'Gaming',
+  EL_AU: 'Audio',
+  
+  // Clothing Departments
+  CL_ME: 'Men\'s Apparel',
+  CL_WO: 'Women\'s Apparel',
+  CL_KI: 'Kids\' Apparel',
+  CL_SH: 'Shoes',
+  CL_AC: 'Accessories',
+  
+  // Home & Garden Departments
+  HG_FU: 'Furniture',
+  HG_DE: 'Decor',
+  HG_KI: 'Kitchen',
+  HG_BE: 'Bedding',
+  HG_GA: 'Garden',
+  
+  // Sports Departments
+  SP_AT: 'Athletic Wear',
+  SP_EQ: 'Equipment',
+  SP_OU: 'Outdoor Gear',
+  SP_FI: 'Fitness',
+  
+  // Beauty Departments
+  BT_SK: 'Skincare',
+  BT_MA: 'Makeup',
+  BT_FR: 'Fragrance',
+  BT_HA: 'Hair Care',
+  
+  [UNASSIGNED_SBU_CODE]: 'Data not available',
+};
+
+export const SBU_NAMES_ARRAY = Object.entries(SBU_NAMES).map(
   ([code, name]) => ({
     code,
     name,
   }),
 );
 
-// US Crop colors - updated for major US crops
-export const CROP_COLORS = {
-  // Major Field Crops
-  CO: '#FFD700', // Corn - Golden
-  SO: '#90EE90', // Soybeans - Light Green
-  WH: '#DEB887', // Wheat - Burlywood
-  CT: '#F0F8FF', // Cotton - Alice Blue
-  RI: '#E6E6FA', // Rice - Lavender
-  SG: '#CD853F', // Sorghum - Peru
-  BA: '#F4A460', // Barley - Sandy Brown
-  OA: '#FFEFD5', // Oats - Papaya Whip
-  RY: '#D2B48C', // Rye - Tan
+export const DEPT_NAMES_ARRAY = Object.entries(DEPT_NAMES).map(
+  ([code, name]) => ({
+    code,
+    name,
+  }),
+);
+
+// SBU colors - updated for sales categories
+export const SBU_COLORS = {
+  // Strategic Business Units
+  EL: '#2196F3', // Electronics - Blue
+  CL: '#E91E63', // Clothing - Pink
+  HG: '#4CAF50', // Home & Garden - Green
+  SP: '#FF9800', // Sports - Orange
+  BT: '#9C27B0', // Beauty - Purple
   
-  // Fruits & Vegetables
-  AL: '#DDA0DD', // Almonds - Plum
-  AP: '#FF6347', // Apples - Tomato Red
-  AV: '#9ACD32', // Avocados - Yellow Green
-  BR: '#228B22', // Broccoli - Forest Green
-  CA: '#FF8C00', // Carrots - Dark Orange
-  CI: '#FFA500', // Citrus - Orange
-  CR: '#DC143C', // Cranberries - Crimson
-  GR: '#800080', // Grapes - Purple
-  LE: '#ADFF2F', // Lettuce - Green Yellow
-  ON: '#F5F5DC', // Onions - Beige
-  OR: '#FF4500', // Oranges - Orange Red
-  PE: '#FFCCCB', // Peaches - Light Pink
-  PO: '#8B4513', // Potatoes - Saddle Brown
-  ST: '#FF1493', // Strawberries - Deep Pink
-  TO: '#FF6347', // Tomatoes - Tomato
-  
-  // Other Crops
-  HA: '#32CD32', // Hay - Lime Green
-  SU: '#F5F5F5', // Sugar Beets - White Smoke
-  SC: '#98FB98', // Sugarcane - Pale Green
-  SN: '#FFFF00', // Sunflower - Yellow
-  PE: '#DEB887', // Peanuts - Burlywood
-  SW: '#FF8C00', // Sweet Potatoes - Dark Orange
-  TA: '#8FBC8F', // Tobacco - Dark Sea Green
-  
-  [UNASSIGNED_CROP_CODE]: '#E5E5E5', // Light Gray
+  [UNASSIGNED_SBU_CODE]: '#E5E5E5', // Light Gray
 };
 
-export const CROP_METRICS_NAMES = {
-  production: 'Production',
-  yield: 'Yield',
-  area: 'Harvested Area',
+// Department colors based on SBU
+export const DEPT_COLORS = {
+  // Electronics - Blue variants
+  EL_SM: '#1976D2',
+  EL_LA: '#1E88E5', 
+  EL_TA: '#42A5F5',
+  EL_GA: '#64B5F6',
+  EL_AU: '#90CAF9',
+  
+  // Clothing - Pink variants
+  CL_ME: '#C2185B',
+  CL_WO: '#D81B60',
+  CL_KI: '#E91E63',
+  CL_SH: '#EC407A',
+  CL_AC: '#F06292',
+  
+  // Home & Garden - Green variants
+  HG_FU: '#388E3C',
+  HG_DE: '#43A047',
+  HG_KI: '#4CAF50',
+  HG_BE: '#66BB6A',
+  HG_GA: '#81C784',
+  
+  // Sports - Orange variants
+  SP_AT: '#F57C00',
+  SP_EQ: '#FB8C00',
+  SP_OU: '#FF9800',
+  SP_FI: '#FFA726',
+  
+  // Beauty - Purple variants
+  BT_SK: '#7B1FA2',
+  BT_MA: '#8E24AA',
+  BT_FR: '#9C27B0',
+  BT_HA: '#AB47BC',
+  
+  [UNASSIGNED_SBU_CODE]: '#E5E5E5',
 };
 
-export const CROP_METRICS_UNITS = {
-  production: 'Bushels', // Changed from Tonnes to Bushels (US standard)
-  yield: 'Bu/Acre',      // Changed from Tonnes/Hectare to Bushels/Acre
-  area: 'Acres',         // Changed from Hectares to Acres
+export const SALES_METRICS_NAMES = {
+  gmv: 'GMV',
+  units: 'Units',
+  aur: 'AUR',
 };
 
-export const CROP_METRICS_ARRAY = Object.entries(CROP_METRICS_NAMES).map(
+export const SALES_METRICS_UNITS = {
+  gmv: '$M', // Millions of dollars
+  units: 'K',  // Thousands of units
+  aur: '$',    // Average Unit Revenue in dollars
+};
+
+export const SALES_METRICS_ARRAY = Object.entries(SALES_METRICS_NAMES).map(
   ([code, name]) => ({
     code,
     name,
@@ -411,10 +444,10 @@ export const WEATHER_PARAMS = {
 };
 
 export const WEATHER_UNITS = {
-  temp: '°F', // Changed from Celsius to Fahrenheit
+  temp: '°F',
   clco: '%',
   evpt: '%',
-  prep: 'in', // Changed from mm to inches
+  prep: 'in',
 };
 
 export const WEATHER_COLORS = {

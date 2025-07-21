@@ -5,7 +5,7 @@ import {
   HouseOutlined as WarehouseDashboardIcon,
   CloudOutlined as WeatherDashboardIcon,
   FolderOpen as PDFDirectoryIcon,
-  TrendingUpOutlined as RatesDashboardIcon,
+  TrendingUpOutlined as PricingDashboardIcon,
 } from '@mui/icons-material';
 
 const Welcome = lazy(() => import('../views/Welcome'));
@@ -13,23 +13,31 @@ const Dashboard = lazy(() => import('../views/Dashboard'));
 const WeatherDashboard = lazy(() => import('../views/WeatherDashboard'));
 const WarehouseDashboard = lazy(() => import('../views/WarehouseDashboard'));
 const PDFDirectory = lazy(() => import('../views/PDFDirectory'));
-const RatesDashboard = lazy(() => import('../views/RatesDashboard'));
+const PricingDashboard = lazy(() => import('../views/PricingDashboard'));
 
 const dashboardVariants = [
   '/year/:year',
-  '/crop/:cropCode',
+  '/sbu/:sbuCode',
+  '/dept/:deptCode',
   '/state/:stateCode',
-  '/year/:year/crop/:cropCode',
+  '/year/:year/sbu/:sbuCode',
+  '/year/:year/dept/:deptCode',
   '/year/:year/state/:stateCode',
-  '/state/:stateCode/crop/:cropCode',
-  '/year/:year/state/:stateCode/crop/:cropCode',
+  '/state/:stateCode/sbu/:sbuCode',
+  '/state/:stateCode/dept/:deptCode',
+  '/sbu/:sbuCode/dept/:deptCode',
+  '/year/:year/state/:stateCode/sbu/:sbuCode',
+  '/year/:year/state/:stateCode/dept/:deptCode',
+  '/year/:year/sbu/:sbuCode/dept/:deptCode',
+  '/state/:stateCode/sbu/:sbuCode/dept/:deptCode',
+  '/year/:year/state/:stateCode/sbu/:sbuCode/dept/:deptCode',
 ];
 
 export const pages = [
   {
     pageLink: '/',
     component: Dashboard,
-    displayName: 'Production',
+    displayName: 'Sales',
     showInNavbar: true,
     navbarIcon: DashboardIcon,
   },
@@ -48,11 +56,11 @@ export const pages = [
     navbarIcon: WarehouseDashboardIcon,
   },
   {
-    pageLink: '/rates',
-    component: RatesDashboard,
-    displayName: 'Rates',
+    pageLink: '/pricing',
+    component: PricingDashboard,
+    displayName: 'Pricing',
     showInNavbar: true,
-    navbarIcon: RatesDashboardIcon,
+    navbarIcon: PricingDashboardIcon,
   },
   {
     pageLink: '/directory',

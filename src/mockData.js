@@ -1,156 +1,156 @@
-// src/mockData.js
-import { STATE_NAMES, CROP_NAMES, CROP_COLORS } from './constants';
+// src/mockData.js - Updated for Sales Data
+import { STATE_NAMES, SBU_NAMES, SBU_COLORS, DEPT_NAMES } from './constants';
 
 // Helper function to generate random data
 const randomBetween = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const randomFloat = (min, max) => Math.random() * (max - min) + min;
 
-// DASHBOARD MOCK DATA
-export const MOCK_CROP_CATEGORIES = [
+// DASHBOARD MOCK DATA - Updated for Sales
+export const MOCK_SBU_CATEGORIES = [
   {
-    categoryName: "Cereals",
-    production: {
-      value: 285000000,
+    categoryName: "Electronics",
+    sales: {
+      value: 285000000, // $285M GMV
       series: [280000000, 275000000, 285000000],
       year: [2021, 2022, 2023],
       change: 3.6
     },
-    consumption: {
-      value: 275000000,
-      series: [270000000, 272000000, 275000000],
+    orders: {
+      value: 2750000, // 2.75M orders
+      series: [2700000, 2720000, 2750000],
       year: [2021, 2022, 2023],
       change: 1.8
     }
   },
   {
-    categoryName: "Pulses",
-    production: {
-      value: 25000000,
-      series: [24000000, 23500000, 25000000],
+    categoryName: "Clothing",
+    sales: {
+      value: 125000000, // $125M GMV
+      series: [120000000, 118000000, 125000000],
       year: [2021, 2022, 2023],
       change: 6.4
     },
-    consumption: {
-      value: 24500000,
-      series: [24000000, 24200000, 24500000],
+    orders: {
+      value: 1850000, // 1.85M orders
+      series: [1800000, 1820000, 1850000],
       year: [2021, 2022, 2023],
       change: 2.1
     }
   },
   {
-    categoryName: "Oilseeds",
-    production: {
-      value: 36000000,
-      series: [35000000, 34500000, 36000000],
+    categoryName: "Home & Garden",
+    sales: {
+      value: 96000000, // $96M GMV
+      series: [92000000, 90000000, 96000000],
       year: [2021, 2022, 2023],
       change: 4.3
     },
-    consumption: {
-      value: 35200000,
-      series: [34800000, 35000000, 35200000],
+    orders: {
+      value: 1420000, // 1.42M orders
+      series: [1380000, 1400000, 1420000],
       year: [2021, 2022, 2023],
       change: 1.1
     }
   },
   {
-    categoryName: "Sugarcane",
-    production: {
-      value: 405000000,
-      series: [400000000, 395000000, 405000000],
+    categoryName: "Sports",
+    sales: {
+      value: 78000000, // $78M GMV
+      series: [75000000, 74000000, 78000000],
       year: [2021, 2022, 2023],
       change: 2.5
     },
-    consumption: {
-      value: 400000000,
-      series: [398000000, 399000000, 400000000],
+    orders: {
+      value: 980000, // 980K orders
+      series: [950000, 965000, 980000],
       year: [2021, 2022, 2023],
-      change: 0.5
+      change: 1.6
     }
   },
   {
-    categoryName: "Cotton",
-    production: {
-      value: 6200000,
-      series: [6000000, 5800000, 6200000],
+    categoryName: "Beauty",
+    sales: {
+      value: 62000000, // $62M GMV
+      series: [58000000, 56000000, 62000000],
       year: [2021, 2022, 2023],
       change: 6.9
-    }
-  },
-  {
-    categoryName: "Jute",
-    production: {
-      value: 1800000,
-      series: [1750000, 1720000, 1800000],
-      year: [2021, 2022, 2023],
-      change: 4.7
     }
   }
 ];
 
-export const MOCK_TOP_CROPS = [
+export const MOCK_TOP_SBUS = [
   {
-    crop: "RI", // Rice
-    series: [116000000, 118000000, 120000000, 122000000, 124000000],
+    sbu: "EL", // Electronics
+    series: [280000000, 275000000, 285000000, 290000000, 295000000],
     year: [2019, 2020, 2021, 2022, 2023],
     insights: {
       production: [
-        "Rice production increased by 2.4% this year",
-        "Favorable monsoon conditions boosted yields"
+        "Electronics sales increased by 2.4% this year",
+        "Strong demand for smartphones and laptops"
+      ],
+      sales: [
+        "Electronics sales increased by 2.4% this year",
+        "Strong demand for smartphones and laptops"
       ]
     }
   },
   {
-    crop: "WH", // Wheat
-    series: [103000000, 105000000, 107000000, 109000000, 111000000],
+    sbu: "CL", // Clothing
+    series: [120000000, 118000000, 125000000, 128000000, 132000000],
     year: [2019, 2020, 2021, 2022, 2023],
     insights: {
       production: [
-        "Wheat production grew by 1.8% annually",
-        "Punjab and Haryana leading producers"
+        "Clothing sales grew by 1.8% annually",
+        "Women's apparel leading the category"
+      ],
+      sales: [
+        "Clothing sales grew by 1.8% annually",
+        "Women's apparel leading the category"
       ]
     }
   },
   {
-    crop: "MA", // Maize
-    series: [28000000, 29000000, 31000000, 32000000, 33500000],
+    sbu: "HG", // Home & Garden
+    series: [85000000, 88000000, 92000000, 96000000, 98000000],
     year: [2019, 2020, 2021, 2022, 2023],
     insights: {
       production: [
-        "Maize showed strong growth of 4.7%",
-        "Increasing demand from poultry sector"
+        "Home & Garden showed strong growth of 4.7%",
+        "Furniture and decor driving sales"
+      ],
+      sales: [
+        "Home & Garden showed strong growth of 4.7%",
+        "Furniture and decor driving sales"
       ]
     }
   },
   {
-    crop: "SU", // Sugarcane
-    series: [400000000, 395000000, 405000000, 410000000, 415000000],
+    sbu: "SP", // Sports
+    series: [70000000, 72000000, 75000000, 78000000, 82000000],
     year: [2019, 2020, 2021, 2022, 2023],
     insights: {
       production: [
-        "Sugarcane production steady at 415M tonnes",
-        "Maharashtra and Uttar Pradesh key states"
+        "Sports category steady growth at 5.1%",
+        "Athletic wear and equipment performing well"
+      ],
+      sales: [
+        "Sports category steady growth at 5.1%",
+        "Athletic wear and equipment performing well"
       ]
     }
   },
   {
-    crop: "CT", // Cotton
-    series: [5800000, 6000000, 5900000, 6100000, 6200000],
+    sbu: "BT", // Beauty
+    series: [52000000, 55000000, 58000000, 62000000, 65000000],
     year: [2019, 2020, 2021, 2022, 2023],
     insights: {
       production: [
-        "Cotton production recovered to 6.2M bales",
-        "Gujarat leading cotton producing state"
-      ]
-    }
-  },
-  {
-    crop: "SO", // Soybean
-    series: [12000000, 11500000, 12500000, 13000000, 13200000],
-    year: [2019, 2020, 2021, 2022, 2023],
-    insights: {
-      production: [
-        "Soybean production reached record 13.2M tonnes",
-        "Madhya Pradesh dominates production"
+        "Beauty sales reached record $65M",
+        "Skincare and makeup driving growth"
+      ],
+      sales: [
+        "Beauty sales reached record $65M",
+        "Skincare and makeup driving growth"
       ]
     }
   }
@@ -158,202 +158,234 @@ export const MOCK_TOP_CROPS = [
 
 export const MOCK_MAP_SUMMARY = [
   {
-    location: "MAHARASHTRA",
-    topCrops: [
-      { crop: "SU", value: 85000000 },
-      { crop: "SO", value: 4200000 },
-      { crop: "CT", value: 1800000 }
+    location: "CALIFORNIA",
+    topSBUs: [
+      { sbu: "EL", value: 85000000 },
+      { sbu: "CL", value: 42000000 },
+      { sbu: "HG", value: 18000000 }
     ]
   },
   {
-    location: "UTTAR PRADESH",
-    topCrops: [
-      { crop: "WH", value: 32000000 },
-      { crop: "RI", value: 14000000 },
-      { crop: "SU", value: 22000000 }
+    location: "NEW YORK",
+    topSBUs: [
+      { sbu: "CL", value: 32000000 },
+      { sbu: "EL", value: 28000000 },
+      { sbu: "BT", value: 22000000 }
     ]
   },
   {
-    location: "PUNJAB",
-    topCrops: [
-      { crop: "WH", value: 18000000 },
-      { crop: "RI", value: 11000000 },
-      { crop: "MA", value: 1200000 }
+    location: "TEXAS",
+    topSBUs: [
+      { sbu: "EL", value: 45000000 },
+      { sbu: "SP", value: 18000000 },
+      { sbu: "HG", value: 12000000 }
     ]
   },
   {
-    location: "HARYANA",
-    topCrops: [
-      { crop: "WH", value: 12000000 },
-      { crop: "RI", value: 4500000 },
-      { crop: "SU", value: 5000000 }
+    location: "FLORIDA",
+    topSBUs: [
+      { sbu: "CL", value: 28000000 },
+      { sbu: "BT", value: 15000000 },
+      { sbu: "SP", value: 12000000 }
     ]
   },
   {
-    location: "MADHYA PRADESH",
-    topCrops: [
-      { crop: "SO", value: 5800000 },
-      { crop: "WH", value: 18000000 },
-      { crop: "MA", value: 2200000 }
+    location: "ILLINOIS",
+    topSBUs: [
+      { sbu: "EL", value: 35000000 },
+      { sbu: "HG", value: 18000000 },
+      { sbu: "CL", value: 15000000 }
     ]
   },
   {
-    location: "RAJASTHAN",
-    topCrops: [
-      { crop: "WH", value: 8500000 },
-      { crop: "BJ", value: 2800000 },
-      { crop: "MA", value: 1500000 }
+    location: "PENNSYLVANIA",
+    topSBUs: [
+      { sbu: "HG", value: 22000000 },
+      { sbu: "EL", value: 20000000 },
+      { sbu: "CL", value: 15000000 }
     ]
   },
   {
-    location: "GUJARAT",
-    topCrops: [
-      { crop: "CT", value: 2400000 },
-      { crop: "WH", value: 3200000 },
-      { crop: "GR", value: 5100000 }
+    location: "OHIO",
+    topSBUs: [
+      { sbu: "EL", value: 25000000 },
+      { sbu: "SP", value: 12000000 },
+      { sbu: "HG", value: 10000000 }
     ]
   },
   {
-    location: "WEST BENGAL",
-    topCrops: [
-      { crop: "RI", value: 15500000 },
-      { crop: "WH", value: 1100000 },
-      { crop: "PO", value: 11200000 }
+    location: "MICHIGAN",
+    topSBUs: [
+      { sbu: "EL", value: 22000000 },
+      { sbu: "SP", value: 15000000 },
+      { sbu: "CL", value: 12000000 }
     ]
   }
 ];
 
-export const MOCK_CROP_MAP_DATA = [
+export const MOCK_SBU_MAP_DATA = [
   {
-    location: "MAHARASHTRA",
+    location: "CALIFORNIA",
     years: [{ year: 2023, value: 85000000 }]
   },
   {
-    location: "UTTAR PRADESH", 
+    location: "NEW YORK", 
     years: [{ year: 2023, value: 32000000 }]
   },
   {
-    location: "PUNJAB",
-    years: [{ year: 2023, value: 18000000 }]
+    location: "TEXAS",
+    years: [{ year: 2023, value: 45000000 }]
   },
   {
-    location: "HARYANA",
-    years: [{ year: 2023, value: 12000000 }]
+    location: "FLORIDA",
+    years: [{ year: 2023, value: 28000000 }]
   },
   {
-    location: "MADHYA PRADESH",
-    years: [{ year: 2023, value: 18000000 }]
+    location: "ILLINOIS",
+    years: [{ year: 2023, value: 35000000 }]
   },
   {
-    location: "RAJASTHAN",
-    years: [{ year: 2023, value: 8500000 }]
+    location: "PENNSYLVANIA",
+    years: [{ year: 2023, value: 22000000 }]
   },
   {
-    location: "GUJARAT",
-    years: [{ year: 2023, value: 3200000 }]
+    location: "OHIO",
+    years: [{ year: 2023, value: 25000000 }]
   },
   {
-    location: "WEST BENGAL",
-    years: [{ year: 2023, value: 15500000 }]
+    location: "MICHIGAN",
+    years: [{ year: 2023, value: 22000000 }]
   }
 ];
 
-export const MOCK_PRODUCTION_TABLE = [
+export const MOCK_SALES_TABLE = [
   {
-    stateCode: "MH",
+    stateCode: "CA",
     year: 2023,
-    cropCode: "SU",
-    production: 85000000,
-    yield: 75.2,
-    area: 1130000
+    sbuCode: "EL",
+    deptCode: "EL_SM",
+    value: 85000000,
+    yoyGrowthPercent: 8.5,
+    yoyGrowthDollar: 6700000
   },
   {
-    stateCode: "UP",
+    stateCode: "NY",
     year: 2023,
-    cropCode: "WH", 
-    production: 32000000,
-    yield: 32.8,
-    area: 975000
+    sbuCode: "CL",
+    deptCode: "CL_WO", 
+    value: 32000000,
+    yoyGrowthPercent: 5.2,
+    yoyGrowthDollar: 1600000
   },
   {
-    stateCode: "PB",
+    stateCode: "TX",
     year: 2023,
-    cropCode: "WH",
-    production: 18000000,
-    yield: 51.2,
-    area: 351000
+    sbuCode: "EL",
+    deptCode: "EL_LA",
+    value: 45000000,
+    yoyGrowthPercent: 6.8,
+    yoyGrowthDollar: 2900000
   },
   {
-    stateCode: "HR",
+    stateCode: "FL",
     year: 2023,
-    cropCode: "WH",
-    production: 12000000,
-    yield: 48.5,
-    area: 247000
+    sbuCode: "CL",
+    deptCode: "CL_ME",
+    value: 28000000,
+    yoyGrowthPercent: 4.3,
+    yoyGrowthDollar: 1150000
   },
   {
-    stateCode: "MP",
+    stateCode: "IL",
     year: 2023,
-    cropCode: "SO",
-    production: 5800000,
-    yield: 11.2,
-    area: 518000
+    sbuCode: "EL",
+    deptCode: "EL_TA",
+    value: 35000000,
+    yoyGrowthPercent: 7.2,
+    yoyGrowthDollar: 2350000
+  },
+  {
+    stateCode: "PA",
+    year: 2023,
+    sbuCode: "HG",
+    deptCode: "HG_FU",
+    value: 22000000,
+    yoyGrowthPercent: 3.8,
+    yoyGrowthDollar: 820000
+  },
+  {
+    stateCode: "OH",
+    year: 2023,
+    sbuCode: "SP",
+    deptCode: "SP_AT",
+    value: 15000000,
+    yoyGrowthPercent: -2.1,
+    yoyGrowthDollar: -320000
+  },
+  {
+    stateCode: "GA",
+    year: 2023,
+    sbuCode: "BT",
+    deptCode: "BT_SK",
+    value: 18000000,
+    yoyGrowthPercent: 9.2,
+    yoyGrowthDollar: 1520000
   }
 ];
 
-// IMPORT/EXPORT MOCK DATA
-export const MOCK_IMPORT_EXPORT = {
-  import: {
+// IMPORT/EXPORT MOCK DATA - Updated for B2B Sales
+export const MOCK_B2B_WHOLESALE = {
+  b2b: {
     data: [
-      { label: "Pulses", value: 2500000 },
-      { label: "Edible Oils", value: 13800000 },
-      { label: "Fruits", value: 850000 },
-      { label: "Spices", value: 320000 },
-      { label: "Tea", value: 180000 },
-      { label: "Other Imports", value: 1250000 } // Changed from "Others"
+      { label: "Enterprise Clients", value: 125000000 },
+      { label: "Retail Partners", value: 98000000 },
+      { label: "Distributors", value: 67000000 },
+      { label: "Franchise Partners", value: 45000000 },
+      { label: "International", value: 32000000 },
+      { label: "Other B2B", value: 28000000 }
     ]
   },
-  export: {
+  wholesale: {
     data: [
-      { label: "Rice", value: 21500000 },
-      { label: "Wheat", value: 3200000 },
-      { label: "Tea", value: 250000 },
-      { label: "Spices", value: 1100000 },
-      { label: "Fruits", value: 750000 },
-      { label: "Other Exports", value: 2850000 } // Changed from "Others"
+      { label: "Major Retailers", value: 156000000 },
+      { label: "Regional Chains", value: 89000000 },
+      { label: "Online Platforms", value: 78000000 },
+      { label: "Specialty Stores", value: 56000000 },
+      { label: "Department Stores", value: 43000000 },
+      { label: "Other Wholesale", value: 35000000 }
     ]
   }
 };
 
-// WEATHER MOCK DATA
+// WEATHER MOCK DATA (keeping for consistency)
 export const MOCK_WEATHER_DATA = [
   {
-    location: "MAHARASHTRA",
+    location: "CALIFORNIA",
     years: [
       {
         year: 2023,
-        value: 28.5, // Average for all months
-        series: [22.1, 25.3, 28.9, 32.1, 35.2, 29.8, 26.4, 25.9, 27.1, 29.3, 26.8, 23.4]
+        value: 68.5, // Average temperature
+        series: [62.1, 65.3, 68.9, 72.1, 75.2, 79.8, 82.4, 81.9, 78.1, 73.3, 66.8, 63.4]
       }
     ]
   },
   {
-    location: "UTTAR PRADESH",
+    location: "NEW YORK",
     years: [
       {
         year: 2023,
-        value: 26.2,
-        series: [18.5, 22.1, 27.2, 32.8, 36.1, 33.2, 30.1, 29.8, 28.4, 26.9, 22.3, 19.1]
+        value: 54.2,
+        series: [38.5, 42.1, 52.2, 62.8, 71.1, 78.2, 82.1, 79.8, 72.4, 61.9, 48.3, 39.1]
       }
     ]
   },
   {
-    location: "PUNJAB",
+    location: "TEXAS",
     years: [
       {
         year: 2023,
-        value: 24.8,
-        series: [14.2, 18.7, 24.1, 29.5, 34.2, 32.8, 31.1, 30.4, 28.1, 25.2, 19.8, 15.6]
+        value: 76.8,
+        series: [58.2, 62.7, 70.1, 77.5, 84.2, 90.8, 95.1, 94.4, 88.1, 79.2, 65.8, 59.6]
       }
     ]
   }
@@ -362,7 +394,7 @@ export const MOCK_WEATHER_DATA = [
 export const MOCK_WEATHER_SUMMARY = [
   {
     param: "temp",
-    value: 28.5,
+    value: 68.5,
     change: 2.3
   },
   {
@@ -384,230 +416,224 @@ export const MOCK_WEATHER_SUMMARY = [
 
 export const MOCK_WEATHER_TABLE = [
   {
-    stateCode: "MH",
+    stateCode: "CA",
     year: 2023,
     month: 6,
-    temp: 29.8,
-    prep: 245,
-    clco: 78,
+    temp: 79.8,
+    prep: 0.2,
+    clco: 15,
     evpt: 142
   },
   {
-    stateCode: "UP",
+    stateCode: "NY",
     year: 2023,
     month: 6,
-    temp: 33.2,
-    prep: 180,
+    temp: 78.2,
+    prep: 3.8,
     clco: 65,
     evpt: 156
   },
   {
-    stateCode: "PB",
+    stateCode: "TX",
     year: 2023,
     month: 6,
-    temp: 32.8,
-    prep: 95,
+    temp: 90.8,
+    prep: 2.1,
     clco: 45,
     evpt: 168
   }
 ];
 
-// WAREHOUSE MOCK DATA
+// WAREHOUSE MOCK DATA - Updated for Distribution Centers
 export const MOCK_WAREHOUSE_SUMMARY = [
   {
-    location: "MAHARASHTRA",
+    location: "CALIFORNIA",
     warehouses: [
-      { type: "FCI", capacity: 2500000, count: 145 },
-      { type: "CWC", capacity: 1800000, count: 89 },
-      { type: "Private", capacity: 3200000, count: 234 }
+      { type: "Distribution Center", capacity: 2500000, count: 8 },
+      { type: "Fulfillment Center", capacity: 1800000, count: 12 },
+      { type: "Local Hubs", capacity: 800000, count: 24 }
     ]
   },
   {
-    location: "UTTAR PRADESH",
+    location: "TEXAS",
     warehouses: [
-      { type: "FCI", capacity: 3200000, count: 198 },
-      { type: "CWC", capacity: 2100000, count: 112 },
-      { type: "Private", capacity: 4100000, count: 287 }
+      { type: "Distribution Center", capacity: 2200000, count: 6 },
+      { type: "Fulfillment Center", capacity: 1600000, count: 10 },
+      { type: "Local Hubs", capacity: 700000, count: 18 }
     ]
   },
   {
-    location: "PUNJAB",
+    location: "NEW YORK",
     warehouses: [
-      { type: "FCI", capacity: 1800000, count: 95 },
-      { type: "CWC", capacity: 1200000, count: 67 },
-      { type: "Private", capacity: 2200000, count: 156 }
+      { type: "Distribution Center", capacity: 1800000, count: 5 },
+      { type: "Fulfillment Center", capacity: 1200000, count: 8 },
+      { type: "Local Hubs", capacity: 600000, count: 16 }
     ]
   }
 ];
 
 export const MOCK_WAREHOUSE_TOTALS = [
   {
-    type: "FCI Godowns",
-    count: 1247,
+    type: "Distribution Centers",
+    count: 45,
     capacity: 15600000
   },
   {
-    type: "Central Warehouses", 
-    count: 892,
+    type: "Fulfillment Centers", 
+    count: 67,
     capacity: 12400000
   },
   {
-    type: "Private Warehouses",
-    count: 3456,
-    capacity: 28900000
+    type: "Local Hubs",
+    count: 156,
+    capacity: 8900000
   }
 ];
 
 export const MOCK_WAREHOUSE_TABLE = [
   {
-    type: "FCI",
-    warehouse: "FCI Godown - Mumbai Central",
-    total: 25000,
-    stateCode: "MH"
+    type: "Distribution Center",
+    warehouse: "West Coast Distribution - Los Angeles",
+    total: 850000,
+    stateCode: "CA"
   },
   {
-    type: "CWC",
-    warehouse: "Central Warehouse - Pune",
-    total: 18000,
-    stateCode: "MH"
+    type: "Fulfillment Center",
+    warehouse: "Prime Fulfillment - San Francisco",
+    total: 620000,
+    stateCode: "CA"
   },
   {
-    type: "Private",
-    warehouse: "Reliance Storage - Nashik",
-    total: 32000,
-    stateCode: "MH"
+    type: "Local Hub",
+    warehouse: "Quick Ship Hub - San Diego",
+    total: 180000,
+    stateCode: "CA"
   },
   {
-    type: "FCI",
-    warehouse: "FCI Godown - Kanpur",
-    total: 28000,
-    stateCode: "UP"
+    type: "Distribution Center",
+    warehouse: "Central Distribution - Dallas",
+    total: 780000,
+    stateCode: "TX"
   }
 ];
 
-// RATES MOCK DATA
-export const MOCK_RATES_SUMMARY = [
+// PRICING MOCK DATA - Updated for Sales Pricing
+export const MOCK_PRICING_SUMMARY = [
   {
-    crop: "Wheat",
+    sbu: "Electronics",
     years: [2021, 2022, 2023, 2024],
-    rates: [2150, 2280, 2450, 2680],
+    avgPrice: [450, 468, 489, 515],
     insights: {
-      rainfall: ["Normal monsoon expected", "Good soil moisture levels"],
-      consumption: ["Steady domestic demand", "Export opportunities rising"],
-      rates: ["Prices trending upward", "Government MSP support"],
-      production: ["Production estimate stable", "Quality expected to be good"]
+      demand: ["Strong consumer demand", "Premium product mix growing"],
+      competition: ["Competitive pricing pressure", "Value positioning important"],
+      pricing: ["Price optimization ongoing", "Premium segment expansion"],
+      market: ["Market share gains", "Customer satisfaction high"]
     }
   },
   {
-    crop: "Rice",
+    sbu: "Clothing",
     years: [2021, 2022, 2023, 2024],
-    rates: [1950, 2100, 2250, 2380],
+    avgPrice: [85, 92, 98, 105],
     insights: {
-      rainfall: ["Adequate rainfall in key states", "Kharif season looks promising"],
-      consumption: ["Strong export demand", "Domestic consumption steady"],
-      rates: ["International prices favorable", "MSP providing floor support"],
-      production: ["Record production expected", "Hybrid varieties performing well"]
+      demand: ["Seasonal demand patterns", "Fashion trends driving sales"],
+      competition: ["Fast fashion competition", "Brand differentiation key"],
+      pricing: ["Dynamic pricing strategy", "Promotional pricing effective"],
+      market: ["Omnichannel growth", "Sustainability focus increasing"]
     }
   }
 ];
 
-export const MOCK_RATES_CODES = {
-  centers: [
-    ["Mumbai", "mumbai"],
-    ["Delhi", "delhi"], 
-    ["Kolkata", "kolkata"],
-    ["Chennai", "chennai"]
+export const MOCK_PRICING_CODES = {
+  channels: [
+    ["Online", "online"],
+    ["Retail", "retail"], 
+    ["Wholesale", "wholesale"],
+    ["B2B", "b2b"]
   ],
-  commodities: [
-    ["Wheat", "wheat"],
-    ["Rice", "rice"],
-    ["Maize", "maize"],
-    ["Soybean", "soybean"]
+  sbus: [
+    ["Electronics", "electronics"],
+    ["Clothing", "clothing"],
+    ["Home & Garden", "home_garden"],
+    ["Sports", "sports"],
+    ["Beauty", "beauty"]
   ]
 };
 
-export const MOCK_RATES_TRENDS = [
-  { year: 2023, month: 1, wholesaleRate: 2180, retailRate: 28 },
-  { year: 2023, month: 2, wholesaleRate: 2200, retailRate: 29 },
-  { year: 2023, month: 3, wholesaleRate: 2250, retailRate: 30 },
-  { year: 2023, month: 4, wholesaleRate: 2280, retailRate: 31 },
-  { year: 2023, month: 5, wholesaleRate: 2320, retailRate: 32 },
-  { year: 2023, month: 6, wholesaleRate: 2350, retailRate: 33 }
+export const MOCK_PRICING_TRENDS = [
+  { year: 2023, month: 1, avgPrice: 445, marginPercent: 28.5 },
+  { year: 2023, month: 2, avgPrice: 458, marginPercent: 29.2 },
+  { year: 2023, month: 3, avgPrice: 472, marginPercent: 30.1 },
+  { year: 2023, month: 4, avgPrice: 485, marginPercent: 29.8 },
+  { year: 2023, month: 5, avgPrice: 498, marginPercent: 31.2 },
+  { year: 2023, month: 6, avgPrice: 512, marginPercent: 32.1 }
 ];
 
-// CROP vs WEATHER MOCK DATA
-export const MOCK_CROP_VS_WEATHER = [
+// SBU vs MARKET FACTORS MOCK DATA
+export const MOCK_SBU_VS_MARKET = [
   {
     values: [
-      { year: 2019, value: 116000000 },
-      { year: 2020, value: 118000000 },
-      { year: 2021, value: 120000000 },
-      { year: 2022, value: 122000000 },
-      { year: 2023, value: 124000000 }
+      { year: 2019, value: 280000000 },
+      { year: 2020, value: 275000000 },
+      { year: 2021, value: 285000000 },
+      { year: 2022, value: 290000000 },
+      { year: 2023, value: 295000000 }
     ],
-    prep: [
-      { year: 2019, value: 1180 },
-      { year: 2020, value: 1220 },
-      { year: 2021, value: 1150 },
-      { year: 2022, value: 1280 },
-      { year: 2023, value: 1200 }
+    marketIndex: [
+      { year: 2019, value: 105.2 },
+      { year: 2020, value: 98.5 },
+      { year: 2021, value: 108.7 },
+      { year: 2022, value: 112.3 },
+      { year: 2023, value: 118.9 }
     ],
-    temp: [
-      { year: 2019, value: 27.8 },
-      { year: 2020, value: 28.2 },
-      { year: 2021, value: 27.5 },
-      { year: 2022, value: 28.8 },
-      { year: 2023, value: 28.1 }
+    consumerSentiment: [
+      { year: 2019, value: 88.5 },
+      { year: 2020, value: 76.2 },
+      { year: 2021, value: 82.1 },
+      { year: 2022, value: 85.8 },
+      { year: 2023, value: 91.3 }
     ],
-    clco: [
-      { year: 2019, value: 62 },
-      { year: 2020, value: 68 },
-      { year: 2021, value: 58 },
-      { year: 2022, value: 71 },
-      { year: 2023, value: 65 }
+    competitorIndex: [
+      { year: 2019, value: 95.8 },
+      { year: 2020, value: 89.3 },
+      { year: 2021, value: 97.2 },
+      { year: 2022, value: 102.1 },
+      { year: 2023, value: 106.7 }
     ],
-    evpt: [
-      { year: 2019, value: 118 },
-      { year: 2020, value: 125 },
-      { year: 2021, value: 112 },
-      { year: 2022, value: 132 },
-      { year: 2023, value: 128 }
-    ],
-    pasm: [
-      { year: 2019, value: 45 },
-      { year: 2020, value: 52 },
-      { year: 2021, value: 38 },
-      { year: 2022, value: 58 },
-      { year: 2023, value: 48 }
+    economicIndex: [
+      { year: 2019, value: 102.5 },
+      { year: 2020, value: 87.2 },
+      { year: 2021, value: 95.8 },
+      { year: 2022, value: 103.2 },
+      { year: 2023, value: 108.9 }
     ]
   }
 ];
 
-// PDF DIRECTORY MOCK DATA
+// PDF DIRECTORY MOCK DATA - Updated for Business Documents
 export const MOCK_PDF_DIRECTORY = [
   {
-    category: "Budget Documents",
-    name: "Union Budget 2023-24",
-    filename: "union-budget-2023-24.pdf",
-    thumbnail: "budget-2023-thumb.jpg"
+    category: "Financial Reports",
+    name: "Q4 2023 Sales Report",
+    filename: "q4-2023-sales-report.pdf",
+    thumbnail: "sales-report-thumb.jpg"
   },
   {
-    category: "Budget Documents", 
-    name: "Economic Survey 2022-23",
-    filename: "economic-survey-2022-23.pdf",
-    thumbnail: "economic-survey-thumb.jpg"
+    category: "Financial Reports", 
+    name: "Annual Performance Review 2023",
+    filename: "annual-performance-2023.pdf",
+    thumbnail: "annual-review-thumb.jpg"
   },
   {
-    category: "Policy Documents",
-    name: "National Food Security Act",
-    filename: "food-security-act.pdf", 
-    thumbnail: "food-security-thumb.jpg"
+    category: "Strategy Documents",
+    name: "SBU Growth Strategy 2024",
+    filename: "sbu-growth-strategy-2024.pdf", 
+    thumbnail: "strategy-thumb.jpg"
   },
   {
-    category: "Policy Documents",
-    name: "PM-KISAN Scheme Guidelines",
-    filename: "pm-kisan-guidelines.pdf",
-    thumbnail: "pm-kisan-thumb.jpg"
+    category: "Strategy Documents",
+    name: "Market Expansion Plan",
+    filename: "market-expansion-plan.pdf",
+    thumbnail: "expansion-plan-thumb.jpg"
   }
 ];
 

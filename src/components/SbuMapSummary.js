@@ -1,12 +1,13 @@
+// src/components/SbuMapSummary.js
 import React, { useState } from 'react';
 import { ButtonGroup, Button, Box, Grid } from '@mui/material';
-import MapSummaryChart from '../charts/Dashboard/MapSummaryChart';
+import SbuMapChart from '../charts/Dashboard/SbuMapChart';
 import SalesTable from '../charts/Dashboard/SalesTable';
 import SuspenseProgress from './SuspenseProgress';
 import useButtonGroupSelect from '../hooks/useButtonGroupSelect';
 import { SALES_METRICS_NAMES } from '../constants';
 
-const MapSummary = () => {
+const SbuMapSummary = () => {
   const basedOn = useButtonGroupSelect('gmv');
   const [mapHeight, setMapHeight] = useState();
 
@@ -26,7 +27,7 @@ const MapSummary = () => {
             ))}
           </ButtonGroup>
           <SuspenseProgress minHeight={mapHeight}>
-            <MapSummaryChart on={basedOn.value} setMapHeight={setMapHeight} />
+            <SbuMapChart on={basedOn.value} setMapHeight={setMapHeight} />
           </SuspenseProgress>
         </Grid>
         <Grid item xs={12} md={7}>
@@ -36,4 +37,4 @@ const MapSummary = () => {
     </Box>
   );
 };
-export default MapSummary;
+export default SbuMapSummary;

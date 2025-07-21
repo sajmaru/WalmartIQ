@@ -9,7 +9,7 @@ import { USA_STATE_CODE } from '../../constants';
 const CategorySummaryChart = ({ expanded }) => {
   const { stateCode = USA_STATE_CODE } = useRouting();
   const { data = [] } = useSWR(
-    `https://usapa-backend.herokuapp.com/api/dashboard/cropCategory?stateCode=${stateCode}`,
+    `https://usapa-backend.herokuapp.com/api/dashboard/sbuCategory?stateCode=${stateCode}`,
     {
       fallbackData: [],
     },
@@ -23,12 +23,12 @@ const CategorySummaryChart = ({ expanded }) => {
       justifyContent="space-evenly"
       style={{ overflow: 'visible' }}>
       <Grid container spacing={3}>
-        {data.slice(0, 4).map(({ categoryName, production, consumption }) => (
+        {data.slice(0, 4).map(({ categoryName, sales, orders }) => (
           <Grid item xs={12} md={6} lg={3} key={`category-${categoryName}`}>
             <CategoryCard
               categoryName={categoryName}
-              production={production}
-              consumption={consumption}
+              sales={sales}
+              orders={orders}
             />
           </Grid>
         ))}
@@ -38,7 +38,7 @@ const CategorySummaryChart = ({ expanded }) => {
           container
           spacing={3}
           style={{ marginTop: 12, overflow: 'visible' }}>
-          {data.slice(4).map(({ categoryName, production, consumption }) => (
+          {data.slice(4).map(({ categoryName, sales, orders }) => (
             <Grid
               item
               xs={12}
@@ -47,8 +47,8 @@ const CategorySummaryChart = ({ expanded }) => {
               key={`category-expanded-${categoryName}`}>
               <CategoryCard
                 categoryName={categoryName}
-                production={production}
-                consumption={consumption}
+                sales={sales}
+                orders={orders}
               />
             </Grid>
           ))}

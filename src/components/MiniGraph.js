@@ -25,12 +25,24 @@ const MiniGraph = ({ series, color, style, years = [], ...props }) => {
         data: { xFormatted, yFormatted },
       },
     }) => {
+      // Format the value based on the magnitude
+      const numValue = parseFloat(yFormatted.replace(/[,$]/g, ''));
+      let formattedValue;
+      
+      if (numValue >= 1000000) {
+        formattedValue = `$${readableNumber(numValue / 1000000)}M`;
+      } else if (numValue >= 1000) {
+        formattedValue = `${readableNumber(numValue / 1000)}K Units`;
+      } else {
+        formattedValue = readableNumber(numValue);
+      }
+
       return (
         <BasicTooltip
           color={chipColor}
           id={`${xFormatted}`}
           enableChip
-          value={`${yFormatted} Tonnes`}
+          value={formattedValue}
         />
       );
     },

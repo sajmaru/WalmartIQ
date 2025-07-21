@@ -11,6 +11,8 @@ import {
   STATE_CODES,
   STATE_NAMES,
   USA_STATE_CODE,
+  FIPS_TO_STATE_CODE,
+  getStateCodeFromName,
 } from '../../constants';
 import { readableNumber } from '../../helpers';
 import useMap from '../../hooks/useMap';
@@ -99,12 +101,35 @@ export const WarehouseMap = memo(({ setMapHeight = () => {} }) => {
       onClick: ({
         properties: { st_nm: stateName, district: districtName },
       }) => {
-        const id =
-          stateCode === USA_STATE_CODE
-            ? stateName
-            : `${stateName}-${districtName}`.toUpperCase();
-        if (stateCode === USA_STATE_CODE && !!data[id])
-          goTo({ stateCode: STATE_CODES[stateName] }, '/warehouse');
+        console.log('🗺️ Warehouse map feature clicked:', { stateName, district: districtName });
+
+        if (stateCode === USA_STATE_CODE && stateName) {
+          // Use the robust helper function for state code lookup
+          let targetStateCode = getStateCodeFromName(stateName);
+          
+          // Fallback: Check if data exists for this state
+          if (!targetStateCode && data[stateName]) {
+            // Try to find the state code from available data
+            const stateEntries = Object.entries(STATE_NAMES);
+            const foundEntry = stateEntries.find(([code, name]) => 
+              name.toUpperCase() === stateName.toUpperCase()
+            );
+            targetStateCode = foundEntry?.[0];
+          }
+
+          console.log('🗺️ Warehouse map state lookup:', {
+            originalName: stateName,
+            targetStateCode,
+            hasData: !!data[stateName]
+          });
+
+          if (targetStateCode && targetStateCode !== USA_STATE_CODE && data[stateName]) {
+            console.log('🗺️ Navigating to warehouse state:', targetStateCode);
+            goTo({ stateCode: targetStateCode }, '/warehouse');
+          } else {
+            console.warn('🗺️ State code not found or no warehouse data for:', stateName);
+          }
+        }
       },
       tooltip: ({
         feature: {
@@ -159,4 +184,3 @@ export const WarehouseMap = memo(({ setMapHeight = () => {} }) => {
   );
 });
 export default WarehouseMap;
-

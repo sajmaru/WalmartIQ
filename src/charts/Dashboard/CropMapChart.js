@@ -15,6 +15,8 @@ import {
   STATE_NAMES,
   UNASSIGNED_CROP_CODE,
   USA_STATE_CODE,
+  FIPS_TO_STATE_CODE,
+  getStateCodeFromName,
 } from '../../constants';
 import { readableNumber } from '../../helpers';
 import useConstants from '../../hooks/useConstants';
@@ -47,7 +49,6 @@ const CropMapChart = memo(({ on = 'production', setMapHeight = () => {} }) => {
   );
 
   const mapProps = useMemo(() => {
-
     if (!values || values.length === 0) {
       // Return default styling when no data
       return {
@@ -115,28 +116,42 @@ const CropMapChart = memo(({ on = 'production', setMapHeight = () => {} }) => {
       borderWidth: () => 2,
       borderColor: () => '#666666',
       onClick: (feature) => {
+        console.log('🗺️ Crop map feature clicked:', feature); // Debug log
 
         const {
           properties: { st_nm: stateName, district: districtName },
         } = feature;
 
         if (stateCode === USA_STATE_CODE && stateName) {
-          // Clicking on India map - navigate to state
-          const targetStateCode = STATE_CODES[stateName];
-         
+          // Use the robust helper function for state code lookup
+          let targetStateCode = getStateCodeFromName(stateName);
+          
+          // Fallback: Try FIPS code lookup if available
+          if (!targetStateCode && feature.id) {
+            targetStateCode = FIPS_TO_STATE_CODE[feature.id];
+          }
+
+          console.log('🗺️ Crop map state lookup:', {
+            originalName: stateName,
+            targetStateCode,
+            cropCode,
+            feature
+          });
 
           if (targetStateCode) {
+            console.log('🗺️ Navigating to state with crop:', { targetStateCode, cropCode });
             goTo({
               stateCode: targetStateCode,
               cropCode,
               year,
             });
           } else {
-            console.warn('🗺️ State code not found for:', stateName);
+            console.warn('🗺️ State code not found for:', stateName, feature);
+            // Show available state codes for debugging
+            console.log('🗺️ Available STATE_CODES:', Object.keys(STATE_CODES));
           }
         } else if (stateCode !== USA_STATE_CODE && districtName) {
-          // Clicking on state map - could navigate to district view if implemented
-          // For now, just log the click since district view might not be implemented
+          console.log('🗺️ District/county click not implemented yet:', districtName);
         }
       },
       tooltip: ({
@@ -204,4 +219,3 @@ const CropMapChart = memo(({ on = 'production', setMapHeight = () => {} }) => {
 CropMapChart.displayName = 'CropMapChart';
 
 export default CropMapChart;
-

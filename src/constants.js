@@ -149,6 +149,70 @@ export const STATE_CODE_TO_FIPS = Object.entries(US_STATE_FIPS).reduce(
   {}
 );
 
+// Helper function for robust state code lookup
+export const getStateCodeFromName = (stateName) => {
+  if (!stateName) return null;
+  
+  // Try direct lookup first
+  let stateCode = STATE_CODES[stateName];
+  if (stateCode) return stateCode;
+  
+  // Try proper case
+  const properCase = stateName.charAt(0).toUpperCase() + stateName.slice(1).toLowerCase();
+  stateCode = STATE_CODES[properCase];
+  if (stateCode) return stateCode;
+  
+  // Try title case
+  const titleCase = stateName.toLowerCase().split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  stateCode = STATE_CODES[titleCase];
+  if (stateCode) return stateCode;
+  
+  // Manual mapping for uppercase state names
+  const uppercaseMapping = {
+    'ALABAMA': 'AL', 'ARIZONA': 'AZ', 'ARKANSAS': 'AR', 'CALIFORNIA': 'CA',
+    'COLORADO': 'CO', 'CONNECTICUT': 'CT', 'DELAWARE': 'DE', 'FLORIDA': 'FL',
+    'GEORGIA': 'GA', 'IDAHO': 'ID', 'ILLINOIS': 'IL', 'INDIANA': 'IN',
+    'IOWA': 'IA', 'KANSAS': 'KS', 'KENTUCKY': 'KY', 'LOUISIANA': 'LA',
+    'MAINE': 'ME', 'MARYLAND': 'MD', 'MASSACHUSETTS': 'MA', 'MICHIGAN': 'MI',
+    'MINNESOTA': 'MN', 'MISSISSIPPI': 'MS', 'MISSOURI': 'MO', 'MONTANA': 'MT',
+    'NEBRASKA': 'NE', 'NEVADA': 'NV', 'NEW HAMPSHIRE': 'NH', 'NEW JERSEY': 'NJ',
+    'NEW MEXICO': 'NM', 'NEW YORK': 'NY', 'NORTH CAROLINA': 'NC', 'NORTH DAKOTA': 'ND',
+    'OHIO': 'OH', 'OKLAHOMA': 'OK', 'OREGON': 'OR', 'PENNSYLVANIA': 'PA',
+    'RHODE ISLAND': 'RI', 'SOUTH CAROLINA': 'SC', 'SOUTH DAKOTA': 'SD',
+    'TENNESSEE': 'TN', 'TEXAS': 'TX', 'UTAH': 'UT', 'VERMONT': 'VT',
+    'VIRGINIA': 'VA', 'WASHINGTON': 'WA', 'WEST VIRGINIA': 'WV',
+    'WISCONSIN': 'WI', 'WYOMING': 'WY'
+  };
+  
+  return uppercaseMapping[stateName.toUpperCase()] || null;
+};
+
+// Debug function to help troubleshoot state name mappings
+export const debugStateMapping = (inputStateName) => {
+  console.log('🔍 Debug State Mapping for:', inputStateName);
+  
+  // Show all available state codes
+  console.log('Available STATE_CODES keys:', Object.keys(STATE_CODES));
+  
+  // Try different variations
+  const variations = [
+    inputStateName,
+    inputStateName.toUpperCase(),
+    inputStateName.toLowerCase(),
+    inputStateName.charAt(0).toUpperCase() + inputStateName.slice(1).toLowerCase(),
+    inputStateName.toLowerCase().split(' ').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
+  ];
+  
+  variations.forEach(variation => {
+    const result = STATE_CODES[variation];
+    console.log(`"${variation}" -> ${result || 'NOT FOUND'}`);
+  });
+  
+  return STATE_CODES[inputStateName];
+};
+
 // Map files configuration
 export const MAP_FILES = {
   // Main US map

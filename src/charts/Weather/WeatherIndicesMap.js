@@ -18,6 +18,8 @@ import {
   WEATHER_INDICES,
   WEATHER_INDICES_COLORS,
   WEATHER_INDICES_UNITS,
+  FIPS_TO_STATE_CODE,
+  getStateCodeFromName,
 } from '../../constants';
 import { readableNumber } from '../../helpers';
 
@@ -88,12 +90,35 @@ export const WeatherIndicesMap = memo(({ setMapHeight = () => {}, on }) => {
       onClick: ({
         properties: { st_nm: stateName, district: districtName },
       }) => {
-        const id =
-          stateCode === USA_STATE_CODE
-            ? stateName
-            : `${stateName}-${districtName}`.toUpperCase();
-        if (stateCode === USA_STATE_CODE && !!data[id])
-          goTo({ stateCode: STATE_CODES[stateName] }, '/weather');
+        console.log('🗺️ Weather indices map feature clicked:', { stateName, district: districtName });
+
+        if (stateCode === USA_STATE_CODE && stateName) {
+          // Use the robust helper function for state code lookup
+          let targetStateCode = getStateCodeFromName(stateName);
+          
+          // Fallback: Check if data exists for this state
+          if (!targetStateCode && data[stateName]) {
+            // Try to find the state code from available data
+            const stateEntries = Object.entries(STATE_NAMES);
+            const foundEntry = stateEntries.find(([code, name]) => 
+              name.toUpperCase() === stateName.toUpperCase()
+            );
+            targetStateCode = foundEntry?.[0];
+          }
+
+          console.log('🗺️ Weather indices map state lookup:', {
+            originalName: stateName,
+            targetStateCode,
+            hasData: !!data[stateName]
+          });
+
+          if (targetStateCode && targetStateCode !== USA_STATE_CODE && data[stateName]) {
+            console.log('🗺️ Navigating to weather indices state:', targetStateCode);
+            goTo({ stateCode: targetStateCode }, '/weather');
+          } else {
+            console.warn('🗺️ State code not found or no weather indices data for:', stateName);
+          }
+        }
       },
       tooltip: ({
         feature: {
@@ -150,4 +175,3 @@ export const WeatherIndicesMap = memo(({ setMapHeight = () => {}, on }) => {
   );
 });
 export default WeatherIndicesMap;
-

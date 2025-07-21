@@ -16,6 +16,8 @@ import {
   STATE_NAMES,
   UNASSIGNED_CROP_CODE,
   USA_STATE_CODE,
+  FIPS_TO_STATE_CODE,
+  getStateCodeFromName,
 } from '../../constants';
 import { readableNumber } from '../../helpers';
 import useConstants from '../../hooks/useConstants';
@@ -36,7 +38,6 @@ const MapSummaryChart = memo(
       `${API_HOST_URL}api/dashboard/mapSummary?year=${year}&stateCode=${stateCode}&on=${on}`,
       {
         fallbackData: [],
-
       },
     );
 
@@ -46,8 +47,6 @@ const MapSummaryChart = memo(
     useEffect(() => setMapHeight(mapHeight), [mapHeight, setMapHeight]);
 
     const { mapProps, legend } = useMemo(() => {
-
-
       if (!values || values.length === 0) {
         return {
           mapProps: {
@@ -126,25 +125,40 @@ const MapSummaryChart = memo(
           borderWidth: () => 2,
           borderColor: () => '#666666',
           onClick: (feature) => {
+            console.log('🗺️ Map feature clicked:', feature); // Debug log
 
             const {
               properties: { st_nm: stateName, district: districtName },
             } = feature;
 
             if (stateCode === USA_STATE_CODE && stateName) {
-              // Clicking on India map - navigate to state
-              const targetStateCode = STATE_CODES[stateName];
+              // Use the robust helper function for state code lookup
+              let targetStateCode = getStateCodeFromName(stateName);
+              
+              // Fallback: Try FIPS code lookup if available
+              if (!targetStateCode && feature.id) {
+                targetStateCode = FIPS_TO_STATE_CODE[feature.id];
+              }
 
+              console.log('🗺️ State lookup:', {
+                originalName: stateName,
+                targetStateCode,
+                feature
+              });
 
               if (targetStateCode) {
+                console.log('🗺️ Navigating to state:', targetStateCode);
                 goTo({
                   stateCode: targetStateCode,
                   year,
                 });
               } else {
-                console.warn('🗺️ State code not found for:', stateName);
+                console.warn('🗺️ State code not found for:', stateName, feature);
+                // Show available state codes for debugging
+                console.log('🗺️ Available STATE_CODES:', Object.keys(STATE_CODES));
               }
             } else if (stateCode !== USA_STATE_CODE && districtName) {
+              console.log('🗺️ District/county click not implemented yet:', districtName);
             }
           },
           tooltip: ({
@@ -182,7 +196,6 @@ const MapSummaryChart = memo(
         legend,
       };
     }, [values, stateCode, year, goTo, on]);
-
 
     return (
       <AnimatedEnter>
@@ -246,4 +259,3 @@ const MapSummaryChart = memo(
 MapSummaryChart.displayName = 'MapSummaryChart';
 
 export default MapSummaryChart;
-

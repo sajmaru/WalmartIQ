@@ -133,3 +133,173 @@ html, body {
   align-items: center !important;
   justify-content: center !important;
 }
+
+
+/* Chat Panel Layout Adjustments */
+.main-content {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: margin-right 0.3s ease; /* Smooth transition when chat opens/closes */
+}
+
+/* When chat panel is open, adjust main content */
+.content-with-chat {
+  transition: margin-right 0.3s ease;
+}
+
+/* Ensure charts and maps resize properly when chat opens */
+.chart-container,
+.map-container {
+  width: 100%;
+  overflow: hidden;
+  transition: width 0.3s ease;
+}
+
+/* Fix for Nivo charts to resize properly */
+.recharts-responsive-container,
+.nivo-container {
+  transition: width 0.3s ease !important;
+}
+
+/* Ensure Material-UI Grid containers adjust properly */
+.MuiGrid-container {
+  width: 100% !important;
+  margin: 0 !important;
+  transition: width 0.3s ease;
+}
+
+/* Chat panel specific styles */
+.chat-panel-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  z-index: 1300;
+  pointer-events: none; /* Allow clicks to pass through when collapsed */
+}
+
+.chat-panel-overlay.open {
+  pointer-events: auto; /* Enable interactions when open */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 1024px) {
+  .chat-panel-container {
+    position: fixed !important;
+    right: -100% !important;
+    transition: right 0.3s ease !important;
+  }
+  
+  .chat-panel-container.mobile-open {
+    right: 0 !important;
+  }
+  
+  /* On mobile, chat should overlay content */
+  .content-with-chat {
+    margin-right: 0 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .chat-panel-container {
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
+}
+
+/* Ensure proper scrolling in chat messages */
+.chat-messages-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+.chat-messages-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.chat-messages-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Animation for resize handle */
+.resize-handle-active {
+  background-color: rgba(25, 118, 210, 0.5) !important;
+}
+
+/* Smooth transitions for all interactive elements */
+.chat-button,
+.chat-chip,
+.send-button {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Focus styles for accessibility */
+.chat-input:focus {
+  outline: 2px solid #1976d2;
+  outline-offset: 2px;
+}
+
+/* Loading state for messages */
+.message-loading {
+  opacity: 0.7;
+  position: relative;
+}
+
+.message-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  width: 12px;
+  height: 12px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Ensure proper z-index stacking */
+.chat-toggle-button {
+  z-index: 1301;
+}
+
+.chat-panel {
+  z-index: 1300;
+}
+
+/* High contrast mode adjustments */
+@media (prefers-contrast: high) {
+  .chat-panel-container {
+    border: 2px solid currentColor;
+  }
+  
+  .message-bubble {
+    border: 1px solid currentColor;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .chat-panel-container,
+  .content-with-chat,
+  .chat-button,
+  .resize-handle {
+    transition: none !important;
+  }
+}

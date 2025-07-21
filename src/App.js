@@ -1,4 +1,5 @@
-import React, { Suspense, useEffect } from 'react';
+// src/App.js - Complete updated version
+import React, { Suspense, useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import { AnimatePresence } from 'framer-motion';
@@ -7,6 +8,7 @@ import useSWR from 'swr';
 import Navbar, { NAVBAR_WIDTH } from './components/Navbar';
 import Router from './routes/Router';
 import ErrorBoundary from './components/ErrorBoundary';
+import ChatPanel from './components/ChatPanel'; // ADD THIS IMPORT
 import { API_HOST_URL } from './constants';
 import useConstants from './hooks/useConstants';
 
@@ -20,7 +22,7 @@ const useAppStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    transition: theme.transitions.create(['margin-left'], {
+    transition: theme.transitions.create(['margin-left', 'margin-right'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
@@ -31,10 +33,17 @@ const useAppStyles = makeStyles((theme) => ({
   ContentFullWidth: {
     marginLeft: 0,
   },
+  // ADD THIS NEW CLASS
+  ContentWithChat: ({ chatPanelWidth }) => ({
+    marginRight: chatPanelWidth || 0,
+  }),
 }));
 
 const App = () => {
-  const styles = useAppStyles();
+  // ADD THIS STATE
+  const [chatPanelWidth, setChatPanelWidth] = useState(0);
+  
+  const styles = useAppStyles({ chatPanelWidth }); // PASS chatPanelWidth
   const location = useLocation();
   
   // Check if we're on the welcome page
@@ -58,6 +67,12 @@ const App = () => {
     }
   }, [data, LATEST_YEAR, setConstant]);
 
+  // ADD THIS HANDLER
+  const handleChatPanelResize = (width, isOpen) => {
+    console.log('🎯 Chat panel resize:', { width, isOpen }); // Debug log
+    setChatPanelWidth(isOpen ? width : 0);
+  };
+
   return (
     <ErrorBoundary>
       <Box className={styles.Container}>
@@ -66,13 +81,18 @@ const App = () => {
           <Box 
             className={`${styles.Content} ${
               isWelcomePage ? styles.ContentFullWidth : styles.ContentWithNavbar
-            }`}
+            } ${chatPanelWidth > 0 ? styles.ContentWithChat : ''}`}
           >
             <AnimatePresence mode="wait">
               <Router />
             </AnimatePresence>
           </Box>
         </Suspense>
+        
+        {/* ADD THIS CHATPANEL COMPONENT */}
+        {!isWelcomePage && (
+          <ChatPanel onResize={handleChatPanelResize} />
+        )}
       </Box>
     </ErrorBoundary>
   );

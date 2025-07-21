@@ -42,6 +42,9 @@ export const WeatherMap = memo(({ setMapHeight = () => {}, month, on }) => {
     [mapHeight, setMapHeight],
   );
 
+  // Determine if this is the US country map
+  const isUSMap = stateCode === USA_STATE_CODE;
+
   const getSelectedValue = useCallback(
     (datum) => (month === ALL_MONTHS_VALUE ? datum.value : datum.series[month]),
     [month],
@@ -103,12 +106,9 @@ export const WeatherMap = memo(({ setMapHeight = () => {}, month, on }) => {
         console.log('🗺️ Weather map feature clicked:', { stateName, district: districtName });
 
         if (stateCode === USA_STATE_CODE && stateName) {
-          // Use the robust helper function for state code lookup
           let targetStateCode = getStateCodeFromName(stateName);
           
-          // Fallback: Try looking in data object
           if (!targetStateCode && data[stateName]) {
-            // Try to find the state code from available data
             const stateEntries = Object.entries(STATE_NAMES);
             const foundEntry = stateEntries.find(([code, name]) => 
               name.toUpperCase() === stateName.toUpperCase()
@@ -172,15 +172,29 @@ export const WeatherMap = memo(({ setMapHeight = () => {}, month, on }) => {
 
   return (
     <AnimatedEnter>
+      {/* UPDATED CONTAINER WITH DYNAMIC PADDING AND SPACING */}
       <Box
         ref={mapRef}
-        style={{ width: '100%', height: mapHeight, padding: 18 }}>
+        style={{ 
+          width: '100%', 
+          height: isUSMap ? mapHeight * 0.75 : mapHeight, // Reduce height for US map
+          padding: isUSMap ? '2px' : '18px', // Minimal padding for US map
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden',
+          marginTop: isUSMap ? '-10px' : '0px', // Pull US map up
+        }}>
         <ResponsiveGeoMap
           fitProjection
           isInteractive
           borderWidth={2}
           borderColor="#404040"
           features={features}
+          // UPDATED PROJECTION SETTINGS FOR US MAP
+          projectionType={isUSMap ? 'albersUsa' : 'mercator'}
+          projectionScale={isUSMap ? 1200 : 100}
+          projectionTranslation={[0.5, isUSMap ? 0.35 : 0.5]} // Move US map up more
           {...mapProps}
         />
       </Box>

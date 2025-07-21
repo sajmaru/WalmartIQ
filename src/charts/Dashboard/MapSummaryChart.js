@@ -46,6 +46,9 @@ const MapSummaryChart = memo(
 
     useEffect(() => setMapHeight(mapHeight), [mapHeight, setMapHeight]);
 
+    // Determine if this is the US country map
+    const isUSMap = stateCode === USA_STATE_CODE;
+
     const { mapProps, legend } = useMemo(() => {
       if (!values || values.length === 0) {
         return {
@@ -125,17 +128,15 @@ const MapSummaryChart = memo(
           borderWidth: () => 2,
           borderColor: () => '#666666',
           onClick: (feature) => {
-            console.log('🗺️ Map feature clicked:', feature); // Debug log
+            console.log('🗺️ Map feature clicked:', feature);
 
             const {
               properties: { st_nm: stateName, district: districtName },
             } = feature;
 
             if (stateCode === USA_STATE_CODE && stateName) {
-              // Use the robust helper function for state code lookup
               let targetStateCode = getStateCodeFromName(stateName);
               
-              // Fallback: Try FIPS code lookup if available
               if (!targetStateCode && feature.id) {
                 targetStateCode = FIPS_TO_STATE_CODE[feature.id];
               }
@@ -154,7 +155,6 @@ const MapSummaryChart = memo(
                 });
               } else {
                 console.warn('🗺️ State code not found for:', stateName, feature);
-                // Show available state codes for debugging
                 console.log('🗺️ Available STATE_CODES:', Object.keys(STATE_CODES));
               }
             } else if (stateCode !== USA_STATE_CODE && districtName) {
@@ -222,13 +222,21 @@ const MapSummaryChart = memo(
             </Box>
           ))}
         </Box>
+        
+        {/* UPDATED CONTAINER WITH BETTER SPACING USING MERCATOR */}
         <div
           ref={mapRef}
           style={{
             width: '100%',
-            height: mapHeight,
-            padding: 18,
+            height: isUSMap ? mapHeight * 0.7 : mapHeight, // Reduce height significantly for US map
+            padding: isUSMap ? '4px 4px 20px 4px' : '18px', // Minimal top/side padding, more bottom padding
             transition: '0.5s height',
+            display: 'flex',
+            alignItems: isUSMap ? 'flex-start' : 'center', // Align to top for US map
+            justifyContent: 'center',
+            overflow: 'hidden',
+            marginTop: isUSMap ? '-20px' : '0px', // Pull US map up significantly
+            marginBottom: isUSMap ? '-30px' : '0px', // Pull content below up
           }}>
           {features && features.length > 0 ? (
             <ResponsiveGeoMap
@@ -237,6 +245,11 @@ const MapSummaryChart = memo(
               borderWidth={2}
               borderColor="#666666"
               features={features}
+              // USING MERCATOR BUT WITH BETTER SETTINGS FOR US MAP
+              projectionType="mercator"
+              projectionScale={isUSMap ? 800 : 100} // Higher scale for US map
+              projectionTranslation={[0.5, isUSMap ? 0.25 : 0.5]} // Move US map way up
+              projectionRotation={[95, 0, 0]} // Center US map better (rotate to center US)
               {...mapProps}
             />
           ) : (

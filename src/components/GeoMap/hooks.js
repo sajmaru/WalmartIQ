@@ -20,6 +20,7 @@ import {
   geoTransverseMercator,
   geoNaturalEarth1,
   geoGraticule,
+  geoAlbersUsa,
 } from 'd3-geo';
 
 const makeGetter = (property, defaultValue) => {
@@ -40,6 +41,7 @@ export const projectionById = {
   mercator: geoMercator,
   transverseMercator: geoTransverseMercator,
   naturalEarth1: geoNaturalEarth1,
+  albersUsa: geoAlbersUsa, // Added for US maps
 };
 
 export const useGeoMap = ({
@@ -62,19 +64,55 @@ export const useGeoMap = ({
       console.warn(`Unknown projection type: ${projectionType}, falling back to mercator`);
     }
     
-    const selectedProjection = (projectionById[projectionType] || geoMercator)()
-      .scale(projectionScale)
-      .translate([
-        width * projectionTranslation[0],
-        height * projectionTranslation[1],
-      ])
-      .rotate(projectionRotation);
+    const selectedProjection = (projectionById[projectionType] || geoMercator)();
+
+    // Special handling for albersUsa projection
+    if (projectionType === 'albersUsa') {
+      // albersUsa is pre-configured and doesn't support scale, translate, or rotate
+      // It's specifically designed for the United States
+      selectedProjection
+        .translate([
+          width * projectionTranslation[0],
+          height * projectionTranslation[1],
+        ]);
+      
+      // Scale for albersUsa needs to be applied differently
+      if (projectionScale !== 100) {
+        selectedProjection.scale(projectionScale);
+      }
+    } else {
+      // For all other projections, apply scale, translate, and rotate
+      selectedProjection
+        .scale(projectionScale)
+        .translate([
+          width * projectionTranslation[0],
+          height * projectionTranslation[1],
+        ])
+        .rotate(projectionRotation);
+    }
 
     if (fitProjection && selectedProjection.fitSize && features.length > 0) {
-      selectedProjection.fitSize([width, height], {
+      const featureCollection = {
         type: 'FeatureCollection',
         features,
-      });
+      };
+      
+      // Special handling for US maps to reduce top/bottom padding
+      if (projectionType === 'albersUsa' || features.length > 10) {
+        // For US maps, use fitExtent instead of fitSize for better control
+        const padding = projectionType === 'albersUsa' ? 10 : 20;
+        if (selectedProjection.fitExtent) {
+          selectedProjection.fitExtent(
+            [[padding, padding], [width - padding, height - padding]], 
+            featureCollection
+          );
+        } else {
+          selectedProjection.fitSize([width, height], featureCollection);
+        }
+      } else {
+        // For state maps, use regular fitSize
+        selectedProjection.fitSize([width, height], featureCollection);
+      }
     }
 
     return selectedProjection;

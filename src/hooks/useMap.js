@@ -14,7 +14,6 @@ import {
 } from '../constants';
 
 const toFeatures = (geo, stateCode, isCountyLevel) => {
-
   if (!geo?.objects) {
     console.warn('No objects in geo data');
     return [];
@@ -25,32 +24,27 @@ const toFeatures = (geo, stateCode, isCountyLevel) => {
     let features;
     
     if (isCountyLevel) {
-      // For state-level maps, we want counties
+      // County level processing (existing code)
       geoObject = geo.objects.counties;
       if (!geoObject) {
         console.warn('No counties object found in geo data');
         return [];
       }
       
-      // Extract all features first
       const allFeatures = feature(geo, geoObject).features || [];
-      
-      // Filter counties for the specific state
       const stateFips = STATE_CODE_TO_FIPS[stateCode];
       if (!stateFips) {
         console.warn(`No FIPS code found for state: ${stateCode}`);
         return [];
       }
       
-      // Filter counties that belong to this state (FIPS code starts with state FIPS)
       features = allFeatures.filter(feat => {
         const countyFips = feat.id;
         return countyFips && countyFips.startsWith(stateFips);
       });
       
-      
     } else {
-      // For US-level map, we want states (excluding territories)
+      // US-level map processing
       geoObject = geo.objects.states;
       if (!geoObject) {
         console.warn('No states object found in geo data');
@@ -59,7 +53,7 @@ const toFeatures = (geo, stateCode, isCountyLevel) => {
       
       const allFeatures = feature(geo, geoObject).features || [];
       
-      // List of territories to exclude (outside North America)
+      // Territories to exclude
       const territoriesToExclude = [
         'American Samoa',
         'Commonwealth of the Northern Mariana Islands',
@@ -68,21 +62,16 @@ const toFeatures = (geo, stateCode, isCountyLevel) => {
         'United States Virgin Islands'
       ];
       
-      // Filter to only include North American states (exclude territories)
+      // Filter to only include continental US states
       features = allFeatures.filter(feat => {
         const stateFips = feat.id;
         const stateName = feat.properties?.name;
         
-        // Exclude by FIPS code (if we have it in our mapping)
         const isValidState = US_STATE_FIPS.hasOwnProperty(stateFips);
-        
-        // Exclude by name (for any territories)
         const isTerritory = territoriesToExclude.includes(stateName);
         
         return isValidState && !isTerritory;
       });
-      
-  
     }
     
     // Add unique IDs and normalize properties
@@ -93,23 +82,21 @@ const toFeatures = (geo, stateCode, isCountyLevel) => {
         feat = { ...feat, id: uniqueId };
       }
       
-      // Normalize properties for consistent access
+      // Normalize properties
       const normalizedProps = { ...feat.properties };
       
       if (isCountyLevel) {
-        // For counties, add state information
         const countyFips = feat.id;
         const stateFips = countyFips.substring(0, 2);
         const stateCode = FIPS_TO_STATE_CODE[stateFips];
         
         normalizedProps.county = feat.properties.name;
-        normalizedProps.st_nm = stateCode; // For consistency with existing code
-        normalizedProps.district = feat.properties.name; // Map to existing district field
+        normalizedProps.st_nm = stateCode;
+        normalizedProps.district = feat.properties.name;
         normalizedProps.fips = countyFips;
         normalizedProps.state_fips = stateFips;
         
       } else {
-        // For states, normalize the state name property
         const stateFips = feat.id;
         const stateCode = FIPS_TO_STATE_CODE[stateFips];
         
@@ -123,7 +110,6 @@ const toFeatures = (geo, stateCode, isCountyLevel) => {
         properties: normalizedProps
       };
     });
-    
     
     return featuresWithIds;
     

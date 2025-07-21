@@ -48,11 +48,13 @@ const CropMapChart = memo(({ on = 'production', setMapHeight = () => {} }) => {
     [mapHeight, setMapHeight],
   );
 
+  // Determine if this is the US country map
+  const isUSMap = stateCode === USA_STATE_CODE;
+
   const mapProps = useMemo(() => {
     if (!values || values.length === 0) {
-      // Return default styling when no data
       return {
-        fillColor: () => '#f0f0f0', // Light gray for no data
+        fillColor: () => '#f0f0f0',
         borderWidth: () => 1,
         borderColor: () => '#ccc',
         onClick: () => {},
@@ -65,7 +67,6 @@ const CropMapChart = memo(({ on = 'production', setMapHeight = () => {} }) => {
       0,
     );
 
-    // Get base color for the crop, with fallback
     const baseColor = CROP_COLORS[cropCode] || '#4a90e2';
     const cropColor = color(baseColor);
 
@@ -116,17 +117,15 @@ const CropMapChart = memo(({ on = 'production', setMapHeight = () => {} }) => {
       borderWidth: () => 2,
       borderColor: () => '#666666',
       onClick: (feature) => {
-        console.log('🗺️ Crop map feature clicked:', feature); // Debug log
+        console.log('🗺️ Crop map feature clicked:', feature);
 
         const {
           properties: { st_nm: stateName, district: districtName },
         } = feature;
 
         if (stateCode === USA_STATE_CODE && stateName) {
-          // Use the robust helper function for state code lookup
           let targetStateCode = getStateCodeFromName(stateName);
           
-          // Fallback: Try FIPS code lookup if available
           if (!targetStateCode && feature.id) {
             targetStateCode = FIPS_TO_STATE_CODE[feature.id];
           }
@@ -147,7 +146,6 @@ const CropMapChart = memo(({ on = 'production', setMapHeight = () => {} }) => {
             });
           } else {
             console.warn('🗺️ State code not found for:', stateName, feature);
-            // Show available state codes for debugging
             console.log('🗺️ Available STATE_CODES:', Object.keys(STATE_CODES));
           }
         } else if (stateCode !== USA_STATE_CODE && districtName) {
@@ -188,9 +186,20 @@ const CropMapChart = memo(({ on = 'production', setMapHeight = () => {} }) => {
 
   return (
     <AnimatedEnter>
+      {/* UPDATED CONTAINER WITH BETTER SPACING USING MERCATOR */}
       <Box
         ref={mapRef}
-        style={{ width: '100%', height: mapHeight, padding: 18 }}>
+        style={{ 
+          width: '100%', 
+          height: isUSMap ? mapHeight * 0.7 : mapHeight, // Reduce height significantly for US map
+          padding: isUSMap ? '4px 4px 20px 4px' : '18px', // Minimal top/side padding, more bottom padding
+          display: 'flex',
+          alignItems: isUSMap ? 'flex-start' : 'center', // Align to top for US map
+          justifyContent: 'center',
+          overflow: 'hidden',
+          marginTop: isUSMap ? '-20px' : '0px', // Pull US map up significantly
+          marginBottom: isUSMap ? '-30px' : '0px', // Pull content below up
+        }}>
         {features && features.length > 0 ? (
           <ResponsiveGeoMap
             fitProjection
@@ -198,6 +207,11 @@ const CropMapChart = memo(({ on = 'production', setMapHeight = () => {} }) => {
             borderWidth={2}
             borderColor="#666666"
             features={features}
+            // USING MERCATOR BUT WITH BETTER SETTINGS FOR US MAP
+            projectionType="mercator"
+            projectionScale={isUSMap ? 800 : 100} // Higher scale for US map
+            projectionTranslation={[0.5, isUSMap ? 0.25 : 0.5]} // Move US map way up
+            projectionRotation={[95, 0, 0]} // Center US map better (rotate to center US)
             {...mapProps}
           />
         ) : (

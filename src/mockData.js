@@ -517,12 +517,36 @@ export const MOCK_WAREHOUSE_TABLE = [
   }
 ];
 
-// PRICING MOCK DATA - Updated for Sales Pricing
+// PRICING MOCK DATA - Updated for GMV Analytics with Forecast
 export const MOCK_PRICING_SUMMARY = [
   {
     sbu: "Electronics",
     years: [2021, 2022, 2023, 2024],
+    actualGMV: [285000000, 290000000, 295000000, 310000000],
+    forecastGMV: [280000000, 292000000, 298000000, 305000000],
     avgPrice: [450, 468, 489, 515],
+    residualExplanations: {
+      0: { // 2021 - high positive residual
+        residual: 5000000,
+        reasons: [
+          "Holiday season surge exceeded expectations by 15%",
+          "New product launch (iPhone 13) drove unexpected demand spike",
+          "Supply chain constraints in competitor products boosted market share"
+        ],
+        impact: "positive",
+        confidence: 0.95
+      },
+      3: { // 2024 - high positive residual  
+        residual: 5000000,
+        reasons: [
+          "AI-powered electronics category experiencing 20% growth",
+          "Back-to-school season performed 18% above forecast",
+          "Premium segment adoption faster than anticipated"
+        ],
+        impact: "positive",
+        confidence: 0.88
+      }
+    },
     insights: {
       demand: ["Strong consumer demand", "Premium product mix growing"],
       competition: ["Competitive pricing pressure", "Value positioning important"],
@@ -533,12 +557,81 @@ export const MOCK_PRICING_SUMMARY = [
   {
     sbu: "Clothing",
     years: [2021, 2022, 2023, 2024],
+    actualGMV: [125000000, 118000000, 132000000, 128000000],
+    forecastGMV: [120000000, 125000000, 128000000, 135000000],
     avgPrice: [85, 92, 98, 105],
+    residualExplanations: {
+      1: { // 2022 - high negative residual
+        residual: -7000000,
+        reasons: [
+          "Unseasonably warm winter reduced coat and sweater sales by 25%",
+          "Supply chain delays for spring fashion lines missed peak season",
+          "Fast fashion competitor aggressive pricing impacted margins"
+        ],
+        impact: "negative",
+        confidence: 0.92
+      },
+      2: { // 2023 - high positive residual
+        residual: 4000000,
+        reasons: [
+          "Sustainable fashion line exceeded expectations by 30%",
+          "Celebrity endorsement campaign drove viral social media engagement",
+          "Return to office trends boosted professional wear sales"
+        ],
+        impact: "positive", 
+        confidence: 0.87
+      },
+      3: { // 2024 - high negative residual
+        residual: -7000000,
+        reasons: [
+          "Economic uncertainty reduced discretionary clothing spending",
+          "Inventory management issues led to stock-outs during peak seasons",
+          "Shift to athleisure trend not captured in forecast models"
+        ],
+        impact: "negative",
+        confidence: 0.91
+      }
+    },
     insights: {
       demand: ["Seasonal demand patterns", "Fashion trends driving sales"],
       competition: ["Fast fashion competition", "Brand differentiation key"],
       pricing: ["Dynamic pricing strategy", "Promotional pricing effective"],
       market: ["Omnichannel growth", "Sustainability focus increasing"]
+    }
+  },
+  {
+    sbu: "Home & Garden",
+    years: [2021, 2022, 2023, 2024],
+    actualGMV: [96000000, 102000000, 98000000, 105000000],
+    forecastGMV: [92000000, 98000000, 103000000, 108000000],
+    avgPrice: [120, 125, 135, 142],
+    residualExplanations: {
+      0: { // 2021 - high positive residual
+        residual: 4000000,
+        reasons: [
+          "COVID-19 home improvement boom exceeded all forecasts",
+          "Garden equipment sales surged 40% with work-from-home trends",
+          "DIY project supplies shortage drove premium product sales"
+        ],
+        impact: "positive",
+        confidence: 0.96
+      },
+      2: { // 2023 - high negative residual
+        residual: -5000000,
+        reasons: [
+          "Interest rate increases reduced home renovation spending",
+          "Unusual drought conditions impacted garden supply sales by 30%",
+          "Housing market slowdown reduced new homeowner purchases"
+        ],
+        impact: "negative",
+        confidence: 0.89
+      }
+    },
+    insights: {
+      demand: ["Home improvement trends", "Seasonal gardening patterns"],
+      competition: ["Big box retailer competition", "Online marketplace growth"],
+      pricing: ["Premium brand positioning", "Bundle pricing strategies"],
+      market: ["DIY market expansion", "Smart home integration growing"]
     }
   }
 ];
